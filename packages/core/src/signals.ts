@@ -17,6 +17,8 @@ export const CORE_SIGNALS = {
   userName: 'user.name',
   upcomingEvents: 'upcoming_events',
   recentlyUnlocked: 'chapters.recently_unlocked',
+  chaptersRead: 'chapters.read',
+  experimentsAvailable: 'experiments.available',
 } as const;
 
 /** Settings key holding the user's name (JSON string). */
@@ -64,6 +66,25 @@ export interface CoreSignalInput {
   userName: string | null;
   recentlyUnlocked: readonly string[];
   upcomingEvents: readonly SignalValue[];
+  /** Active modules' read chapters, for `chapters.read`. Default []. */
+  chaptersRead?: readonly ChapterReadSignal[];
+  /** Active modules' experiments, for `experiments.available`. Default []. */
+  experimentsAvailable?: readonly ExperimentSignal[];
+}
+
+/** One entry of `chapters.read`: an active module and the day its chapter was marked read. */
+export interface ChapterReadSignal {
+  readonly module: string;
+  readonly chapter: number;
+  readonly read_day: string;
+}
+
+/** One entry of `experiments.available`: a technique an active module offers as an experiment. */
+export interface ExperimentSignal {
+  readonly module: string;
+  readonly technique: string;
+  readonly label: string;
+  readonly default_days: number;
 }
 
 /** Core's signals from plain data. Missing values are null. Pure. */
@@ -77,6 +98,8 @@ export function coreSignals(input: CoreSignalInput): Signals {
     [CORE_SIGNALS.userName]: input.userName && input.userName.trim() ? input.userName.trim() : null,
     [CORE_SIGNALS.upcomingEvents]: [...input.upcomingEvents],
     [CORE_SIGNALS.recentlyUnlocked]: [...input.recentlyUnlocked],
+    [CORE_SIGNALS.chaptersRead]: (input.chaptersRead ?? []).map((c) => ({ ...c })),
+    [CORE_SIGNALS.experimentsAvailable]: (input.experimentsAvailable ?? []).map((e) => ({ ...e })),
   };
 }
 
@@ -148,9 +171,30 @@ export async function buildSignals(opts: BuildSignalsOptions): Promise<SignalsSn
     userName: parseName(nameRows[0]?.value),
     recentlyUnlocked: recentlyUnlocked(active, chapters, day),
     upcomingEvents,
+    chaptersRead: chaptersReadSignal(active, chapters),
+    experimentsAvailable: experimentsSignal(active),
   });
 
   return { signals: { ...moduleSignals, ...core }, failed };
+}
+
+/** Active modules whose chapter is read, with the read day. Pure. */
+export function chaptersReadSignal(
+  active: readonly Module<unknown>[],
+  read: readonly Pick<ChapterRecord, 'chapter' | 'read_day'>[],
+): ChapterReadSignal[] {
+  const byChapter = new Map(read.map((r) => [r.chapter, r.read_day]));
+  return active.flatMap((m) => {
+    const readDay = byChapter.get(m.manifest.chapter);
+    return readDay === undefined ? [] : [{ module: m.manifest.id, chapter: m.manifest.chapter, read_day: readDay }];
+  });
+}
+
+/** Every experiment the given (active) modules offer. Pure. */
+export function experimentsSignal(active: readonly Module<unknown>[]): ExperimentSignal[] {
+  return active.flatMap((m) =>
+    m.experiments.map((e) => ({ module: m.manifest.id, technique: e.technique, label: e.label, default_days: e.defaultDays })),
+  );
 }
 
 function parseName(json: string | undefined): string | null {

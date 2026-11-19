@@ -38,7 +38,7 @@ interface PromptDef {
 
 A `Signals` snapshot is computed once per pick (morning: after day types and energy are saved; evening: after the day rating): a plain map `key → value` built from every active module's `SignalDef`s plus core's. Conditions and placeholders read only this snapshot.
 
-Core signals: `day.types`, `day.energy`, `day.rating`, `yesterday.rating`, `yesterday.intent_result` (yesterday = the previous calendar day), `user.name`, `upcoming_events` (concatenation of active modules' `<id>.upcoming_events` arrays), `chapters.recently_unlocked` (module ids unlocked ≤ 14 days ago). Missing values are `null`; conditions read them with the `signalNumber` / `signalString` / `signalIncludes` helpers so `null` never passes a comparison. A module signal whose `compute` throws is left out of the snapshot.
+Core signals: `day.types`, `day.energy`, `day.rating`, `yesterday.rating`, `yesterday.intent_result` (yesterday = the previous calendar day), `user.name`, `upcoming_events` (concatenation of active modules' `<id>.upcoming_events` arrays), `chapters.recently_unlocked` (module ids unlocked ≤ 14 days ago), `chapters.read` (`{module, chapter, read_day}[]` for active modules), `experiments.available` (`{module, technique, label, default_days}[]`: every active module's `experiments`). Missing values are `null`; conditions read them with the `signalNumber` / `signalString` / `signalIncludes` helpers so `null` never passes a comparison. A module signal whose `compute` throws is left out of the snapshot.
 
 Days since a prompt was last shown is not a signal: the engine gets each prompt's last-shown day from `prompts_shown` as a separate input and uses it only for cooldowns.
 

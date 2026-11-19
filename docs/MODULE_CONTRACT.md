@@ -24,13 +24,13 @@ export const module: Module = {
 | --- | --- |
 | `manifest` | `id` (`ch02`), `chapter` (2; Introduction = 0), `title`, `idea` (one line), `evidence` (2–4 sentences), `references` (string[]). Shown on the module's "Why this exists" sheet and in the Library. |
 | `migrations` | `{ version, sql }[]`. Tables prefixed with the module id. |
-| `screens` | Svelte components under `ui/`. Routes are mounted under `/m/<id>/...` by the shell. |
+| `screens` | Svelte components under `ui/`. Routes are mounted under `/m/<id>/...` by the shell (`path: ''` is `/m/<id>`). The component receives `ModuleViewProps` (`day` = today, `signals` = a fresh snapshot). |
 | `todayCards` | Small cards on Today. `visible(signals)` is pure. The component receives `ModuleViewProps` (`{ store, day, signals }`). |
 | `prompts` | See PROMPTS.md for fields. Each prompt's `module` = this module's id. |
 | `signals` | `{ key: '<id>.<name>', compute(ctx): Promise<value> }`. `compute` reads via `ctx.store` only. Keys are namespaced by module id. |
-| `reviewSections` | Read data via Store/signals; no writes except accepting suggestions through core. The component receives `ModuleViewProps` (`day` = last day of the week). |
+| `reviewSections` | Read data via Store/signals. Writes only to the module's own tables (e.g. a weekly check-in); suggestions are accepted through core. The component receives `ModuleViewProps` (`day` = last day of the week). |
 | `suggestions` | `{ id, evaluate(signals, ctx) => Suggestion | null }`. Pure over its inputs; tested. |
-| `experiments` | Techniques the Introduction module can run as trials. |
+| `experiments` | Techniques the Introduction module can run as trials. Reach intro through core's `experiments.available` signal (active modules only). |
 
 ## Folder layout
 
@@ -38,7 +38,7 @@ export const module: Module = {
 packages/modules/ch02-thought-records/
   manifest.ts
   migrations/001_init.sql
-  schema.ts          # zod schemas + types
+  schema.ts          # record types + small hand-written validators (no zod)
   repo.ts            # Store calls for this module's tables
   signals.ts         # + signals.test.ts
   prompts.ts         # + prompts.test.ts (conditions)

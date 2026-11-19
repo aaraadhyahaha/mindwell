@@ -29,7 +29,7 @@ export {
   libraryEntries,
 } from './registry';
 export { readChapters, markChapterRead, markChapterUnread } from './library';
-export type { CoreSignalInput, BuildSignalsOptions, SignalsSnapshot } from './signals';
+export type { CoreSignalInput, BuildSignalsOptions, SignalsSnapshot, ChapterReadSignal, ExperimentSignal } from './signals';
 export {
   CORE_SIGNALS,
   NAME_SETTING,
@@ -41,6 +41,8 @@ export {
   coreSignals,
   parseDayTypes,
   buildSignals,
+  chaptersReadSignal,
+  experimentsSignal,
 } from './signals';
 export { corePrompts, FALLBACK_INTENT_ID, FALLBACK_JOURNAL_ID } from './core-prompts';
 export type { PromptStats, SlotRules, SelectionInput, PickedPrompt, Selection } from './engine';
