@@ -63,13 +63,13 @@ Via `ctx.signals` (signals) and the screen's `signals` snapshot (UI), never ch01
 | `coach_by_name` | Coach yourself by name when stressed | 14 |
 
 ## Acceptance checks
-- [ ] Starting from a capture pre-fills the thought and story.
-- [ ] Incomplete drafts appear at the top of `/m/ch02` and can be resumed.
-- [ ] With ch01 inactive, ch02 works (no capture links, `unchallenged_story` undefined).
+- [x] Starting from a capture pre-fills the thought and story.
+- [x] Incomplete drafts appear at the top of `/m/ch02` and can be resumed.
+- [x] With ch01 inactive, ch02 works (no capture links, `unchallenged_story` undefined).
 
 ## Build checklist
 - [x] [builder] migrations + schema + repo
 - [x] [tester] signals, conditions, suggestions
 - [x] [main] stepped form with three-Ps hints and coach line
 - [x] [builder] history + per-story chart, Today card, review section
-- [ ] [main] register, end-to-end check
+- [x] [main] register, end-to-end check

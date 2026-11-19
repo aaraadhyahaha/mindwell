@@ -29,6 +29,8 @@ Build in phases. Use each phase for 1–2 weeks before the next. Tags say who do
 
 - [x] Both modules built and registered (2026-11-19). Capture timing (/#capture and N) and capture from the compositor binding with and without a mindwell tab open still to check by hand.
 ## Phase 2 — Chapter 2 → `docs/modules/ch02.md`
+
+- [x] Module built and registered (2026-11-19); acceptance checks pass (`apps/web/src/lib/ch02-flow.test.ts` + browser check). Core: `ctx.signals` (signals read earlier modules' keys) and `undefined` = not published; ch01 publishes `stories` and `captures_recent`.
 ## Phase 3 — Chapter 3 → `docs/modules/ch03.md`
 
 Each spec has its own checklist.
