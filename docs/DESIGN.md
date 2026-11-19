@@ -17,7 +17,7 @@ mindwell should feel like a companion to the book: calm, typographic, quiet. It 
 One accent only, used for the primary action and focus rings. No other colours except greys from these tokens. Follow the system light/dark setting, with a manual override.
 
 **Type** (fonts bundled locally, never loaded from the web)
-- Serif: Lora (variable, OFL) for titles, prompts, intent and reading text.
+- Serif: Literata (variable, OFL; opsz + wght axes, `font-optical-sizing: auto`) for titles, prompts, intent and reading text.
 - Sans: Source Sans 3 (variable, OFL) for small UI labels, buttons, numbers.
 - Scale (px): 12 · 14 · 16 (body) · 19 · 24 · 32. Line height 1.5 body, 1.25 headings.
 - Section labels: sans, 12 px, uppercase, letter-spacing 0.12em, `--muted` (the book's small-caps look).

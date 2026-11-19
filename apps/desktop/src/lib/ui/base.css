@@ -5,9 +5,11 @@
 }
 html {
   -webkit-text-size-adjust: 100%;
+  font-optical-sizing: auto;
 }
 body {
   margin: 0;
+  font-optical-sizing: auto;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-serif);
