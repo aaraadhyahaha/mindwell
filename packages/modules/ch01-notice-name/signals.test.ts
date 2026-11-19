@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Signals } from '@mindwell/core';
-import { ch01SignalValues, eveningCardVisible, storiesNoteVisible, storyBars, thoughtsNavCount, type CaptureRow, type StoryRow } from './signals';
+import { ch01SignalValues, thoughtRecordHref, eveningCardVisible, storiesNoteVisible, storyBars, thoughtsNavCount, type CaptureRow, type StoryRow } from './signals';
 
 const DAY = '2026-11-19';
 const stories: StoryRow[] = [
@@ -275,5 +275,16 @@ describe('storyBars', () => {
   it('drives the margin note', () => {
     expect(storiesNoteVisible(s)).toBe(true);
     expect(storiesNoteVisible({})).toBe(false);
+  });
+});
+
+describe('thoughtRecordHref', () => {
+  it('links to ch02 when ch02 is active', () => {
+    const s: Signals = { 'chapters.read': [{ module: 'ch02', chapter: 2, read_day: DAY }] };
+    expect(thoughtRecordHref(s, 'c 1')).toBe('/m/ch02/new?capture=c%201');
+  });
+  it('is null when ch02 is inactive or the signal is missing', () => {
+    expect(thoughtRecordHref({ 'chapters.read': [{ module: 'ch01', chapter: 1, read_day: DAY }] }, 'c1')).toBeNull();
+    expect(thoughtRecordHref({}, 'c1')).toBeNull();
   });
 });

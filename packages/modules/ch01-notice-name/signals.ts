@@ -159,3 +159,11 @@ export function storyBars(s: Signals, limit = 3): StoryBar[] {
 
 /** Margin note visibility: some story was captured this week. Pure. */
 export const storiesNoteVisible = (s: Signals): boolean => storyBars(s).length > 0;
+
+/** Href for starting a ch02 thought record from a capture, or null when ch02 isn't active (route link only, no import). Pure. */
+export function thoughtRecordHref(s: Signals, captureId: string): string | null {
+  const active = signalList(s, 'chapters.read').some(
+    (v) => v !== null && typeof v === 'object' && !Array.isArray(v) && (v as { readonly module?: SignalValue }).module === 'ch02',
+  );
+  return active ? `/m/ch02/new?capture=${encodeURIComponent(captureId)}` : null;
+}

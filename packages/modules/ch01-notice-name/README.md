@@ -21,7 +21,7 @@
 - "Capture a thought" + shortcut hint: the Today toolbar's action (the app shell shows it while ch01 is active; it replaced the anytime card).
 - Today margin note (`margin` slot, order 20), visible when a story was captured this week: "Stories this week", the top 3 stories with counts and bars (`storyBars`).
 - Sidebar: Thoughts shows this week's captures as its count (`thoughtsNavCount`).
-- Today card (evening), visible when captures today > 0: today's captures grouped by story; unlinked ones show "link to story".
+- Today card (evening), visible when captures today > 0: today's captures grouped by story; unlinked ones show "link to story". While ch02 is active (`chapters.read`), each capture also shows a "Thought record" link to `/m/ch02/new?capture=<id>` (`thoughtRecordHref`; a route link, not an import).
 
 ## Signals published
 | Key | Value | Meaning |

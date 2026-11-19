@@ -2,10 +2,11 @@
   import type { ModuleViewProps } from '@mindwell/core';
   import { Card, SectionLabel } from '@mindwell/ui';
   import { capturesOnDay, listStories } from '../repo';
+  import { thoughtRecordHref } from '../signals';
   import type { CaptureRecord, StoryRecord } from '../schema';
   import LinkStory from './LinkStory.svelte';
 
-  let { store, day }: ModuleViewProps = $props();
+  let { store, day, signals }: ModuleViewProps = $props();
   let captures = $state<CaptureRecord[]>([]);
   let stories = $state<StoryRecord[]>([]);
 
@@ -42,6 +43,9 @@
             {#if !g.name}
               <LinkStory {store} {day} captureId={c.id} {stories} onlinked={load} />
             {/if}
+            {#if thoughtRecordHref(signals, c.id)}
+              <a class="link" href={thoughtRecordHref(signals, c.id)}>Thought record</a>
+            {/if}
           </li>
         {/each}
       </ul>
@@ -60,6 +64,17 @@
     list-style: none;
     padding: 0;
     margin: var(--space-1) 0 0;
+  }
+  .link {
+    font: 600 12.5px var(--font-sans);
+    color: var(--accent);
+    text-decoration: none;
+    min-height: 24px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .link:hover {
+    text-decoration: underline;
   }
   li {
     font-family: var(--font-serif);
