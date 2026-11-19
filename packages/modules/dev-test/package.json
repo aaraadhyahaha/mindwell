@@ -11,5 +11,11 @@
   },
   "dependencies": {
     "@mindwell/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "svelte": "^5.56.3"
+  },
+  "devDependencies": {
+    "svelte": "^5.56.3"
   }
 }

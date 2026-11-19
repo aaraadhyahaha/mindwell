@@ -1,8 +1,7 @@
-import type { Component } from 'svelte';
 import type { ChapterRecord, LibraryEntry, Module } from '@mindwell/core';
 import { activeModules, libraryEntries, markChapterRead, markChapterUnread, readChapters } from '@mindwell/core';
 import { getStore } from './db';
-import { modules } from './registry';
+import { modules, type ModuleComponent } from './registry';
 
 /**
  * Which chapters are read, and so which modules are active. Everything that
@@ -12,8 +11,8 @@ class Activation {
   read = $state<ChapterRecord[]>([]);
   loaded = $state(false);
 
-  active: Module<Component>[] = $derived(activeModules(modules, this.read.map((r) => r.chapter)));
-  library: LibraryEntry<Component>[] = $derived(libraryEntries(modules, this.read));
+  active: Module<ModuleComponent>[] = $derived(activeModules(modules, this.read.map((r) => r.chapter)));
+  library: LibraryEntry<ModuleComponent>[] = $derived(libraryEntries(modules, this.read));
 
   async load(): Promise<void> {
     this.read = await readChapters(await getStore());

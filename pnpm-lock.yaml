@@ -69,6 +69,10 @@ importers:
       '@mindwell/core':
         specifier: workspace:*
         version: link:../../core
+    devDependencies:
+      svelte:
+        specifier: ^5.56.3
+        version: 5.58.0
 
   packages/storage-sqlite:
     dependencies:
