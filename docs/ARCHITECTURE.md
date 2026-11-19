@@ -83,7 +83,13 @@ interface Importer {
 
 ## Native (src-tauri)
 
-Plugins: `sql` (sqlite), `global-shortcut` (capture), `notification` (reminders, reappraisal cards), `dialog` + `fs` (export). Small commands only, e.g. `focus_capture_window`. Optional app lock is deferred (not needed for v1).
+Plugins: `sql` (sqlite), `global-shortcut` (capture), `single-instance` (capture from the command line), `notification` (reminders, reappraisal cards), `dialog` + `fs` (export). Small commands only. Optional app lock is deferred (not needed for v1).
+
+**Windows.** `main` (hidden on close; the app lives in the tray) and `capture` (ch01). Both are created at startup. `main` is shown unless the app was started with `--capture`. `capture` is created hidden at 460×170, with no decorations, always on top and kept off the taskbar, and loads `/m/ch01/capture`. In a non-`main` window the shell renders the screen alone (no nav, no reminders). Opening capture shows and focuses the window, then emits `capture:open` to it; the shell remounts the form so it starts empty with the input focused. The form dispatches the DOM event `mindwell:done` when finished, and the shell hides the window (in `main` it goes back to Today).
+
+**Capture triggers.**
+- **Global shortcut** (X11, macOS, Windows): the main window reads `capture.shortcut` from core settings (default `Super+Shift+N`) and calls `set_capture_shortcut(accelerator | null)` while ch01 is active. Rust re-registers it and opens capture on key press.
+- **`mindwell --capture`** (every platform, and the way to do it on Wayland, where global shortcuts generally don't fire): `single-instance` forwards a second launch's args to the running app, which opens capture. With no running app, the process starts in the tray with `main` hidden and opens capture. `capture_info` returns `{ command, wayland }`: the executable path (`$APPIMAGE` when set) and whether the session is Wayland. Settings uses it to show the exact compositor binding, e.g. Hyprland `bind = SUPER SHIFT, N, exec, <path> --capture`.
 
 ## Planned extensions (don't build yet; don't block them)
 
