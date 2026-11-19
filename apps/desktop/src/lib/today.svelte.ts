@@ -220,6 +220,7 @@ export class TodayState {
   // ---- Morning ----
 
   async saveMorningBasics(): Promise<void> {
+    if (this.energy === null) return;
     await this.guard(async (store) => {
       await this.upsertDay(store, { types: JSON.stringify(this.types), energy: this.energy });
       await this.refreshSignals(store);

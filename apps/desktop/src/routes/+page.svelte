@@ -85,8 +85,9 @@
             bind:value={() => today.types, (v) => (today.types = Array.isArray(v) ? v : [])}
           />
           <Scale label="Energy" mode="1-5" minLabel="Low" maxLabel="High" bind:value={today.energy} />
+          {#if today.energy === null}<p class="muted">Choose your energy to continue.</p>{/if}
           <div class="row">
-            <Button onclick={() => void today.saveMorningBasics()}>Continue</Button>
+            <Button disabled={today.energy === null} onclick={() => void today.saveMorningBasics()}>Continue</Button>
             {#if today.morningEditing}
               <Button variant="quiet" onclick={() => (today.morningEditing = false)}>Cancel</Button>
             {/if}
