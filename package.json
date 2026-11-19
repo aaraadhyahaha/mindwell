@@ -1,0 +1,15 @@
+{
+  "name": "mindwell",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @mindwell/desktop tauri dev",
+    "test": "vitest run",
+    "check": "pnpm -r --no-bail check",
+    "build": "pnpm --filter @mindwell/desktop tauri build"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.1"
+  }
+}

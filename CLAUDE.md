@@ -49,13 +49,18 @@ Habits:
 - One phase (or one module) per session; `/clear` between them. Commit after each checklist item with a short message.
 - Replies to the user: what changed and what's next, in a few lines.
 
-## Commands (fill in during Phase 0)
+## Commands
 
-- `pnpm install`
-- `pnpm dev` — run the desktop app (`tauri dev`)
-- `pnpm test` — all unit tests · `pnpm vitest run <path>` — one area
-- `pnpm check` — svelte-check + tsc
-- `pnpm build` — release build
+Run from the repo root. Needs Node ≥ 22, pnpm, and a Rust toolchain (for `dev` / `build`).
+
+- `pnpm install` — install all workspace packages
+- `pnpm dev` — run the desktop app (`tauri dev`: Vite on :1420 + the native window)
+- `pnpm test` — all unit tests (Vitest, one root config) · `pnpm vitest run <path>` — one file or folder
+- `pnpm check` — `tsc` for each package + `svelte-check` for `apps/desktop` (warnings fail)
+- `pnpm build` — release build (`tauri build`; bundles land in `apps/desktop/src-tauri/target/release/bundle/`)
+- `pnpm --filter <pkg> add <dep>` — add a dependency to one package (e.g. `@mindwell/core`)
+
+Workspace packages are consumed as TypeScript source (`exports` → `src/index.ts`); there is no package build step.
 
 ## Definition of done (per checklist item)
 
