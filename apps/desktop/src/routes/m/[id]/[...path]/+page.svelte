@@ -6,6 +6,10 @@
   import { Page, WhySheet } from '@mindwell/ui';
   import { activation } from '$lib/activation.svelte';
   import { getStore } from '$lib/db';
+  import { capture } from '$lib/capture.svelte';
+  import { isAuxWindow } from '$lib/window';
+
+  const bare = isAuxWindow();
 
   // Mounts an active module's screen at /m/<id>/<path>. Inactive or unknown → not found.
   const mod = $derived(activation.active.find((m) => m.manifest.id === page.params.id) ?? null);
@@ -18,14 +22,18 @@
   let error = $state<string | null>(null);
   let whyOpen = $state(false);
 
+  // The capture window lives for the whole session: reload activation and signals on each open,
+  // so a chapter marked read in the main window (or a failed first load) is picked up.
   $effect(() => {
     void page.url.pathname;
+    void capture.openCount;
     void load();
   });
 
   async function load() {
     try {
-      if (!activation.loaded) await activation.load();
+      error = null;
+      if (!activation.loaded || bare) await activation.load();
       const s = await getStore();
       day = localDay();
       signals = (await buildSignals({ store: s, day, active: activation.active, chapters: activation.read })).signals;
@@ -43,10 +51,12 @@
     <p class="note">This screen belongs to a chapter that isn't marked read, or it doesn't exist.</p>
   </Page>
 {:else if mod && Screen && store && signals}
-  {#key page.url.pathname}
+  {#key `${page.url.pathname}:${capture.openCount}`}
     <Screen {store} {day} {signals} />
   {/key}
+  {#if !bare}
   <p class="why-row"><button type="button" class="why" onclick={() => (whyOpen = true)}>Why this exists</button></p>
+  {/if}
   <WhySheet bind:open={whyOpen} title={mod.manifest.title}>
     <p>{mod.manifest.idea}</p>
     <p>{mod.manifest.evidence}</p>

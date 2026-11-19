@@ -8,6 +8,10 @@
   import { startReminders } from '$lib/reminders.svelte';
   import { activation } from '$lib/activation.svelte';
   import { isAuxWindow } from '$lib/window';
+  import { capture, startCaptureSync } from '$lib/capture.svelte';
+  import { goto } from '$app/navigation';
+  import { getCurrentWindow } from '@tauri-apps/api/window';
+  import { listen } from '@tauri-apps/api/event';
 
   let { children } = $props();
 
@@ -26,13 +30,35 @@
     { href: '/settings', label: 'Settings' }
   ]);
   onMount(() => {
-    if (bare) return;
+    const onDone = () => {
+      if (bare) void getCurrentWindow().hide();
+      else void goto('/');
+    };
+    window.addEventListener('mindwell:done', onDone);
+    if (bare) {
+      let unlisten = () => {};
+      let gone = false;
+      void listen('capture:open', () => capture.openCount++).then((u) => {
+        if (gone) u();
+        else unlisten = u;
+      });
+      return () => {
+        gone = true;
+        unlisten();
+        window.removeEventListener('mindwell:done', onDone);
+      };
+    }
+    const stopCapture = startCaptureSync();
     let stop = () => {};
     void activation.load().catch(() => {});
     void settings.load().then(() => {
       stop = startReminders();
     });
-    return () => stop();
+    return () => {
+      stop();
+      stopCapture();
+      window.removeEventListener('mindwell:done', onDone);
+    };
   });
 
   const isActive = (href: string) =>

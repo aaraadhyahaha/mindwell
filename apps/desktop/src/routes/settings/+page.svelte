@@ -2,6 +2,9 @@
   import { Page, SectionLabel, Field, Choice, Button } from '@mindwell/ui';
   import type { ThemePreference } from '@mindwell/ui';
   import { settings } from '$lib/settings.svelte';
+  import { activation } from '$lib/activation.svelte';
+  import { capture, captureInfo, saveShortcut } from '$lib/capture.svelte';
+  import type { CaptureInfo } from '$lib/capture.svelte';
   import { exportRecords } from '$lib/export';
   import type { ExportFormat } from '$lib/export';
 
@@ -16,6 +19,12 @@
   ];
   const isTheme = (v: unknown): v is ThemePreference => v === 'system' || v === 'day' || v === 'night';
   const uid = $props.id();
+
+  const ch01Active = $derived(activation.active.some((m) => m.manifest.id === 'ch01'));
+  let info = $state<CaptureInfo | null>(null);
+  $effect(() => {
+    void captureInfo().then((i) => (info = i));
+  });
 
   let exporting = $state(false);
   let exportMsg = $state('');
@@ -73,7 +82,29 @@
 
   <section aria-labelledby="s-cap">
     <SectionLabel as="h2"><span id="s-cap">Capture shortcut</span></SectionLabel>
-    <p class="muted">Capture shortcut arrives with Chapter 1.</p>
+    {#if !ch01Active}
+      <p class="muted">The capture shortcut arrives when Chapter 1 is marked read.</p>
+    {:else}
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div onfocusout={() => void saveShortcut(capture.shortcut)}>
+        <Field
+          label="Shortcut"
+          bind:value={capture.shortcut}
+          hint="Opens a small capture window from anywhere. Format: Super+Shift+N."
+        />
+      </div>
+      {#if capture.error}<p class="note" role="alert">{capture.error}</p>{/if}
+      {#if info}
+        <p class="muted">From a compositor or launcher, run:</p>
+        <p><code>{info.command}</code></p>
+        {#if info.wayland}
+          <p class="muted">
+            Global shortcuts usually don't fire on Wayland. Bind this in your compositor instead, for example
+            Hyprland: <code>bind = SUPER SHIFT, N, exec, {info.command}</code>
+          </p>
+        {/if}
+      {/if}
+    {/if}
   </section>
 
   <section aria-labelledby="s-theme">
@@ -111,6 +142,12 @@
     font-family: var(--font-sans);
     font-size: var(--text-14);
     color: var(--muted);
+  }
+  code {
+    font-family: var(--font-mono, monospace);
+    font-size: var(--text-14);
+    color: var(--ink);
+    overflow-wrap: anywhere;
   }
   .actions {
     display: flex;

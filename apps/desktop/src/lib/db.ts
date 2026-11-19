@@ -20,7 +20,16 @@ export function getStore(): Promise<Store> {
 
 async function open(): Promise<Store> {
   const store = createStore(await createTauriDriver('sqlite:mindwell.db'));
-  await store.migrate('core', coreMigrations);
-  for (const m of modules) await store.migrate(m.manifest.id, m.migrations);
-  return store;
+  // The main and capture windows open the database at the same time. On a first run both may
+  // try the same migration; the loser fails, so retry briefly and find it already applied.
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await store.migrate('core', coreMigrations);
+      for (const m of modules) await store.migrate(m.manifest.id, m.migrations);
+      return store;
+    } catch (err) {
+      if (attempt >= 4) throw err;
+      await new Promise((r) => setTimeout(r, 150 * attempt));
+    }
+  }
 }

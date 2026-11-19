@@ -12,7 +12,9 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "mindwell",
+        "visible": false,
         "width": 1000,
         "height": 720
       }
