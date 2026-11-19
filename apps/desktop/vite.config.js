@@ -3,9 +3,31 @@ import { sveltekit } from "@sveltejs/kit/vite";
 import process from "node:process";
 const host = process.env.TAURI_DEV_HOST;
 
+/**
+ * Release guard: the dev test module is registered only when `import.meta.env.DEV`
+ * (see src/lib/registry.ts). Fails a production build if any of its files reach a chunk.
+ */
+function noDevModuleInRelease() {
+  return {
+    name: "mindwell:no-dev-module-in-release",
+    apply: "build",
+    generateBundle(_options, bundle) {
+      for (const chunk of Object.values(bundle)) {
+        if (chunk.type !== "chunk") continue;
+        const leaked = Object.entries(chunk.modules)
+          .filter(([id, info]) => id.includes("/packages/modules/dev-test/") && info.renderedLength > 0)
+          .map(([id]) => id);
+        if (leaked.length > 0) {
+          this.error(`Dev test module in release chunk ${chunk.fileName}: ${leaked.join(", ")}`);
+        }
+      }
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig(() => ({
-  plugins: [sveltekit()],
+  plugins: [sveltekit(), noDevModuleInRelease()],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

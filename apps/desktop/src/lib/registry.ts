@@ -1,7 +1,6 @@
 import type { Component } from 'svelte';
 import type { Module } from '@mindwell/core';
 import { validateModules } from '@mindwell/core';
-import { module as devTest } from '@mindwell/module-dev-test';
 
 /**
  * A module's UI component. Props differ by part (cards and review sections get
@@ -14,8 +13,9 @@ export type ModuleComponent = Component<any>;
  * Registered is not active: a module is active only when its chapter is marked read.
  */
 export const modules: Module<ModuleComponent>[] = [
-  // Dev-only test module; never in release builds.
-  ...(import.meta.env.DEV ? [devTest] : []),
+  // Dev-only test module. Imported dynamically inside the DEV branch so a release
+  // build drops it entirely (vite.config.js fails the build if it leaks).
+  ...(import.meta.env.DEV ? [(await import('@mindwell/module-dev-test')).module] : []),
 ];
 
 validateModules(modules);
