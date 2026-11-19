@@ -43,13 +43,15 @@ packages/modules/ch02-thought-records/
   signals.ts         # + signals.test.ts
   prompts.ts         # + prompts.test.ts (conditions)
   suggestions.ts     # + suggestions.test.ts
-  ui/                # Svelte screens + Today cards + review sections
+  ui/                # Svelte screens + Today cards + review sections (built from `@mindwell/ui`)
+  package.json       # deps: `@mindwell/core`, `@mindwell/ui`; `svelte` as a peer; `check` = svelte-check
   index.ts           # exports `module`
   README.md          # copy of docs/modules/ch02.md (keep in sync)
 ```
 
 ## Rules
 
+- A module may import only `@mindwell/core` and `@mindwell/ui`: never other modules, the app, Tauri or SQL. Its `package.json` lists those two plus `svelte` as a peer, and its `check` script is `svelte-check --fail-on-warnings`.
 - No imports from other modules. To use another module's data, read its **published signals**, or reference a core-visible record by id (e.g. ch02 stores `capture_id` from ch01). Read other modules' tables only through a signal they publish, never directly.
 - Never alter another module's tables. Extra data about someone else's record goes in your own table keyed by that id (e.g. `ch03_defusions.capture_id`).
 - A module is active only when its chapter is marked read in the Library. Inactive modules contribute nothing: no prompts, cards, signals, nav items.

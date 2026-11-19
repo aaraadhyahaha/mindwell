@@ -5,12 +5,12 @@
 ```
 mindwell/
   apps/desktop/                 # SvelteKit (adapter-static) + Tauri 2
-    src/                        # shell UI: routes, layout, design system
+    src/                        # shell UI: routes, layout
       lib/registry.ts           # THE list of enabled modules
-      lib/ui/                   # design-system components (Card, Field, Scale, ...)
     src-tauri/                  # thin Rust: plugins + tiny commands
   packages/core/                # plain TS: types, Store interface, signals, prompt engine, registry, dates
   packages/storage-sqlite/      # Store implementation over a SqlDriver
+  packages/ui/                  # design system: tokens, base styles, bundled fonts, components (Card, Field, Scale, ...)
   packages/modules/
     intro-experiments/
     ch01-notice-name/
@@ -19,16 +19,17 @@ mindwell/
   docs/
 ```
 
-pnpm workspaces. Package names: `@mindwell/core`, `@mindwell/storage-sqlite`, `@mindwell/mod-ch01-notice-name`, etc.
+pnpm workspaces. Package names: `@mindwell/core`, `@mindwell/storage-sqlite`, `@mindwell/ui`, `@mindwell/mod-ch01-notice-name`, etc.
 
 ## Layers
 
 | Layer | Knows about | Never imports |
 | --- | --- | --- |
 | `packages/core` | its own types | Tauri, Svelte, SQL, any module |
-| `packages/modules/*` | `@mindwell/core` (+ Svelte for `ui/`) | other modules, Tauri, storage internals |
+| `packages/ui` | Svelte (peer) only | the app, Tauri, SQL, any module |
+| `packages/modules/*` | `@mindwell/core`, `@mindwell/ui` (+ Svelte for `ui/`) | other modules, the app, Tauri, storage internals |
 | `packages/storage-sqlite` | `Store` + `SqlDriver` from core | UI, modules |
-| `apps/desktop` (Svelte) | core, registry, modules, design system | SQL |
+| `apps/desktop` (Svelte) | core, ui, registry, modules | SQL |
 | `src-tauri` (Rust) | plugins | domain logic |
 
 ## Key interfaces (in `packages/core`)

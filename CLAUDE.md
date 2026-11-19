@@ -12,7 +12,7 @@ Stack: Tauri 2 · SvelteKit (adapter-static, SPA) + Svelte 5 runes · TypeScript
 | A module | `docs/modules/<id>.md` + `docs/MODULE_CONTRACT.md` |
 | Prompts, signals, Today | `docs/PROMPTS.md` |
 | Storage, packages, native | `docs/ARCHITECTURE.md` |
-| UI or styling | `docs/DESIGN.md` |
+| UI or styling | `docs/DESIGN.md` (design system lives in `packages/ui`) |
 | Should this feature exist? | `docs/PHILOSOPHY.md` |
 | What's next | `docs/ROADMAP.md` |
 
@@ -21,7 +21,7 @@ Do not read the whole repo or every doc "for context".
 ## Hard rules
 
 1. `packages/core` is plain TypeScript: never imports Tauri, Svelte, SQL, or any module.
-2. Modules never import each other. They share data only through core records (by id) and published signals.
+2. Modules never import each other or the app; they may import only `@mindwell/core` and `@mindwell/ui`. They share data only through core records (by id) and published signals.
 3. A module never alters another module's tables.
 4. All persistence goes through the `Store` interface. No SQL in UI code.
 5. Signals, prompt conditions and suggestion rules are pure functions with unit tests.
@@ -56,8 +56,8 @@ Run from the repo root. Needs Node ≥ 22, pnpm, and a Rust toolchain (for `dev`
 - `pnpm install` — install all workspace packages
 - `pnpm dev` — run the desktop app (`tauri dev`: Vite on :1420 + the native window)
 - `pnpm test` — all unit tests (Vitest, one root config) · `pnpm vitest run <path>` — one file or folder
-- `pnpm check` — `tsc` for each package + `svelte-check` for `apps/desktop` (warnings fail)
-- `pnpm build` — release build (`tauri build`; bundles land in `apps/desktop/src-tauri/target/release/bundle/`)
+- `pnpm check` — runs each package's `check`: `tsc` for `packages/core` and `packages/storage-sqlite`; `svelte-check --fail-on-warnings` for `packages/ui`, every module package and `apps/desktop`
+- `pnpm build` — release build (`tauri build`; bundles land in `apps/desktop/src-tauri/target/release/bundle/`). The dev test module is registered only in dev builds; a Vite plugin in `apps/desktop/vite.config.js` fails the release build if its code reaches the bundle.
 - `pnpm --filter <pkg> add <dep>` — add a dependency to one package (e.g. `@mindwell/core`)
 
 Workspace packages are consumed as TypeScript source (`exports` → `src/index.ts`); there is no package build step.

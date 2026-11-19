@@ -16,7 +16,7 @@ mindwell should feel like a companion to the book: calm, typographic, quiet. It 
 
 One accent only, used for the primary action and focus rings. No other colours except greys from these tokens. Follow the system light/dark setting, with a manual override.
 
-**Type** (fonts bundled locally, never loaded from the web)
+**Type** (fonts bundled in `packages/ui/src/fonts/`, OFL, never loaded from the web; the app imports `@mindwell/ui/fonts.css`, `/tokens.css` and `/base.css` once in `+layout.svelte`)
 - Serif: Literata (variable, OFL; opsz + wght axes, `font-optical-sizing: auto`) for titles, prompts, intent and reading text.
 - Sans: Source Sans 3 (variable, OFL) for small UI labels, buttons, numbers.
 - Scale (px): 12 · 14 · 16 (body) · 19 · 24 · 32. Line height 1.5 body, 1.25 headings.
@@ -24,7 +24,7 @@ One accent only, used for the primary action and focus rings. No other colours e
 
 **Space:** 4 px base; common steps 8 / 12 / 16 / 24 / 40 / 64. Reading column max 64ch, centred. Radius 6 px for cards and inputs, 999px only for pills.
 
-## Components (in `apps/desktop/src/lib/ui/`)
+## Components (in `packages/ui/src/`, package `@mindwell/ui`)
 
 `Page` (column + chapter-opener header) · `SectionLabel` · `Card` (surface, 1px `--rule` border, no shadow) · `PromptCard` (serif text, useful / not-useful / show another) · `Field` (label + input/textarea) · `Scale` (1–5 or 0–100, tap or keyboard) · `Choice` (pills, single/multi) · `Button` (primary = accent fill, secondary = outline, quiet = text) · `WhySheet` (manifest drawer) · `LineChart` (thin 1.5px ink line, direct labels, no legend boxes).
 
