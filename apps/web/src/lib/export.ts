@@ -14,16 +14,14 @@ export async function exportRecords(format: ExportFormat): Promise<ExportResult>
     const type = format === 'md' ? 'text/markdown;charset=utf-8' : 'application/json';
     const filename = `mindwell-${localDay(new Date())}.${format}`;
     const url = URL.createObjectURL(new Blob([text], { type }));
-    try {
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    } finally {
-      URL.revokeObjectURL(url);
-    }
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    // Revoking right after click() can cancel the download in some browsers.
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
     if (await settings.save(SETTING_KEYS.lastExportAt, at)) settings.lastExportAt = at;
     return { status: 'saved', filename };
   } catch {

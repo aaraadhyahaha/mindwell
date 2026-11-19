@@ -18,7 +18,8 @@
     PromptCard,
     MarginNote,
     RatingDots,
-    Tag
+    Tag,
+    SectionLabel
   } from '@mindwell/ui';
   import { TodayState } from '$lib/today.svelte';
   import type { ShownPrompt } from '$lib/today.svelte';
@@ -194,15 +195,16 @@
 
 {#snippet backupCard()}
   {#if showBackup}
-    <Step n="" title="Export a backup">
+    <section class="backup" aria-labelledby="backup-h">
+      <SectionLabel as="h2"><span id="backup-h">Export a backup</span></SectionLabel>
       <p class="note">Your entries live only in this browser. Download a copy once a week, in case its data is cleared.</p>
-      <div class="foot-actions backup">
+      <div class="foot-actions backup-actions">
         <Button disabled={backupBusy} onclick={() => void backup('json')}>Download JSON</Button>
         <Button variant="secondary" disabled={backupBusy} onclick={() => void backup('md')}>Markdown</Button>
         <Button variant="quiet" disabled={backupBusy} onclick={() => void settings.dismissBackup()}>Not now</Button>
       </div>
       {#if backupError}<p class="note" role="alert">Could not export. Please try again.</p>{/if}
-    </Step>
+    </section>
   {/if}
 {/snippet}
 
@@ -411,6 +413,11 @@
     gap: 10px;
   }
   .backup {
+    margin-top: 44px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+  }
+  .backup-actions {
     margin-top: 16px;
   }
   .note,
