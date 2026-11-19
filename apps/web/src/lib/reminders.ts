@@ -56,3 +56,25 @@ export function dueReminders(
   if (check('evening', cfg.evening, cfg.eveningOn, !!today?.closed_at)) out.push('evening');
   return out;
 }
+
+/**
+ * Catch-up: one notification for a reminder missed earlier today (laptop asleep, tab closed).
+ * Returns the latest such kind (evening over morning), else null. Pure.
+ */
+export function catchUpReminder(
+  now: Date,
+  cfg: ReminderConfig,
+  today: Pick<DayRecord, 'checkin_at' | 'closed_at'> | null,
+  sent: ReminderSent,
+): ReminderKind | null {
+  const day = localDay(now);
+  const current = sinceDayStart(now.getHours() * 60 + now.getMinutes());
+  const missed = (kind: ReminderKind, time: string, on: boolean, done: boolean): boolean => {
+    if (!on || done || sent[kind] === day) return false;
+    const at = parseTime(time);
+    return at !== null && current - sinceDayStart(at) >= 0;
+  };
+  if (missed('evening', cfg.evening, cfg.eveningOn, !!today?.closed_at)) return 'evening';
+  if (missed('morning', cfg.morning, cfg.morningOn, !!today?.checkin_at)) return 'morning';
+  return null;
+}

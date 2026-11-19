@@ -1,6 +1,8 @@
 <script lang="ts">
   import { Page, SectionLabel, Field, Choice, Button, Toolbar, Kbd } from '@mindwell/ui';
   import type { ThemePreference } from '@mindwell/ui';
+  import { onMount } from 'svelte';
+  import { requestNotificationPermission } from '$lib/reminders.svelte';
   import { capture } from '$lib/capture.svelte';
   import { settings } from '$lib/settings.svelte';
   import { activation } from '$lib/activation.svelte';
@@ -22,6 +24,14 @@
   const ch01Active = $derived(activation.active.some((m) => m.manifest.id === 'ch01'));
 
   const origin = typeof location !== 'undefined' ? location.origin : '';
+
+  let permission = $state<NotificationPermission | 'unsupported' | null>(null);
+  onMount(() => {
+    permission = 'Notification' in window ? Notification.permission : 'unsupported';
+  });
+  async function allow() {
+    permission = await requestNotificationPermission();
+  }
 
   let exporting = $state(false);
   let exportMsg = $state('');
@@ -50,8 +60,18 @@
   <section aria-labelledby="s-rem">
     <SectionLabel as="h2"><span id="s-rem">Reminders</span></SectionLabel>
     <p class="muted">
-      A quiet notification while mindwell is open in a browser tab.
+      A quiet notification while mindwell is open in a browser tab. If one is missed, it shows once when you come
+      back to the tab.
     </p>
+    {#if permission === 'default'}
+      <div class="actions">
+        <Button variant="secondary" onclick={() => void allow()}>Allow notifications</Button>
+      </div>
+    {:else if permission === 'denied'}
+      <p class="muted">Notifications are blocked for this site. Allow them in your browser's site settings.</p>
+    {:else if permission === 'unsupported'}
+      <p class="muted">This browser can't show notifications.</p>
+    {/if}
     <div class="reminder">
       <div class="time">
         <label for="{uid}-m">Morning check-in</label>
