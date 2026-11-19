@@ -9,6 +9,8 @@
     "core:default",
     "sql:default",
     "sql:allow-execute",
-    "notification:default"
+    "notification:default",
+    "dialog:allow-save",
+    "fs:allow-write-text-file"
   ]
 }

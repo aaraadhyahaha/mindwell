@@ -1,7 +1,9 @@
 <script lang="ts">
-  import { Page, SectionLabel, Field, Choice } from '$lib/ui';
+  import { Page, SectionLabel, Field, Choice, Button } from '$lib/ui';
   import type { ThemePreference } from '$lib/ui';
   import { settings } from '$lib/settings.svelte';
+  import { exportRecords } from '$lib/export';
+  import type { ExportFormat } from '$lib/export';
 
   const onOff = [
     { value: 'on', label: 'On' },
@@ -14,6 +16,19 @@
   ];
   const isTheme = (v: unknown): v is ThemePreference => v === 'system' || v === 'day' || v === 'night';
   const uid = $props.id();
+
+  let exporting = $state(false);
+  let exportMsg = $state('');
+
+  async function runExport(format: ExportFormat) {
+    exporting = true;
+    exportMsg = '';
+    const r = await exportRecords(format);
+    exporting = false;
+    if (r.status === 'saved') exportMsg = `Saved to ${r.path}.`;
+    else if (r.status === 'unavailable') exportMsg = 'Export works in the desktop app.';
+    else if (r.status === 'error') exportMsg = 'Could not export. Please try again.';
+  }
 </script>
 
 <Page label="SETTINGS" title="Settings">
@@ -69,6 +84,19 @@
       bind:value={() => settings.theme, (v) => isTheme(v) && void settings.setThemePref(v)}
     />
   </section>
+
+  <section aria-labelledby="s-rec">
+    <SectionLabel as="h2"><span id="s-rec">Your records</span></SectionLabel>
+    <p class="muted">
+      Everything you've recorded, as a file you keep. Markdown is easy to read; JSON is complete, including deleted
+      records.
+    </p>
+    <div class="actions">
+      <Button variant="secondary" disabled={exporting} onclick={() => void runExport('md')}>Export as Markdown</Button>
+      <Button variant="secondary" disabled={exporting} onclick={() => void runExport('json')}>Export as JSON</Button>
+    </div>
+    {#if exportMsg}<p class="muted" role="status">{exportMsg}</p>{/if}
+  </section>
 </Page>
 
 <style>
@@ -83,6 +111,11 @@
     font-family: var(--font-sans);
     font-size: var(--text-14);
     color: var(--muted);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
   }
   .reminder {
     display: flex;
