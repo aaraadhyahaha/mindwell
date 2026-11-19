@@ -472,3 +472,16 @@ describe('Store.transaction', () => {
     expect(order).toEqual(['tx-start', 'tx-end', 'list:1']);
   });
 });
+
+describe('Store.tables', () => {
+  it('lists record tables sorted, without _migrations or sqlite internals', async () => {
+    await store.migrate('core', [{ version: 1, sql: 'CREATE TABLE days (id TEXT PRIMARY KEY)' }]);
+    await store.migrate('ch01', [{ version: 2, sql: 'CREATE TABLE ch01_alpha (id INTEGER PRIMARY KEY AUTOINCREMENT)' }]);
+    expect(await store.tables()).toEqual(['ch01_alpha', 'ch01_captures', 'days']);
+  });
+
+  it('works inside a transaction', async () => {
+    const names = await store.transaction((tx) => tx.tables());
+    expect(names).toEqual(['ch01_captures']);
+  });
+});

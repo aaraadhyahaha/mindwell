@@ -1,4 +1,4 @@
-import type { Migration } from './store';
+import type { Migration, Store } from './store';
 import type { PromptDef, SignalDef, Signals, SuggestionRule } from './prompts';
 
 export interface ModuleManifest {
@@ -23,6 +23,15 @@ export interface ScreenDef<C> {
 }
 
 export type TodaySlot = 'morning' | 'anytime' | 'evening';
+
+/** Props the shell passes to every module Today card and review section component. */
+export interface ModuleViewProps {
+  store: Store;
+  /** Local day being shown (Today) or the last day of the reviewed week. */
+  day: string;
+  /** The snapshot the page computed; cards read it, never recompute it. */
+  signals: Signals;
+}
 
 export interface TodayCardDef<C> {
   id: string;

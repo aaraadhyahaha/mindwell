@@ -75,6 +75,8 @@ export interface Store {
   /** Returns null when missing, or when soft-deleted unless `includeDeleted`. */
   get<T extends BaseRecord>(table: string, id: string, options?: GetOptions): Promise<T | null>;
   list<T extends BaseRecord>(table: string, query?: Query): Promise<T[]>;
+  /** Names of every record table (core and modules), sorted. Excludes internal tables such as `_migrations`. */
+  tables(): Promise<string[]>;
   /** Applies, in version order, each migration not yet recorded for `owner`. Safe to call repeatedly. */
   migrate(owner: string, migrations: Migration[]): Promise<void>;
   /** Runs `fn` atomically: commits if it resolves, rolls back if it throws. */

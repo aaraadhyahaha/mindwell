@@ -181,6 +181,15 @@ function build(driver: SqlDriver, run: Serial, depth: number): Store {
       });
     },
 
+    tables(): Promise<string[]> {
+      return run(async () => {
+        const rows = await driver.select<{ name: string }>(
+          "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE '\\_%' ESCAPE '\\' AND name NOT LIKE 'sqlite\\_%' ESCAPE '\\' ORDER BY name",
+        );
+        return rows.map((r) => r.name);
+      });
+    },
+
     migrate(owner: string, migrations: Migration[]): Promise<void> {
       return run(async () => {
         await driver.execute(
