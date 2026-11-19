@@ -12,6 +12,8 @@ export interface ModuleManifest {
   /** 2–4 sentences. */
   evidence: string;
   references: string[];
+  /** What reading the chapter adds to the app, one short line each (Library detail). */
+  adds?: string[];
 }
 
 export interface ScreenDef<C> {

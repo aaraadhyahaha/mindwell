@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import Opener from './Opener.svelte';
   /**
    * A screen's content under the toolbar. Opens with the chapter opener: label → 42px serif
    * title → italic lede → 48px ink rule. With `margin`, a 280px "In the margin" column sits
@@ -26,10 +27,7 @@
 
 <div class="page" class:two={!!margin}>
   <section aria-label={ariaLabel ?? label ?? title}>
-    {#if label}<p class="label">{label}</p>{/if}
-    <h1 class="title">{title}</h1>
-    {#if lede}<p class="lede">{lede}</p>{/if}
-    <hr class="opener-rule" />
+    <Opener {label} {title} {lede} />
     {@render children()}
   </section>
   {#if margin}
@@ -58,29 +56,6 @@
     color: var(--muted);
     font-weight: 600;
     margin: 0;
-  }
-  .title {
-    font-family: var(--font-serif);
-    font-weight: 400;
-    font-size: 42px;
-    line-height: 1.12;
-    margin: 10px 0 0;
-    letter-spacing: -0.015em;
-  }
-  .lede {
-    font-family: var(--font-serif);
-    font-style: italic;
-    color: var(--muted);
-    font-size: 18px;
-    line-height: 1.5;
-    margin: 12px 0 0;
-    max-width: 560px;
-  }
-  .opener-rule {
-    width: 48px;
-    border: 0;
-    border-top: 1px solid var(--ink);
-    margin: 28px 0 40px;
   }
   .margin {
     border-left: 1px solid var(--rule);

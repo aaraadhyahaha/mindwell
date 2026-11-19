@@ -49,7 +49,8 @@ export const TOC_AHEAD = 3;
 /**
  * The sidebar's table of contents: book chapters from the Introduction up to TOC_AHEAD past the
  * furthest chapter read (at least through chapter 1 + TOC_AHEAD). A built chapter shows its
- * module's short title ("Chapter 1: Notice and name" → "Notice and name"); the Introduction stays "Introduction".
+ * module's short title ("Chapter 1: Notice and name" → "Notice and name"), any other chapter its `short`
+ * book title ("Talking back"); the Introduction stays "Introduction".
  */
 export function tocRows(
   entries: readonly { chapter: number; title: string; readDay: string | null; module: { manifest: { title: string } } | null }[],
@@ -63,7 +64,10 @@ export function tocRows(
     .map((e) => ({
       chapter: e.chapter,
       number: e.chapter === 0 ? '·' : String(e.chapter),
-      title: e.chapter !== 0 && e.module ? shortTitle(e.module.manifest.title) : e.title,
+      title:
+        e.chapter !== 0 && e.module
+          ? shortTitle(e.module.manifest.title)
+          : (BOOK_CHAPTERS.find((c) => c.chapter === e.chapter)?.short ?? e.title),
       read: e.readDay !== null,
     }));
 }

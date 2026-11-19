@@ -8,4 +8,5 @@ export const manifest: ModuleManifest = {
   evidence:
     'Psychology findings are averages; a technique that helps most people may do little for you, and some famous effects shrank on replication. Testing techniques on yourself is the only way to know.',
   references: ['Introduction of Clear Mind, Steady Work.'],
+  adds: ['Experiments with a start and an end', 'A weekly "Is this helping?" check', 'Keep, drop or extend at the end'],
 };

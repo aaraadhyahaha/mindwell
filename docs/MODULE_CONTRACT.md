@@ -22,7 +22,7 @@ export const module: Module = {
 
 | Part | Notes |
 | --- | --- |
-| `manifest` | `id` (`ch02`), `chapter` (2; Introduction = 0), `title`, `idea` (one line), `evidence` (2–4 sentences), `references` (string[]). Shown on the module's "Why this exists" sheet and in the Library. |
+| `manifest` | `id` (`ch02`), `chapter` (2; Introduction = 0), `title`, `idea` (one line), `evidence` (2–4 sentences), `references` (string[]), optional `adds` (string[], one short line per thing the chapter adds; the Library detail lists them). Shown on the module's "Why this exists" sheet and in the Library. |
 | `migrations` | `{ version, sql }[]`. Tables prefixed with the module id. |
 | `screens` | Svelte components under `ui/`. Routes are mounted under `/m/<id>/...` by the shell (`path: ''` is `/m/<id>`). The component receives `ModuleViewProps` (`day` = today, `signals` = a fresh snapshot). An `inNav` screen may set `icon` (a `@mindwell/ui` `Icon` name for its sidebar row) and `navCount(signals)` (pure; the number shown beside the row, or null). |
 | `todayCards` | Small cards on Today. `visible(signals)` is pure. The component receives `ModuleViewProps` (`{ store, day, signals }`). `margin` cards are short notes in Today's margin column, built from `MarginNote` (label + serif lines); `order` sorts within a slot (core's "Coming up" sits at 30). |

@@ -1,4 +1,5 @@
 export { default as Page } from './Page.svelte';
+export { default as Opener } from './Opener.svelte';
 export { default as SectionLabel } from './SectionLabel.svelte';
 export { default as Card } from './Card.svelte';
 export { default as PromptCard } from './PromptCard.svelte';

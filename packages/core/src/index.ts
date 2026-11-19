@@ -14,13 +14,13 @@ export type {
   SuggestionRecord,
   SettingRecord,
 } from './records';
-export type { BookChapter } from './book';
+export type { BookChapter, BookPart } from './book';
 export type { LibraryEntry } from './registry';
 export { DAY_BOUNDARY_HOUR, localDay, isDay, addDays, daysBetween } from './dates';
 export { newId, isId } from './id';
 export { CORE_TABLES, DAY_TYPES } from './records';
 export { coreMigrations } from './migrations';
-export { BOOK_CHAPTERS } from './book';
+export { BOOK_CHAPTERS, BOOK_PARTS } from './book';
 export {
   RECENTLY_UNLOCKED_DAYS,
   validateModules,

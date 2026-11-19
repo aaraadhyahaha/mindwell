@@ -52,14 +52,14 @@ describe('tocRows', () => {
     expect(tocRows(withRead([0, 1, 5])).at(-1)?.chapter).toBe(8);
     expect(tocRows(withRead([12])).at(-1)?.chapter).toBe(12);
   });
-  it("uses a built chapter's short module title, keeps Introduction, drops non-book modules", () => {
+  it("uses a built chapter's short module title, else the book's short title; keeps Introduction, drops non-book modules", () => {
     const rows = tocRows([
       { chapter: 0, title: 'Introduction', readDay: null, module: { manifest: { title: 'Introduction: Experiments' } } },
       { chapter: 1, title: 'Why negativity sticks', readDay: null, module: { manifest: { title: 'Chapter 1: Notice and name' } } },
       { chapter: 2, title: 'Talking back to your thoughts', readDay: null, module: null },
       { chapter: 100, title: 'Test module', readDay: '2026-11-01', module: { manifest: { title: 'Test module' } } },
     ]);
-    expect(rows.map((r) => r.title)).toEqual(['Introduction', 'Notice and name', 'Talking back to your thoughts']);
+    expect(rows.map((r) => r.title)).toEqual(['Introduction', 'Notice and name', 'Talking back']);
   });
 });
 
