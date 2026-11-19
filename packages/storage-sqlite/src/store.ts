@@ -147,36 +147,38 @@ function build(driver: SqlDriver, run: Serial, depth: number): Store {
     },
 
     list<T extends BaseRecord>(table: string, query: Query = {}): Promise<T[]> {
-      const clauses: string[] = [];
-      const params: SqlValue[] = [];
-      if (!query.includeDeleted) clauses.push('deleted_at IS NULL');
-      for (const [col, value] of Object.entries(query.where ?? {})) {
-        if (value === null) {
-          clauses.push(`${ident(col)} IS NULL`);
-        } else {
-          clauses.push(`${ident(col)} = ?`);
-          params.push(value);
+      return run(async () => {
+        const clauses: string[] = [];
+        const params: SqlValue[] = [];
+        if (!query.includeDeleted) clauses.push('deleted_at IS NULL');
+        for (const [col, value] of Object.entries(query.where ?? {})) {
+          if (value === null) {
+            clauses.push(`${ident(col)} IS NULL`);
+          } else {
+            clauses.push(`${ident(col)} = ?`);
+            params.push(value);
+          }
         }
-      }
-      let sql = `SELECT * FROM ${ident(table)}`;
-      if (clauses.length > 0) sql += ` WHERE ${clauses.join(' AND ')}`;
-      const orders: OrderBy[] = query.orderBy === undefined ? [] : [query.orderBy].flat();
-      if (orders.length > 0) {
-        sql +=
-          ' ORDER BY ' +
-          orders.map((o) => `${ident(o.column)} ${o.direction === 'desc' ? 'DESC' : 'ASC'}`).join(', ');
-      }
-      if (query.limit !== undefined) {
-        sql += ' LIMIT ?';
-        params.push(Math.trunc(query.limit));
-      } else if (query.offset !== undefined) {
-        sql += ' LIMIT -1';
-      }
-      if (query.offset !== undefined) {
-        sql += ' OFFSET ?';
-        params.push(Math.trunc(query.offset));
-      }
-      return run(() => driver.select<T>(sql, params));
+        let sql = `SELECT * FROM ${ident(table)}`;
+        if (clauses.length > 0) sql += ` WHERE ${clauses.join(' AND ')}`;
+        const orders: OrderBy[] = query.orderBy === undefined ? [] : [query.orderBy].flat();
+        if (orders.length > 0) {
+          sql +=
+            ' ORDER BY ' +
+            orders.map((o) => `${ident(o.column)} ${o.direction === 'desc' ? 'DESC' : 'ASC'}`).join(', ');
+        }
+        if (query.limit !== undefined) {
+          sql += ' LIMIT ?';
+          params.push(Math.trunc(query.limit));
+        } else if (query.offset !== undefined) {
+          sql += ' LIMIT -1';
+        }
+        if (query.offset !== undefined) {
+          sql += ' OFFSET ?';
+          params.push(Math.trunc(query.offset));
+        }
+        return driver.select<T>(sql, params);
+      });
     },
 
     migrate(owner: string, migrations: Migration[]): Promise<void> {
