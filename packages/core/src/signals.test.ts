@@ -70,4 +70,11 @@ describe('buildSignals ctx.signals', () => {
     expect(CORE_SIGNALS.userName in seen[0]!).toBe(true);
     expect(signals['b.z']).toBe(2);
   });
+
+  it('leaves out a signal whose compute returns undefined', async () => {
+    const a = { ...mod('a', 1), signals: [{ key: 'a.maybe', compute: async () => undefined }] };
+    const { signals, failed } = await buildSignals({ store: emptyStore, day: '2026-11-19', active: [a], chapters: [] });
+    expect('a.maybe' in signals).toBe(false);
+    expect(failed).toEqual([]);
+  });
 });

@@ -18,7 +18,7 @@ Fills a thought record **fully in the app** (they may also copy it into their jo
 Draft autosaves; a record counts as complete when steps 2, 3 and 8 are filled.
 
 ## Reading ch01
-Via `ctx.signals` (signals) and the screen's `signals` snapshot (UI), never ch01's tables: `ch01.captures_recent` for the capture text and `story_id` when started from `?capture=<id>`; `ch01.stories` for story names; `ch01.story_counts_7d` for `unchallenged_story`. With ch01 inactive these are absent: no prefill, stories show no names, and `unchallenged_story` is not published.
+Via `ctx.signals` (signals) and the screen's `signals` snapshot (UI), never ch01's tables: `ch01.captures_recent` for the capture text and `story_id` when started from `?capture=<id>`; `ch01.stories` for story names; `ch01.story_counts_7d` for `unchallenged_story`. With ch01 inactive these are absent: no prefill, `story_trend` is empty (no story names), and `unchallenged_story` is not published (its `compute` returns `undefined`).
 
 ## Records
 | Table | Fields | Notes |
@@ -69,7 +69,7 @@ Via `ctx.signals` (signals) and the screen's `signals` snapshot (UI), never ch01
 
 ## Build checklist
 - [x] [builder] migrations + schema + repo
-- [ ] [tester] signals, conditions, suggestions
+- [x] [tester] signals, conditions, suggestions
 - [ ] [builder] stepped form with three-Ps hints and coach line
 - [ ] [builder] history + per-story chart, Today card, review section
 - [ ] [main] register, end-to-end check

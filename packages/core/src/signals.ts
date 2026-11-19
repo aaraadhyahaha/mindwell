@@ -167,7 +167,8 @@ export async function buildSignals(opts: BuildSignalsOptions): Promise<SignalsSn
   for (const m of active) {
     for (const def of m.signals) {
       try {
-        moduleSignals[def.key] = await def.compute({ store, day, now, signals: { ...moduleSignals, ...baseCore } });
+        const value = await def.compute({ store, day, now, signals: { ...moduleSignals, ...baseCore } });
+        if (value !== undefined) moduleSignals[def.key] = value;
       } catch (error) {
         failed.push({ key: def.key, error });
       }

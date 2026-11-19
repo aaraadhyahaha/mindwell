@@ -34,7 +34,8 @@ export interface SignalContext {
 export interface SignalDef {
   /** Namespaced by owner: `'<id>.<name>'`, e.g. `'ch02.records_this_week'`. */
   key: string;
-  compute(ctx: SignalContext): Promise<SignalValue>;
+  /** `undefined` means "not published" (e.g. it needs an inactive module's signal): the key is left out. */
+  compute(ctx: SignalContext): Promise<SignalValue | undefined>;
 }
 
 export type PromptKind = 'intent' | 'journal';
