@@ -16,7 +16,7 @@
 | `ch01_captures` | `text`, `story_id` (nullable), `intensity` (1–5, nullable), `captured_at`, `day` | |
 
 ## Screens and Today cards
-- Capture window (separate small Tauri window, always-on-top, opened by shortcut).
+- Capture screen (a small card at `/m/ch01/capture`, opened from Today or a shortcut).
 - Screen `/m/ch01`: stories list (count last 7 / 30 days, trend), capture history by day.
 - "Capture a thought" + shortcut hint: the Today toolbar's action (the app shell shows it while ch01 is active; it replaced the anytime card).
 - Today margin note (`margin` slot, order 20), visible when a story was captured this week: "Stories this week", the top 3 stories with counts and bars (`storyBars`).
@@ -70,9 +70,9 @@ Decisions made while building Phase 1. Where these notes add to the tables above
 - **Package:** `packages/modules/ch01-notice-name/`, name `@mindwell/module-ch01`, id `ch01`, chapter 1.
 - **Screens:**
   - `path: ''` is "Thoughts" (`inNav: true`).
-  - `path: 'capture'` is "Capture" (`inNav: false`). It is the capture form, and the capture window loads it.
-  - The Today toolbar's "Capture a thought" links to `/m/ch01/capture` in the main window.
-- **Leaving capture:** modules can't import Tauri. When the capture form is done (saved, or Esc), it dispatches `window.dispatchEvent(new CustomEvent('mindwell:done'))`. The shell handles it: the capture window hides itself; the main window goes back to Today.
+  - `path: 'capture'` is "Capture" (`inNav: false`). It is the capture form, and the capture screen is it.
+  - The Today toolbar's "Capture a thought" links to `/m/ch01/capture` in the app.
+- **Leaving capture:** When the capture form is done (saved, or Esc), it dispatches `window.dispatchEvent(new CustomEvent('mindwell:done'))`. The shell handles it by going back to Today.
 - **Capture flow:**
   1. The input is focused on mount. Intensity 1–5 is optional (keys 1–5 while the text is empty, or click).
   2. Enter saves. If the story matcher finds a match, one line appears: "Link to '{story}'?" with **Link** (Enter), **Other story** (a select) and **New story** (a name field). Esc leaves the capture unlinked and closes.
@@ -81,14 +81,7 @@ Decisions made while building Phase 1. Where these notes add to the tables above
   - Words are lowercased, split on non-letters, keeping words of ≥ 3 letters minus a small stopword list.
   - A story's score is the number of distinct words the new text shares with the story's name plus its past captures' texts. Archived stories are skipped.
   - The best score ≥ 1 wins. A tie goes to the story with the most recent capture.
-- **Windows:**
-  - `src-tauri` creates the `capture` window hidden at startup: 460×170, no decorations, always on top, skip taskbar, URL `/m/ch01/capture`. Showing it is then instant.
-  - Opening it means show, focus, then emit `capture:open` to that window. The shell remounts the form on that event, so each open starts empty with the input focused.
-  - A close request on the capture window hides it.
-- **Triggers:**
-  - **Global shortcut** (`tauri-plugin-global-shortcut`) on X11, macOS and Windows. The accelerator lives in core `settings` under key `capture.shortcut` (JSON string, default `"Super+Shift+N"`). The main window registers it through the Rust command `set_capture_shortcut` while ch01 is active, and clears it otherwise.
-  - **`mindwell --capture`** (`tauri-plugin-single-instance`). With the app running, a second launch forwards its args and the running instance opens capture. Without it, the app starts in the tray (main window hidden) and opens capture.
-  - Settings shows the exact command, built from the Rust command `capture_info` (executable path, or `$APPIMAGE`), e.g. `bind = SUPER SHIFT, N, exec, /usr/bin/mindwell --capture`. On Wayland it says the global shortcut may not fire there, so bind the command in the compositor.
+- **Triggers:** the capture screen is a route; how it is opened (shortcut, `/#capture`) is handled by the app shell, not this module.
 - **Extra signals:**
   - `ch01.captures_today` (number) sets the evening card's visibility.
   - `ch01.unlinked_7d` (number) feeds `ch01.unlinked`.

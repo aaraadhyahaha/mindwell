@@ -8,11 +8,6 @@ html {
   -webkit-text-size-adjust: 100%;
   background: var(--bg);
 }
-/* Extra windows (capture) are transparent: the screen's own card is the window. */
-html[data-window='aux'],
-html[data-window='aux'] body {
-  background: transparent;
-}
 body {
   margin: 0;
   background: var(--bg);

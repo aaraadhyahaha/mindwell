@@ -3,10 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter @mindwell/desktop tauri dev",
+    "dev": "pnpm --filter @mindwell/web dev",
     "test": "vitest run",
     "check": "pnpm -r --no-bail check",
-    "build": "pnpm --filter @mindwell/desktop tauri build"
+    "build": "pnpm --filter @mindwell/web build",
+    "preview": "pnpm --filter @mindwell/web preview"
   },
   "devDependencies": {
     "playwright": "^1.65.1",

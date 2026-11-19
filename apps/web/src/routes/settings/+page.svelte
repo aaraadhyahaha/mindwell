@@ -3,8 +3,6 @@
   import type { ThemePreference } from '@mindwell/ui';
   import { settings } from '$lib/settings.svelte';
   import { activation } from '$lib/activation.svelte';
-  import { capture, captureInfo, saveShortcut } from '$lib/capture.svelte';
-  import type { CaptureInfo } from '$lib/capture.svelte';
   import { exportRecords } from '$lib/export';
   import type { ExportFormat } from '$lib/export';
 
@@ -21,10 +19,6 @@
   const uid = $props.id();
 
   const ch01Active = $derived(activation.active.some((m) => m.manifest.id === 'ch01'));
-  let info = $state<CaptureInfo | null>(null);
-  $effect(() => {
-    void captureInfo().then((i) => (info = i));
-  });
 
   let exporting = $state(false);
   let exportMsg = $state('');
@@ -35,7 +29,7 @@
     const r = await exportRecords(format);
     exporting = false;
     if (r.status === 'saved') exportMsg = `Saved to ${r.path}.`;
-    else if (r.status === 'unavailable') exportMsg = 'Export works in the desktop app.';
+    else if (r.status === 'unavailable') exportMsg = 'Export is not available yet.';
     else if (r.status === 'error') exportMsg = 'Could not export. Please try again.';
   }
 </script>
@@ -55,7 +49,7 @@
   <section aria-labelledby="s-rem">
     <SectionLabel as="h2"><span id="s-rem">Reminders</span></SectionLabel>
     <p class="muted">
-      A quiet notification while mindwell is open or in the tray. Closing the window keeps it in the tray.
+      A quiet notification while mindwell is open in a browser tab.
     </p>
     <div class="reminder">
       <div class="time">
@@ -86,25 +80,7 @@
     {#if !ch01Active}
       <p class="muted">The capture shortcut arrives when Chapter 1 is marked read.</p>
     {:else}
-      <!-- svelte-ignore a11y_no_static_element_interactions -->
-      <div onfocusout={() => void saveShortcut(capture.shortcut)}>
-        <Field
-          label="Shortcut"
-          bind:value={capture.shortcut}
-          hint="Opens a small capture window from anywhere. Format: Super+Shift+N."
-        />
-      </div>
-      {#if capture.error}<p class="note" role="alert">{capture.error}</p>{/if}
-      {#if info}
-        <p class="muted">From a compositor or launcher, run:</p>
-        <p><code>{info.command}</code></p>
-        {#if info.wayland}
-          <p class="muted">
-            Global shortcuts usually don't fire on Wayland. Bind this in your compositor instead, for example
-            Hyprland: <code>bind = SUPER SHIFT, N, exec, {info.command}</code>
-          </p>
-        {/if}
-      {/if}
+      <p class="muted">Capture setup arrives in the next step.</p>
     {/if}
   </section>
 
@@ -143,12 +119,6 @@
     font-family: var(--font-sans);
     font-size: var(--text-14);
     color: var(--muted);
-  }
-  code {
-    font-family: var(--font-mono, monospace);
-    font-size: var(--text-14);
-    color: var(--ink);
-    overflow-wrap: anywhere;
   }
   .actions {
     display: flex;

@@ -1,5 +1,5 @@
 {
-  "name": "@mindwell/desktop",
+  "name": "@mindwell/web",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
@@ -8,8 +8,7 @@
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "tauri": "tauri"
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "dependencies": {
     "@mindwell/core": "workspace:*",
@@ -17,17 +16,12 @@
     "@mindwell/module-dev-test": "workspace:*",
     "@mindwell/module-intro": "workspace:*",
     "@mindwell/storage-sqlite": "workspace:*",
-    "@mindwell/ui": "workspace:*",
-    "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-dialog": "^2.8.4",
-    "@tauri-apps/plugin-fs": "^2.7.1",
-    "@tauri-apps/plugin-notification": "^2.8.1"
+    "@mindwell/ui": "workspace:*"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "^2.65.1",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
-    "@tauri-apps/cli": "^2",
     "@types/node": "^26.6.6",
     "svelte": "^5.56.3",
     "svelte-check": "^4.6.0",

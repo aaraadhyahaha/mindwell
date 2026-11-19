@@ -8,9 +8,6 @@
   import { activation } from '$lib/activation.svelte';
   import { getStore } from '$lib/db';
   import { capture } from '$lib/capture.svelte';
-  import { isAuxWindow } from '$lib/window';
-
-  const bare = isAuxWindow();
 
   // Mounts an active module's screen at /m/<id>/<path>. Inactive or unknown → not found.
   const mod = $derived(activation.active.find((m) => m.manifest.id === page.params.id) ?? null);
@@ -27,8 +24,8 @@
   let error = $state<string | null>(null);
   let whyOpen = $state(false);
 
-  // The capture window lives for the whole session: reload activation and signals on each open,
-  // so a chapter marked read in the main window (or a failed first load) is picked up.
+  // Reload activation and signals on each open, so a chapter marked read elsewhere
+  // (or a failed first load) is picked up.
   $effect(() => {
     void page.url.pathname;
     void capture.openCount;
@@ -38,7 +35,7 @@
   async function load() {
     try {
       error = null;
-      if (!activation.loaded || bare) await activation.load();
+      if (!activation.loaded) await activation.load();
       const s = await getStore();
       day = localDay();
       signals = (await buildSignals({ store: s, day, active: activation.active, chapters: activation.read })).signals;
@@ -49,15 +46,13 @@
   }
 </script>
 
-{#if !bare}
-  <Toolbar head={head?.head ?? 'mindwell'} sub={head?.sub}>
-    {#snippet actions()}
-      {#if canCapture}
-        <Button variant="secondary" icon="plus" href="/m/ch01/capture">Capture a thought<Kbd keys={capture.shortcut} /></Button>
-      {/if}
-    {/snippet}
-  </Toolbar>
-{/if}
+<Toolbar head={head?.head ?? 'mindwell'} sub={head?.sub}>
+  {#snippet actions()}
+    {#if canCapture}
+      <Button variant="secondary" icon="plus" href="/m/ch01/capture">Capture a thought<Kbd keys={capture.shortcut} /></Button>
+    {/if}
+  {/snippet}
+</Toolbar>
 {#if error}
   <Page title="Not available"><p class="note">{error}</p></Page>
 {:else if activation.loaded && (!mod || !screen)}
@@ -68,7 +63,7 @@
   {#key `${page.url.pathname}:${capture.openCount}`}
     <Screen {store} {day} {signals} />
   {/key}
-  {#if !bare && !screen?.whyInOpener}
+  {#if !screen?.whyInOpener}
   <p class="why-row"><button type="button" class="why" onclick={() => (whyOpen = true)}>Why this exists</button></p>
   {/if}
   <WhySheet bind:open={whyOpen} title={mod.manifest.title}>

@@ -1,7 +1,6 @@
-import type { Store } from '@mindwell/core';
+import type { SqlDriver, Store } from '@mindwell/core';
 import { coreMigrations } from '@mindwell/core';
 import { createStore } from '@mindwell/storage-sqlite';
-import { createTauriDriver } from '@mindwell/storage-sqlite/tauri';
 import { modules } from './registry';
 
 let ready: Promise<Store> | null = null;
@@ -19,9 +18,7 @@ export function getStore(): Promise<Store> {
 }
 
 async function open(): Promise<Store> {
-  const store = createStore(await createTauriDriver('sqlite:mindwell.db'));
-  // The main and capture windows open the database at the same time. On a first run both may
-  // try the same migration; the loser fails, so retry briefly and find it already applied.
+  const store = createStore(await createDriver());
   for (let attempt = 1; ; attempt++) {
     try {
       await store.migrate('core', coreMigrations);
@@ -32,4 +29,9 @@ async function open(): Promise<Store> {
       await new Promise((r) => setTimeout(r, 150 * attempt));
     }
   }
+}
+
+// Replaced by the browser driver in step 2.
+async function createDriver(): Promise<SqlDriver> {
+  throw new Error('Browser SQLite driver lands in step 2');
 }

@@ -156,12 +156,9 @@
 </div>
 
 <style>
-  /* In the main window the card sits on the page; the capture window is the card. */
+  /* The card sits on the page. */
   .wrap {
     padding: 40px;
-  }
-  :global(html[data-window='aux']) .wrap {
-    padding: 0;
   }
   .cw {
     width: 560px;
@@ -176,10 +173,6 @@
     color: var(--ink);
     display: flex;
     flex-direction: column;
-  }
-  :global(html[data-window='aux']) .cw {
-    width: 100vw;
-    height: 100vh;
   }
   /* The form's rows are the card's flex rows. */
   form {

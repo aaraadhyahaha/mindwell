@@ -83,7 +83,7 @@ export interface Store {
   transaction<R>(fn: (tx: Store) => Promise<R>): Promise<R>;
 }
 
-/** Thin SQL seam so storage is testable without Tauri. Positional `?` parameters. */
+/** Thin SQL seam so storage is testable without a browser. Positional `?` parameters. */
 export interface SqlDriver {
   execute(sql: string, params?: SqlValue[]): Promise<{ rowsAffected: number }>;
   select<T>(sql: string, params?: SqlValue[]): Promise<T[]>;

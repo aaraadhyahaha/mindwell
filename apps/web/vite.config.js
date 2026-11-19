@@ -1,8 +1,6 @@
 import { defineConfig } from "vite";
 import { sveltekit } from "@sveltejs/kit/vite";
-import process from "node:process";
 import { fileURLToPath } from "node:url";
-const host = process.env.TAURI_DEV_HOST;
 
 /**
  * Release guard: the dev test module is registered only when `import.meta.env.DEV`
@@ -31,31 +29,15 @@ function noDevModuleInRelease() {
 export default defineConfig(() => ({
   plugins: [sveltekit(), noDevModuleInRelease()],
 
-  // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
-  //
-  // 1. prevent Vite from obscuring rust errors
-  clearScreen: false,
-  // 2. tauri expects a fixed port, fail if that port is not available
   server: {
-    port: 1420,
+    port: 5173,
     strictPort: true,
-    host: host || "127.0.0.1",
-    hmr: host
-      ? {
-          protocol: "ws",
-          host,
-          port: 1421,
-        }
-      : undefined,
-    watch: {
-      // 3. tell Vite to ignore watching `src-tauri`
-      ignored: ["**/src-tauri/**"],
-    },
-    // 4. SvelteKit narrows the dev server's file access to this app. Workspace packages are
-    //    consumed as source, and their assets (the bundled fonts in packages/ui) are fetched
-    //    by URL, so allow packages/ too; without it every font 403s and falls back to the system.
+    // SvelteKit narrows the dev server's file access to this app. Workspace packages are
+    // consumed as source, and their assets (the bundled fonts in packages/ui) are fetched
+    // by URL, so allow packages/ too; without it every font 403s and falls back to the system.
     fs: {
       allow: [fileURLToPath(new URL("../../packages", import.meta.url))],
     },
   },
+  preview: { port: 4173, strictPort: true },
 }));
