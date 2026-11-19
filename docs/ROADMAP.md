@@ -5,7 +5,7 @@ Build in phases. Use each phase for 1–2 weeks before the next. Tags say who do
 ## Phase 0 — Skeleton (no chapter features)
 
 - [x] [main] Scaffold monorepo: pnpm workspaces, `apps/desktop` (create-tauri-app, SvelteKit + TS), `packages/core`, `packages/storage-sqlite`; strict TS; Vitest; `pnpm check`. Fill in CLAUDE.md commands.
-- [ ] [main] `core`: BaseRecord, Store, SqlDriver, Migration, Module, PromptDef, SignalDef, SuggestionRule types; `dates.ts` (day with 04:00 boundary); ULID helper.
+- [x] [main] `core`: BaseRecord, Store, SqlDriver, Migration, Module, PromptDef, SignalDef, SuggestionRule types; `dates.ts` (day with 04:00 boundary); ULID helper.
 - [ ] [builder] `storage-sqlite`: Store over SqlDriver, migrations table, soft delete; Tauri driver (plugin-sql) + better-sqlite3 test driver.
 - [ ] [tester] Tests for Store (CRUD, soft delete, migrations idempotent) and `dates.ts`.
 - [ ] [builder] Design system: tokens, bundled fonts, components from DESIGN.md, dev `/styleguide`. **Review before screens.**
