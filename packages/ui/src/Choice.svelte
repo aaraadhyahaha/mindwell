@@ -20,7 +20,7 @@
   const tabStop = $derived(
     Math.max(0, options.findIndex((o) => o.value === (typeof value === 'string' ? value : null)))
   );
-  let buttons: HTMLButtonElement[] = [];
+  let buttons: HTMLButtonElement[] = $state([]);
 
   function toggle(v: string) {
     if (multiple) {

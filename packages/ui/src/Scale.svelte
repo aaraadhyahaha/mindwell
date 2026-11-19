@@ -19,7 +19,7 @@
 
   const steps = [1, 2, 3, 4, 5];
   const tabStop = $derived(value ? value - 1 : 0);
-  let boxes: HTMLButtonElement[] = [];
+  let boxes: HTMLButtonElement[] = $state([]);
 
   function onkeydown(e: KeyboardEvent, i: number) {
     let next = -1;
