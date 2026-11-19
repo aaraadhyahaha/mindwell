@@ -13,7 +13,7 @@ Build in phases. Use each phase for 1–2 weeks before the next. Tags say who do
 - [x] [main] Signals snapshot + prompt engine (PROMPTS.md) + core prompts.
 - [x] [tester] Tests for selection: conditions, cooldowns, technique de-dup, scoring, fallbacks, seeded jitter stability.
 - [x] [builder] Today: morning check-in, evening close, slots, PromptCard feedback, "show another".
-- [ ] [builder] Weekly review frame (sections + suggestions accept/dismiss), Settings (name, reminder times 07:30 / 21:30, theme), reminders via notification plugin.
+- [x] [builder] Weekly review frame (sections + suggestions accept/dismiss), Settings (name, reminder times 07:30 / 21:30, theme), reminders via notification plugin.
 - [ ] [builder] Export all records to Markdown + JSON.
 - [ ] [main] Phase check: daily loop works end to end with a dummy module; check-in and close each < 3 min.
 

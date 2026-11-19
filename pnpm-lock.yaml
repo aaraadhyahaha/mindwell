@@ -29,6 +29,9 @@ importers:
       '@tauri-apps/api':
         specifier: ^2
         version: 2.12.5
+      '@tauri-apps/plugin-notification':
+        specifier: ^2.8.1
+        version: 2.8.1
     devDependencies:
       '@sveltejs/adapter-static':
         specifier: ^3.0.10
@@ -355,6 +358,9 @@ packages:
     resolution: {integrity: sha512-Dm8s/4aiE52HsBh+Gz3uSrh+fEykRICA1VoAnQA80IqHoTRncPg+q4rGvuhmyNsHUPg3QrPjUrTUSfWmXLVVEw==}
     engines: {node: '>= 10'}
     hasBin: true
+
+  '@tauri-apps/plugin-notification@2.8.1':
+    resolution: {integrity: sha512-B+OCJv17XCFQxAhe2+fn2bHqQ1fz/hGnYHeT++yv8+q0daOH5o1ghX7MmxWgoGFp7POaNn4UMONclHeZn65mJA==}
 
   '@tauri-apps/plugin-sql@2.6.0':
     resolution: {integrity: sha512-UfP4p3Zwh6N7ODRMgnMgXSN6rfUxFo7YXHnRjX8L3Vx7i+IV0bh+r8puwv2OnGq04SLDZFY+LvotxN+pJdZ1Zg==}
@@ -964,6 +970,10 @@ snapshots:
       '@tauri-apps/cli-win32-arm64-msvc': 2.12.5
       '@tauri-apps/cli-win32-ia32-msvc': 2.12.5
       '@tauri-apps/cli-win32-x64-msvc': 2.12.5
+
+  '@tauri-apps/plugin-notification@2.8.1':
+    dependencies:
+      '@tauri-apps/api': 2.12.5
 
   '@tauri-apps/plugin-sql@2.6.0':
     dependencies:

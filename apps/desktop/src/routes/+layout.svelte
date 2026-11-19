@@ -3,13 +3,26 @@
   import '$lib/ui/tokens.css';
   import '$lib/ui/base.css';
   import { page } from '$app/state';
+  import { onMount } from 'svelte';
+  import { settings } from '$lib/settings.svelte';
+  import { startReminders } from '$lib/reminders.svelte';
 
   let { children } = $props();
 
   const links = [
     { href: '/', label: 'Today' },
-    { href: '/library', label: 'Library' }
+    { href: '/week', label: 'Week' },
+    { href: '/library', label: 'Library' },
+    { href: '/settings', label: 'Settings' }
   ];
+  onMount(() => {
+    let stop = () => {};
+    void settings.load().then(() => {
+      stop = startReminders();
+    });
+    return () => stop();
+  });
+
   const isActive = (href: string) =>
     href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
 </script>
