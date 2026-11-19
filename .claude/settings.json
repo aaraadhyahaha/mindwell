@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm test:*)",
+      "Bash(pnpm vitest:*)",
+      "Bash(pnpm check:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git log:*)"
+    ],
+    "deny": [
+      "Read(./node_modules/**)",
+      "Read(./**/node_modules/**)",
+      "Read(./apps/desktop/src-tauri/target/**)",
+      "Read(./**/build/**)",
+      "Read(./**/.svelte-kit/**)",
+      "Read(./pnpm-lock.yaml)",
+      "Read(./apps/desktop/src-tauri/Cargo.lock)"
+    ]
+  }
+}

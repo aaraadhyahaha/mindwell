@@ -1,0 +1,45 @@
+# Design
+
+mindwell should feel like a companion to the book: calm, typographic, quiet. It should feel like a well-set page, not a productivity dashboard.
+
+## Tokens
+
+| Token | Day ("Paper") | Night |
+| --- | --- | --- |
+| `--bg` | `#F5F0E6` | `#1A1815` |
+| `--surface` | `#FBF8F2` | `#221F1B` |
+| `--ink` | `#1F1B16` | `#E8E0D2` |
+| `--muted` | `#6B6358` | `#9A9082` |
+| `--rule` | `#D9D0C1` | `#3A352E` |
+| `--accent` | `#3E5C58` (deep sea-green) | `#8FB3AC` |
+| `--accent-soft` | `#E3EAE6` | `#2C3A37` |
+
+One accent only, used for the primary action and focus rings. No other colours except greys from these tokens. Follow the system light/dark setting, with a manual override.
+
+**Type** (fonts bundled locally, never loaded from the web)
+- Serif: Lora (variable, OFL) for titles, prompts, intent and reading text.
+- Sans: Source Sans 3 (variable, OFL) for small UI labels, buttons, numbers.
+- Scale (px): 12 · 14 · 16 (body) · 19 · 24 · 32. Line height 1.5 body, 1.25 headings.
+- Section labels: sans, 12 px, uppercase, letter-spacing 0.12em, `--muted` (the book's small-caps look).
+
+**Space:** 4 px base; common steps 8 / 12 / 16 / 24 / 40 / 64. Reading column max 64ch, centred. Radius 6 px for cards and inputs, 999px only for pills.
+
+## Components (in `apps/desktop/src/lib/ui/`)
+
+`Page` (column + chapter-opener header) · `SectionLabel` · `Card` (surface, 1px `--rule` border, no shadow) · `PromptCard` (serif text, useful / not-useful / show another) · `Field` (label + input/textarea) · `Scale` (1–5 or 0–100, tap or keyboard) · `Choice` (pills, single/multi) · `Button` (primary = accent fill, secondary = outline, quiet = text) · `WhySheet` (manifest drawer) · `LineChart` (thin 1.5px ink line, direct labels, no legend boxes).
+
+## Patterns
+
+- **Chapter opener** at the top of each module page: section label "CHAPTER 2", serif title 24px, a 40px thin rule.
+- **Prompts** are the visual centre of Today: serif 19px, generous space around them.
+- **Empty states** explain what will appear and why, in one line ("Captured thoughts will gather here through the day.").
+- **Motion:** 150–200 ms fades only. No bounce, slide-ins, confetti, or celebration.
+- **Keyboard:** everything reachable without a mouse; the capture window opens focused and submits with Enter, closes with Esc.
+
+## Never
+
+Gradients · glass/blur effects · drop shadows beyond 1px borders · emoji · motivational quotes · streak counters · red warning states for missed days · more than one accent colour.
+
+## Process
+
+Before building screens in Phase 0, build `/styleguide` (dev-only route) showing every token and component. Review it, then build screens from it.
