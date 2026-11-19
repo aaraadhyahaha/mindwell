@@ -13,6 +13,8 @@
   import { startReminders } from '$lib/reminders.svelte';
   import { activation } from '$lib/activation.svelte';
   import { goto } from '$app/navigation';
+  import { openCapture } from '$lib/capture.svelte';
+  import { isCaptureKey } from '$lib/capture-key';
 
   let { children } = $props();
 
@@ -30,13 +32,43 @@
     void nav.refresh();
   });
 
+  let cameFromHash = false;
+
   onMount(() => {
-    const onDone = () => void goto('/');
+    const onDone = () => {
+      if (cameFromHash) {
+        cameFromHash = false;
+        window.close();
+        setTimeout(() => void goto('/', { replaceState: true }), 150);
+      } else {
+        void goto('/');
+      }
+    };
     window.addEventListener('mindwell:done', onDone);
     const refreshNav = () => void nav.refresh();
     window.addEventListener('focus', refreshNav);
     let stop = () => {};
-    void activation.load().catch(() => {});
+    const loaded = activation.load().catch(() => {});
+    const ch01Active = () => activation.active.some((m) => m.manifest.id === 'ch01');
+
+    const onKey = (e: KeyboardEvent) => {
+      if (isCaptureKey(e, e.target as HTMLElement | null) && ch01Active()) {
+        e.preventDefault();
+        openCapture();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+
+    const checkHash = async () => {
+      if (location.hash !== '#capture') return;
+      await loaded;
+      cameFromHash = true;
+      openCapture({ replace: true });
+    };
+    void checkHash();
+    const onHash = () => void checkHash();
+    window.addEventListener('hashchange', onHash);
+
     void settings.load().then(() => {
       stop = startReminders();
     });
@@ -44,6 +76,8 @@
       stop();
       window.removeEventListener('focus', refreshNav);
       window.removeEventListener('mindwell:done', onDone);
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('hashchange', onHash);
     };
   });
 

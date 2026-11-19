@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { Page, SectionLabel, Field, Choice, Button, Toolbar } from '@mindwell/ui';
+  import { Page, SectionLabel, Field, Choice, Button, Toolbar, Kbd } from '@mindwell/ui';
   import type { ThemePreference } from '@mindwell/ui';
+  import { capture } from '$lib/capture.svelte';
   import { settings } from '$lib/settings.svelte';
   import { activation } from '$lib/activation.svelte';
   import { exportRecords } from '$lib/export';
@@ -19,6 +20,8 @@
   const uid = $props.id();
 
   const ch01Active = $derived(activation.active.some((m) => m.manifest.id === 'ch01'));
+
+  const origin = typeof location !== 'undefined' ? location.origin : '';
 
   let exporting = $state(false);
   let exportMsg = $state('');
@@ -78,7 +81,13 @@
     {#if !ch01Active}
       <p class="muted">The capture shortcut arrives when Chapter 1 is marked read.</p>
     {:else}
-      <p class="muted">Capture setup arrives in the next step.</p>
+      <p class="muted">Press <Kbd keys={capture.shortcut} /> anywhere in mindwell to capture a thought.</p>
+      <p class="muted">
+        To capture from anywhere on your desktop, bind a key in your compositor or desktop settings to open the
+        capture page. It opens in your browser, alongside any mindwell tab already open. Hyprland:
+      </p>
+      <p><code>bind = SUPER SHIFT, N, exec, xdg-open {origin}/#capture</code></p>
+      <p class="muted">Other desktops: run <code>xdg-open {origin}/#capture</code> from a custom shortcut.</p>
     {/if}
   </section>
 
