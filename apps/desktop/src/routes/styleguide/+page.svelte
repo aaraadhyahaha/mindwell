@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Choice, SectionLabel, setTheme, theme, type ThemePreference } from '@mindwell/ui';
+  import { Choice, SectionLabel, Toolbar, setTheme, theme, type ThemePreference } from '@mindwell/ui';
   import Panel from './Panel.svelte';
 
   const options = [
@@ -15,6 +15,7 @@
 
 <svelte:head><title>mindwell styleguide</title></svelte:head>
 
+<Toolbar head="Styleguide" sub="development only" />
 <header>
   <SectionLabel as="h2">Styleguide (dev only)</SectionLabel>
   <Choice label="Theme override for the whole app" {options} bind:value={pref} />

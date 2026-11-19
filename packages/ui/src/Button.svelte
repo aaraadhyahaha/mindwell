@@ -1,10 +1,18 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import type { IconName } from './Icon.svelte';
+  import Icon from './Icon.svelte';
+  /**
+   * primary = accent fill (44px), secondary = surface + rule outline (38px), quiet = accent text.
+   * With `href` it renders a link styled as a button. `icon` adds a 16px leading stroke icon.
+   */
   let {
     variant = 'primary',
     type = 'button',
     disabled = false,
     pressed,
+    href,
+    icon,
     onclick,
     children
   }: {
@@ -12,59 +20,80 @@
     type?: 'button' | 'submit' | 'reset';
     disabled?: boolean;
     pressed?: boolean;
+    href?: string;
+    icon?: IconName;
     onclick?: (e: MouseEvent) => void;
     children: Snippet;
   } = $props();
 </script>
 
-<button class={variant} {type} {disabled} aria-pressed={pressed} {onclick}>
-  {@render children()}
-</button>
+{#if href}
+  <a class="btn {variant}" {href} {onclick}>
+    {#if icon}<Icon name={icon} />{/if}{@render children()}
+  </a>
+{:else}
+  <button class="btn {variant}" {type} {disabled} aria-pressed={pressed} {onclick}>
+    {#if icon}<Icon name={icon} />{/if}{@render children()}
+  </button>
+{/if}
 
 <style>
-  button {
-    font-family: var(--font-sans);
-    font-size: var(--text-14);
-    line-height: var(--leading-body);
-    padding: var(--space-2) var(--space-4);
-    border: 1px solid transparent;
-    border-radius: var(--radius);
-    background: transparent;
+  .btn {
+    font: 600 14px/1 var(--font-sans);
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 9px;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
     transition:
       background-color var(--motion-fast) var(--ease),
       border-color var(--motion-fast) var(--ease),
       opacity var(--motion-fast) var(--ease);
   }
-  button:disabled {
+  .btn :global(svg) {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+  }
+  .btn:disabled {
     opacity: 0.45;
     cursor: default;
   }
+  .secondary:hover:not(:disabled) {
+    border-color: var(--muted);
+  }
   .primary {
     background: var(--accent);
-    color: var(--bg);
     border-color: var(--accent);
+    color: var(--on-accent);
+    height: 44px;
+    padding: 0 22px;
   }
   .primary:hover:not(:disabled) {
     opacity: 0.88;
   }
-  .secondary {
-    color: var(--ink);
-    border-color: var(--ink);
-  }
-  .secondary:hover:not(:disabled) {
-    background: var(--accent-soft);
-  }
   .quiet {
-    color: var(--ink);
-    padding-left: var(--space-2);
-    padding-right: var(--space-2);
+    background: none;
+    border-color: transparent;
+    color: var(--accent);
+    padding: 0 8px;
   }
   .quiet:hover:not(:disabled) {
     text-decoration: underline;
   }
-  button[aria-pressed='true'] {
+  .btn[aria-pressed='true'] {
     background: var(--accent-soft);
     border-color: var(--accent);
+    color: var(--accent);
   }
 </style>

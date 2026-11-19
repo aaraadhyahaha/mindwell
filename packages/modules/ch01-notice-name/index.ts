@@ -3,7 +3,7 @@ import type { Module, ModuleViewProps } from '@mindwell/core';
 import { manifest } from './manifest';
 import { migrations } from './migrations';
 import { prompts } from './prompts';
-import { eveningCardVisible, signals } from './signals';
+import { eveningCardVisible, signals, thoughtsNavCount } from './signals';
 import { suggestions } from './suggestions';
 import CaptureCard from './ui/CaptureCard.svelte';
 import CaptureScreen from './ui/CaptureScreen.svelte';
@@ -15,7 +15,7 @@ export const module: Module<Component<ModuleViewProps>> = {
   manifest,
   migrations,
   screens: [
-    { path: '', title: 'Thoughts', component: ThoughtsScreen, inNav: true },
+    { path: '', title: 'Thoughts', component: ThoughtsScreen, inNav: true, icon: 'thoughts', navCount: thoughtsNavCount },
     { path: 'capture', title: 'Capture', component: CaptureScreen, inNav: false },
   ],
   todayCards: [

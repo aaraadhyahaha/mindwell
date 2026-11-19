@@ -1,5 +1,5 @@
 import type { BaseRecord, SignalDef, SignalValue, Signals, Store } from '@mindwell/core';
-import { addDays, signalNumber } from '@mindwell/core';
+import { addDays, signalList, signalNumber } from '@mindwell/core';
 
 /** The fields signals read (structural, so tests can pass plain objects). */
 export interface StoryRow {
@@ -106,3 +106,13 @@ export const signals: SignalDef[] = [
 
 /** Evening card visibility: something was captured today. Pure. */
 export const eveningCardVisible = (s: Signals): boolean => (signalNumber(s, 'ch01.captures_today') ?? 0) > 0;
+
+/** Nav count beside "Thoughts": captures in the last 7 days (linked or not), or null when none. Pure. */
+export const thoughtsNavCount = (s: Signals): number | null => {
+  const linked = signalList(s, 'ch01.story_counts_7d').reduce<number>((sum, v) => {
+    const n = v !== null && typeof v === 'object' && !Array.isArray(v) ? (v as { readonly count?: SignalValue }).count : undefined;
+    return sum + (typeof n === 'number' ? n : 0);
+  }, 0);
+  const total = linked + (signalNumber(s, 'ch01.unlinked_7d') ?? 0);
+  return total > 0 ? total : null;
+};

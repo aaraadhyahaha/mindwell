@@ -128,7 +128,7 @@ async function seed(browser) {
   await page.getByRole('radio', { name: '4' }).click();
   await page.getByRole('button', { name: /^Continue/ }).click();
   await page.waitForTimeout(500);
-  const intent = page.getByLabel(/intention/i);
+  const intent = page.getByLabel(/intent/i).first();
   await intent.fill('Walk into the physics test calm, and treat the nerves as fuel.');
   await intent.blur();
   await page.waitForTimeout(300);

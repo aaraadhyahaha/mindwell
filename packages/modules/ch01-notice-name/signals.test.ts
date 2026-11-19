@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Signals } from '@mindwell/core';
-import { ch01SignalValues, eveningCardVisible, type CaptureRow, type StoryRow } from './signals';
+import { ch01SignalValues, eveningCardVisible, thoughtsNavCount, type CaptureRow, type StoryRow } from './signals';
 
 const DAY = '2026-11-19';
 const stories: StoryRow[] = [
@@ -214,5 +214,25 @@ describe('eveningCardVisible', () => {
     expect(eveningCardVisible({})).toBe(false);
     expect(eveningCardVisible(s(null))).toBe(false);
     expect(eveningCardVisible(s(Number.NaN))).toBe(false);
+  });
+});
+
+describe('thoughtsNavCount', () => {
+  it('counts linked and unlinked captures from the last 7 days', () => {
+    const s: Signals = {
+      'ch01.story_counts_7d': [
+        { id: 'a', name: "I'll fail", count: 4 },
+        { id: 'b', name: 'Not good enough', count: 2 },
+      ],
+      'ch01.unlinked_7d': 1,
+    };
+    expect(thoughtsNavCount(s)).toBe(7);
+  });
+  it('is null when there is nothing this week or the signals are missing', () => {
+    expect(thoughtsNavCount({ 'ch01.story_counts_7d': [], 'ch01.unlinked_7d': 0 })).toBeNull();
+    expect(thoughtsNavCount({})).toBeNull();
+  });
+  it('ignores malformed entries', () => {
+    expect(thoughtsNavCount({ 'ch01.story_counts_7d': [{ id: 'a' }, 'x', 3], 'ch01.unlinked_7d': 2 })).toBe(2);
   });
 });

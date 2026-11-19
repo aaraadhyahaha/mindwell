@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { ModuleManifest } from '@mindwell/core';
-  import { Page, SectionLabel, Card, Button, WhySheet } from '@mindwell/ui';
+  import { Page, SectionLabel, Card, Button, WhySheet, Toolbar } from '@mindwell/ui';
+  import { BOOK_CHAPTERS } from '@mindwell/core';
   import { activation } from '$lib/activation.svelte';
 
   let error = $state<string | null>(null);
@@ -49,6 +50,11 @@
   });
 </script>
 
+<Toolbar head="The book" sub="Clear Mind, Steady Work">
+  {#snippet actions()}
+    <span class="readcount">{activation.read.filter((r) => BOOK_CHAPTERS.some((c) => c.chapter === r.chapter)).length} of {BOOK_CHAPTERS.length} chapters read</span>
+  {/snippet}
+</Toolbar>
 <Page title="Library">
   <p class="hint">
     Marking a chapter read turns on its module. Marking it unread turns it off; nothing you've recorded is deleted.
@@ -101,6 +107,10 @@
 {/if}
 
 <style>
+  .readcount {
+    font-size: 13px;
+    color: var(--muted);
+  }
   ul {
     list-style: none;
     margin: 0;

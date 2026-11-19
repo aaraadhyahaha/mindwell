@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Page, SectionLabel, Field, Choice, Button } from '@mindwell/ui';
+  import { Page, SectionLabel, Field, Choice, Button, Toolbar } from '@mindwell/ui';
   import type { ThemePreference } from '@mindwell/ui';
   import { settings } from '$lib/settings.svelte';
   import { activation } from '$lib/activation.svelte';
@@ -40,6 +40,7 @@
   }
 </script>
 
+<Toolbar head="Settings" />
 <Page label="SETTINGS" title="Settings">
   {#if settings.error}<p class="note" role="alert">{settings.error}</p>{/if}
 

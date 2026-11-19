@@ -3,7 +3,7 @@ import type { Module, ModuleViewProps } from '@mindwell/core';
 import { manifest } from './manifest';
 import { migrations } from './migrations';
 import { prompts } from './prompts';
-import { signals, verdictCardVisible } from './signals';
+import { experimentsNavCount, signals, verdictCardVisible } from './signals';
 import { suggestions } from './suggestions';
 import ExperimentsScreen from './ui/ExperimentsScreen.svelte';
 import ReviewSection from './ui/ReviewSection.svelte';
@@ -12,7 +12,9 @@ import VerdictCard from './ui/VerdictCard.svelte';
 export const module: Module<Component<ModuleViewProps>> = {
   manifest,
   migrations,
-  screens: [{ path: '', title: 'Experiments', component: ExperimentsScreen, inNav: true }],
+  screens: [
+    { path: '', title: 'Experiments', component: ExperimentsScreen, inNav: true, icon: 'experiments', navCount: experimentsNavCount },
+  ],
   todayCards: [
     {
       id: 'verdict',

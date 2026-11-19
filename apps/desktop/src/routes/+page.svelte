@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { DAY_TYPES } from '@mindwell/core';
   import type { PromptSlot } from '@mindwell/core';
-  import { Page, SectionLabel, Card, PromptCard, Field, Scale, Choice, Button } from '@mindwell/ui';
+  import { Page, SectionLabel, Card, PromptCard, Field, Scale, Choice, Button, Toolbar } from '@mindwell/ui';
   import { TodayState } from '$lib/today.svelte';
   import type { ShownPrompt } from '$lib/today.svelte';
   import { dayHeading, intentResultLabel, isEveningOpen } from '$lib/today';
@@ -69,6 +69,7 @@
   {/if}
 {/snippet}
 
+<Toolbar head={dayHeading(today.day)} />
 <Page label={dayHeading(today.day)} title="Today">
   {#if today.error}<p class="note" role="alert">{today.error}</p>{/if}
 

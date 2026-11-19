@@ -8,11 +8,11 @@
 <style>
   .section-label {
     font-family: var(--font-sans);
-    font-size: var(--text-12);
-    font-weight: 500;
-    line-height: var(--leading-body);
+    font-size: 11px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
     color: var(--muted);
+    font-weight: 600;
+    margin: 0;
   }
 </style>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { introSignalValues, midpoint } from './signals';
+import { experimentsNavCount, introSignalValues, midpoint } from './signals';
 import type { CheckinRow, ExperimentRow } from './signals';
 
 function exp(over: Partial<ExperimentRow> & { id: string }): ExperimentRow {
@@ -243,5 +243,15 @@ describe('introSignalValues', () => {
       );
       expect(r.modules_tried).toEqual(['alpha', 'mid', 'zeta']);
     });
+  });
+});
+
+describe('experimentsNavCount', () => {
+  it('counts running experiments', () => {
+    expect(experimentsNavCount({ 'intro.active': [{ id: 'a' }, { id: 'b' }] })).toBe(2);
+  });
+  it('is null when none are running or the signal is missing', () => {
+    expect(experimentsNavCount({ 'intro.active': [] })).toBeNull();
+    expect(experimentsNavCount({})).toBeNull();
   });
 });

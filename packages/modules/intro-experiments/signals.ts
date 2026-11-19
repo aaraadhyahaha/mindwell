@@ -1,5 +1,5 @@
 import type { BaseRecord, SignalDef, SignalValue, Signals, Store } from '@mindwell/core';
-import { addDays, daysBetween, signalNumber } from '@mindwell/core';
+import { addDays, daysBetween, signalList, signalNumber } from '@mindwell/core';
 
 /** The experiment fields signals read (structural, so tests can pass plain objects). */
 export interface ExperimentRow {
@@ -100,3 +100,9 @@ export const signals: SignalDef[] = [
 
 /** Today card (morning) visibility: an experiment awaits a verdict. Pure. */
 export const verdictCardVisible = (s: Signals): boolean => (signalNumber(s, 'intro.awaiting_verdict') ?? 0) > 0;
+
+/** Nav count beside "Experiments": running experiments, or null when none. Pure. */
+export const experimentsNavCount = (s: Signals): number | null => {
+  const n = signalList(s, 'intro.active').length;
+  return n > 0 ? n : null;
+};

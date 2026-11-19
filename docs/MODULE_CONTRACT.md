@@ -10,7 +10,7 @@ import type { Module } from '@mindwell/core';
 export const module: Module = {
   manifest,          // id, chapter, title, idea, evidence, references
   migrations,        // ordered SQL for this module's own tables
-  screens,           // [{ path: '/ch02', title, component, inNav: true }]
+  screens,           // [{ path: '/ch02', title, component, inNav: true, icon?, navCount?(signals) }]
   todayCards,        // [{ id, slot: 'morning'|'anytime'|'evening', component, visible(signals) }]
   prompts,           // PromptDef[] added to the shared library (see PROMPTS.md)
   signals,           // SignalDef[] this module publishes
@@ -24,7 +24,7 @@ export const module: Module = {
 | --- | --- |
 | `manifest` | `id` (`ch02`), `chapter` (2; Introduction = 0), `title`, `idea` (one line), `evidence` (2–4 sentences), `references` (string[]). Shown on the module's "Why this exists" sheet and in the Library. |
 | `migrations` | `{ version, sql }[]`. Tables prefixed with the module id. |
-| `screens` | Svelte components under `ui/`. Routes are mounted under `/m/<id>/...` by the shell (`path: ''` is `/m/<id>`). The component receives `ModuleViewProps` (`day` = today, `signals` = a fresh snapshot). |
+| `screens` | Svelte components under `ui/`. Routes are mounted under `/m/<id>/...` by the shell (`path: ''` is `/m/<id>`). The component receives `ModuleViewProps` (`day` = today, `signals` = a fresh snapshot). An `inNav` screen may set `icon` (a `@mindwell/ui` `Icon` name for its sidebar row) and `navCount(signals)` (pure; the number shown beside the row, or null). |
 | `todayCards` | Small cards on Today. `visible(signals)` is pure. The component receives `ModuleViewProps` (`{ store, day, signals }`). |
 | `prompts` | See PROMPTS.md for fields. Each prompt's `module` = this module's id. |
 | `signals` | `{ key: '<id>.<name>', compute(ctx): Promise<value> }`. `compute` reads via `ctx.store` only. Keys are namespaced by module id. |

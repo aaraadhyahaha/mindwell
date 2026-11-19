@@ -2,7 +2,12 @@
   import '@mindwell/ui/fonts.css';
   import '@mindwell/ui/tokens.css';
   import '@mindwell/ui/base.css';
+  import { Shell, Sidebar, NavLabel, NavItem, Toc } from '@mindwell/ui';
+  import type { TocEntry } from '@mindwell/ui';
   import { page } from '$app/state';
+  import { afterNavigate } from '$app/navigation';
+  import { nav } from '$lib/nav.svelte';
+  import { moduleNavLinks, tocRows } from '$lib/nav';
   import { onMount } from 'svelte';
   import { settings } from '$lib/settings.svelte';
   import { startReminders } from '$lib/reminders.svelte';
@@ -18,17 +23,20 @@
   // Small extra windows (the capture window) render the screen alone: no nav, no reminders.
   const bare = isAuxWindow();
 
-  const links = $derived([
-    { href: '/', label: 'Today' },
-    { href: '/week', label: 'Week' },
-    ...activation.active.flatMap((m) =>
-      m.screens
-        .filter((s) => s.inNav)
-        .map((s) => ({ href: `/m/${m.manifest.id}${s.path ? `/${s.path}` : ''}`, label: s.title }))
-    ),
-    { href: '/library', label: 'Library' },
-    { href: '/settings', label: 'Settings' }
-  ]);
+  const practice = $derived(moduleNavLinks(activation.active));
+  const toc = $derived<TocEntry[]>(
+    tocRows(activation.library).map((r) => ({
+      href: `/library#chapter-${r.chapter}`,
+      number: r.number,
+      title: r.title,
+      read: r.read
+    }))
+  );
+
+  afterNavigate(() => {
+    if (!bare) void nav.refresh();
+  });
+
   onMount(() => {
     const onDone = () => {
       if (bare) void getCurrentWindow().hide();
@@ -49,6 +57,8 @@
       };
     }
     const stopCapture = startCaptureSync();
+    const refreshNav = () => void nav.refresh();
+    window.addEventListener('focus', refreshNav);
     let stop = () => {};
     void activation.load().catch(() => {});
     void settings.load().then(() => {
@@ -57,6 +67,7 @@
     return () => {
       stop();
       stopCapture();
+      window.removeEventListener('focus', refreshNav);
       window.removeEventListener('mindwell:done', onDone);
     };
   });
@@ -65,35 +76,29 @@
     href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
 </script>
 
-{#if !bare}
-  <nav aria-label="Main">
-    {#each links as l (l.href)}
-      <a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>{l.label}</a>
-    {/each}
-  </nav>
+{#if bare}
+  {@render children()}
+{:else}
+  <Shell>
+    {#snippet sidebar()}
+      <Sidebar subtitle="a companion to Clear Mind, Steady Work">
+        <NavLabel>Daily</NavLabel>
+        <NavItem href="/" label="Today" icon="today" current={isActive('/')} />
+        <NavItem href="/week" label="This week" icon="week" current={isActive('/week')} />
+        {#if practice.length > 0}
+          <NavLabel>Practice</NavLabel>
+          {#each practice as l (l.href)}
+            <NavItem href={l.href} label={l.label} icon={l.icon} count={nav.counts[l.href] ?? null} current={isActive(l.href)} />
+          {/each}
+        {/if}
+        <NavLabel>The book</NavLabel>
+        <NavItem href="/library" label="Library" icon="library" current={isActive('/library')} />
+        <Toc entries={toc} />
+        {#snippet footer()}
+          <NavItem href="/settings" label="Settings" icon="settings" current={isActive('/settings')} />
+        {/snippet}
+      </Sidebar>
+    {/snippet}
+    {@render children()}
+  </Shell>
 {/if}
-
-{@render children()}
-
-<style>
-  nav {
-    max-width: var(--reading-width);
-    margin: 0 auto;
-    padding: var(--space-4) var(--space-5) 0;
-    display: flex;
-    gap: var(--space-4);
-    flex-wrap: wrap;
-    font-family: var(--font-sans);
-    font-size: var(--text-14);
-  }
-  a {
-    color: var(--muted);
-    text-decoration: none;
-  }
-  a:hover {
-    color: var(--ink);
-  }
-  a[aria-current='page'] {
-    color: var(--ink);
-  }
-</style>

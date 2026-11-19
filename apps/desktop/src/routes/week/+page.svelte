@@ -10,7 +10,7 @@
     reviewWeek,
     weekSummary
   } from '@mindwell/core';
-  import { Page, SectionLabel, Card, Button, LineChart } from '@mindwell/ui';
+  import { Page, SectionLabel, Card, Button, LineChart, Toolbar } from '@mindwell/ui';
   import { activation } from '$lib/activation.svelte';
   import { getStore } from '$lib/db';
   import { weekRangeLabel } from '$lib/week';
@@ -63,6 +63,7 @@
   }
 </script>
 
+<Toolbar head="This week" sub={weekRangeLabel(week[0]!, lastDay)} />
 <Page label={weekRangeLabel(week[0]!, lastDay)} title="This week">
   {#if error}<p class="note" role="alert">{error}</p>{/if}
 

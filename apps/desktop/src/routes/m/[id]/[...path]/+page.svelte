@@ -3,7 +3,8 @@
   import type { ModuleViewProps, Signals, Store } from '@mindwell/core';
   import { buildSignals, localDay } from '@mindwell/core';
   import { page } from '$app/state';
-  import { Page, WhySheet } from '@mindwell/ui';
+  import { Page, WhySheet, Toolbar } from '@mindwell/ui';
+  import { moduleRunningHead } from '$lib/nav';
   import { activation } from '$lib/activation.svelte';
   import { getStore } from '$lib/db';
   import { capture } from '$lib/capture.svelte';
@@ -15,6 +16,7 @@
   const mod = $derived(activation.active.find((m) => m.manifest.id === page.params.id) ?? null);
   const screen = $derived(mod?.screens.find((s) => s.path === (page.params.path ?? '')) ?? null);
   const Screen = $derived(screen?.component as Component<ModuleViewProps> | undefined);
+  const head = $derived(mod ? moduleRunningHead(mod.manifest) : null);
 
   let store = $state<Store | null>(null);
   let signals = $state<Signals | null>(null);
@@ -44,6 +46,7 @@
   }
 </script>
 
+{#if !bare}<Toolbar head={head?.head ?? 'mindwell'} sub={head?.sub} />{/if}
 {#if error}
   <Page title="Not available"><p class="note">{error}</p></Page>
 {:else if activation.loaded && (!mod || !screen)}

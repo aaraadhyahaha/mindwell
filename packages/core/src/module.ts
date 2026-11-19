@@ -20,6 +20,10 @@ export interface ScreenDef<C> {
   title: string;
   component: C;
   inNav: boolean;
+  /** Sidebar icon name from `@mindwell/ui` (`Icon`); unknown names show a plain dot. */
+  icon?: string;
+  /** Pure. The number shown after the nav label (e.g. active experiments), or null for none. */
+  navCount?: (signals: Signals) => number | null;
 }
 
 export type TodaySlot = 'morning' | 'anytime' | 'evening';
