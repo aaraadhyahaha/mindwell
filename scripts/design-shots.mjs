@@ -1,19 +1,17 @@
-// Design check: screenshots the approved mockups and the running app (Vite on :1420)
+// Design check: screenshots the approved mockups and the running app (Vite on :5173)
 // at the same window size, and reports which font file renders a node.
 //
-// The app runs in plain Chromium with the Tauri IPC mocked: `plugin:sql|*` goes to a
-// real SQLite file (node:sqlite) in .design-shots/, everything else returns null.
+// The app runs in Chromium with a persistent profile in .design-shots/profile, so the
+// database the app keeps in OPFS (sqlite-wasm) survives between runs; `seed` starts it fresh.
 //
 //   node scripts/design-shots.mjs mockup today            -> .design-shots/mockup-today.png
 //   node scripts/design-shots.mjs app / today             -> .design-shots/app-today.png
-//   node scripts/design-shots.mjs seed                    -> fills .design-shots/mindwell.db
+//   node scripts/design-shots.mjs seed                    -> fresh profile, seeded through the app
 //   node scripts/design-shots.mjs fonts <path|mockup:name> <selector>...
 //   node scripts/design-shots.mjs compare today /            -> every box/spacing/font difference
 //
-// Env: SHOT_W / SHOT_H (default 1440 × 900), SHOT_AT (page clock, default today 08:30),
-//      SHOT_WINDOW (window label, default main; `capture` renders the bare capture window).
+// Env: SHOT_W / SHOT_H (default 1440 × 900), SHOT_AT (page clock, default today 08:30).
 import { chromium } from 'playwright';
-import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync, rmSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -23,7 +21,7 @@ const out = join(root, '.design-shots');
 mkdirSync(out, { recursive: true });
 const W = Number(process.env.SHOT_W ?? 1440);
 const H = Number(process.env.SHOT_H ?? 900);
-const APP = 'http://127.0.0.1:1420';
+const APP = 'http://localhost:5173';
 const pad = (n) => String(n).padStart(2, '0');
 const now = new Date();
 const todayIso = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
@@ -31,53 +29,12 @@ const AT = new Date(process.env.SHOT_AT ?? `${todayIso}T08:30:00`);
 
 const mockupUrl = (name) => pathToFileURL(join(root, 'docs/design/mockups', `${name}.html`)).href;
 
-const TAURI_MOCK = `
-  window.__TAURI_INTERNALS__ = {
-    metadata: { currentWindow: { label: '${process.env.SHOT_WINDOW ?? 'main'}' }, currentWebview: { windowLabel: '${process.env.SHOT_WINDOW ?? 'main'}', label: '${process.env.SHOT_WINDOW ?? 'main'}' } },
-    transformCallback(cb) { const id = Math.floor(Math.random() * 1e9); window['_' + id] = cb; return id; },
-    unregisterCallback() {},
-    convertFileSrc: (p) => p,
-    async invoke(cmd, args) {
-      if (cmd.startsWith('plugin:sql|')) return window.__mwSql(cmd, JSON.stringify(args ?? {}));
-      return null;
-    },
-  };
-  window.__TAURI_EVENT_PLUGIN_INTERNALS__ = { unregisterListener() {} };
-`;
-
-function sqlHandler(db) {
-  return (cmd, json) => {
-    const a = JSON.parse(json);
-    const values = a.values ?? [];
-    switch (cmd) {
-      case 'plugin:sql|load':
-        return a.db;
-      case 'plugin:sql|close':
-        return true;
-      case 'plugin:sql|execute': {
-        if (values.length === 0) db.exec(a.query);
-        else db.prepare(a.query).run(...values);
-        const r = db.prepare('SELECT changes() AS c, last_insert_rowid() AS r').get();
-        return [Number(r.c), Number(r.r)];
-      }
-      case 'plugin:sql|select':
-        return db.prepare(a.query).all(...values).map((row) => ({ ...row }));
-      default:
-        throw new Error(`unmocked ${cmd}`);
-    }
-  };
-}
-
-async function openApp(browser, { fresh = false } = {}) {
-  const file = join(out, 'mindwell.db');
-  if (fresh) for (const f of [file, `${file}-wal`, `${file}-shm`]) rmSync(f, { force: true });
-  const db = new DatabaseSync(file);
-  const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
+async function openApp(browser) {
+  const page = await browser.newPage();
+  await page.setViewportSize({ width: W, height: H });
   await page.clock.setFixedTime(AT);
-  await page.exposeFunction('__mwSql', sqlHandler(db));
-  await page.addInitScript(TAURI_MOCK);
   page.on('pageerror', (e) => console.error('pageerror:', e.message));
-  return { page, db };
+  return { page };
 }
 
 async function settle(page) {
@@ -88,7 +45,7 @@ async function settle(page) {
 
 /** Seeds the "morning check-in" state the Today mockup shows, through the app's own code. */
 async function seed(browser) {
-  const { page } = await openApp(browser, { fresh: true });
+  const { page } = await openApp(browser);
   await page.goto(`${APP}/`);
   await settle(page);
   await page.evaluate(async (rootDir) => {
@@ -134,11 +91,11 @@ async function seed(browser) {
   await intent.fill('Walk into the physics test calm, and treat the nerves as fuel.');
   await intent.blur();
   await page.waitForTimeout(300);
-  console.log('seeded', join(out, 'mindwell.db'));
+  console.log('seeded', profile);
 }
 
 async function shoot(browser, url, name, isApp) {
-  const { page } = isApp ? await openApp(browser) : { page: await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 }) };
+  const { page } = isApp ? await openApp(browser) : { page: await browser.newPage() };
   await page.goto(url);
   await settle(page);
   // The app's main column scrolls inside a 100vh shell: grow the window to its content so the
@@ -155,7 +112,7 @@ async function shoot(browser, url, name, isApp) {
 
 async function fonts(browser, target, selectors) {
   const isMockup = target.startsWith('mockup:');
-  const { page } = isMockup ? { page: await browser.newPage({ viewport: { width: W, height: H } }) } : await openApp(browser);
+  const { page } = isMockup ? { page: await browser.newPage() } : await openApp(browser);
   await page.goto(isMockup ? mockupUrl(target.slice(7)) : `${APP}${target}`);
   await settle(page);
   const cdp = await page.context().newCDPSession(page);
@@ -221,7 +178,7 @@ async function measure(page) {
 }
 
 async function compare(browser, mockup, path) {
-  const mp = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
+  const mp = await browser.newPage();
   await mp.goto(mockupUrl(mockup));
   await settle(mp);
   const { page: ap } = await openApp(browser);
@@ -256,7 +213,9 @@ async function compare(browser, mockup, path) {
 }
 
 const [mode, ...rest] = process.argv.slice(2);
-const browser = await chromium.launch();
+const profile = join(out, 'profile');
+if (mode === 'seed') rmSync(profile, { recursive: true, force: true });
+const browser = await chromium.launchPersistentContext(profile, { viewport: { width: W, height: H }, deviceScaleFactor: 1 });
 try {
   if (mode === 'seed') await seed(browser);
   else if (mode === 'mockup') await shoot(browser, mockupUrl(rest[0]), `mockup-${rest[0]}`, false);

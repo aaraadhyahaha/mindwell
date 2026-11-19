@@ -40,4 +40,8 @@ export default defineConfig(() => ({
     },
   },
   preview: { port: 4173, strictPort: true },
+  // The SQLite WASM build loads its .wasm by URL relative to itself; pre-bundling breaks that.
+  optimizeDeps: { exclude: ["@sqlite.org/sqlite-wasm"] },
+  // The database worker (packages/storage-sqlite/src/browser/worker.ts) uses ES imports.
+  worker: { format: /** @type {const} */ ("es") },
 }));

@@ -1,9 +1,12 @@
 import type { SqlDriver, Store } from '@mindwell/core';
 import { coreMigrations } from '@mindwell/core';
 import { createStore } from '@mindwell/storage-sqlite';
+import { createBrowserDriver, requestPersistentStorage } from '@mindwell/storage-sqlite/browser';
 import { modules } from './registry';
 
 let ready: Promise<Store> | null = null;
+/** One per tab: it holds the tab's place in the leader election (see storage-sqlite/browser). */
+let driver: SqlDriver | null = null;
 
 /**
  * The app's Store, opened once. Applies core migrations, then every registered
@@ -18,7 +21,14 @@ export function getStore(): Promise<Store> {
 }
 
 async function open(): Promise<Store> {
-  const store = createStore(await createDriver());
+  // The data lives in this browser's origin-private file system; ask not to evict it.
+  if (!driver) {
+    void requestPersistentStorage().catch(() => false);
+    driver = createBrowserDriver();
+  }
+  const store = createStore(driver);
+  // Two tabs opening at once share one connection but may both try a first-run migration;
+  // the loser fails, so retry briefly and find it already applied.
   for (let attempt = 1; ; attempt++) {
     try {
       await store.migrate('core', coreMigrations);
@@ -29,9 +39,4 @@ async function open(): Promise<Store> {
       await new Promise((r) => setTimeout(r, 150 * attempt));
     }
   }
-}
-
-// Replaced by the browser driver in step 2.
-async function createDriver(): Promise<SqlDriver> {
-  throw new Error('Browser SQLite driver lands in step 2');
 }
