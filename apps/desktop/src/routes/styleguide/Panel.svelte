@@ -1,7 +1,7 @@
 <script lang="ts">
   import {
     Page, SectionLabel, Card, PromptCard, Field, Scale, Choice, Button, WhySheet, LineChart
-  } from '$lib/ui';
+  } from '@mindwell/ui';
 
   let { theme }: { theme: 'day' | 'night' } = $props();
 

@@ -1,6 +1,6 @@
 export type ThemePreference = 'system' | 'day' | 'night';
 
-// Held in memory; the Settings store (`$lib/settings.svelte`) persists it through the Store and re-applies it on start.
+// Held in memory; the app's Settings store persists it through the Store and re-applies it on start.
 export const theme = $state<{ preference: ThemePreference }>({ preference: 'system' });
 
 export function setTheme(p: ThemePreference): void {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { BaseRecord, ModuleViewProps } from '@mindwell/core';
+  import { Card, Field, SectionLabel } from '@mindwell/ui';
 
   interface Note extends BaseRecord {
     day: string;
@@ -35,8 +36,8 @@
   });
 </script>
 
-<div class="card">
-  <p class="label">Dev notes today</p>
+<Card>
+  <SectionLabel>Dev notes today</SectionLabel>
   {#if notes.length === 0}
     <p class="muted">Notes you add here today will gather in this card.</p>
   {:else}
@@ -45,55 +46,19 @@
     </ul>
   {/if}
   <form onsubmit={add}>
-    <label>
-      <span class="label">Add a note</span>
-      <input bind:value={draft} />
-    </label>
+    <Field label="Add a note" bind:value={draft} hint="Press Enter to save." />
   </form>
   {#if error}<p class="muted" role="alert">{error}</p>{/if}
-</div>
+</Card>
 
 <style>
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-    padding: var(--space-4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-  .label {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-  }
   .muted {
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: var(--text-14);
     color: var(--muted);
   }
   ul {
-    margin: 0;
+    margin: var(--space-2) 0;
     padding-left: 1.2em;
-  }
-  label {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-  input {
-    font: inherit;
-    color: var(--ink);
-    background: var(--bg);
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-    padding: var(--space-2) var(--space-3);
-  }
-  input:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 1px;
   }
 </style>

@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { DAY_TYPES } from '@mindwell/core';
   import type { PromptSlot } from '@mindwell/core';
-  import { Page, SectionLabel, Card, PromptCard, Field, Scale, Choice, Button } from '$lib/ui';
+  import { Page, SectionLabel, Card, PromptCard, Field, Scale, Choice, Button } from '@mindwell/ui';
   import { TodayState } from '$lib/today.svelte';
   import type { ShownPrompt } from '$lib/today.svelte';
   import { dayHeading, intentResultLabel, isEveningOpen } from '$lib/today';

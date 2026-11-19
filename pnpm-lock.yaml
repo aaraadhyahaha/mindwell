@@ -26,6 +26,9 @@ importers:
       '@mindwell/storage-sqlite':
         specifier: workspace:*
         version: link:../../packages/storage-sqlite
+      '@mindwell/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@tauri-apps/api':
         specifier: ^2
         version: 2.12.5
@@ -78,10 +81,19 @@ importers:
       '@mindwell/core':
         specifier: workspace:*
         version: link:../../core
+      '@mindwell/ui':
+        specifier: workspace:*
+        version: link:../../ui
     devDependencies:
       svelte:
         specifier: ^5.56.3
         version: 5.58.0
+      svelte-check:
+        specifier: ^4.7.8
+        version: 4.7.8(picomatch@4.0.7)(svelte@5.58.0)(typescript@6.0.3)
+      typescript:
+        specifier: ~6.0.3
+        version: 6.0.3
 
   packages/storage-sqlite:
     dependencies:
@@ -101,6 +113,18 @@ importers:
       better-sqlite3:
         specifier: ^13.2.0
         version: 13.2.0
+
+  packages/ui:
+    devDependencies:
+      svelte:
+        specifier: ^5.58.0
+        version: 5.58.0
+      svelte-check:
+        specifier: ^4.7.8
+        version: 4.7.8(picomatch@4.0.7)(svelte@5.58.0)(typescript@6.0.3)
+      typescript:
+        specifier: ~6.0.3
+        version: 6.0.3
 
 packages:
 

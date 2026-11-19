@@ -1,7 +1,7 @@
 <script lang="ts">
-  import '$lib/ui/fonts.css';
-  import '$lib/ui/tokens.css';
-  import '$lib/ui/base.css';
+  import '@mindwell/ui/fonts.css';
+  import '@mindwell/ui/tokens.css';
+  import '@mindwell/ui/base.css';
   import { page } from '$app/state';
   import { onMount } from 'svelte';
   import { settings } from '$lib/settings.svelte';

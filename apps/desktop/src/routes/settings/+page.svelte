@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Page, SectionLabel, Field, Choice, Button } from '$lib/ui';
-  import type { ThemePreference } from '$lib/ui';
+  import { Page, SectionLabel, Field, Choice, Button } from '@mindwell/ui';
+  import type { ThemePreference } from '@mindwell/ui';
   import { settings } from '$lib/settings.svelte';
   import { exportRecords } from '$lib/export';
   import type { ExportFormat } from '$lib/export';

@@ -2,8 +2,8 @@ import type { SettingRecord } from '@mindwell/core';
 import { CORE_TABLES, NAME_SETTING } from '@mindwell/core';
 import { getStore } from './db';
 import type { ReminderConfig, ReminderSent } from './reminders';
-import { setTheme } from './ui';
-import type { ThemePreference } from './ui';
+import { setTheme } from '@mindwell/ui';
+import type { ThemePreference } from '@mindwell/ui';
 
 export const SETTING_KEYS = {
   name: NAME_SETTING,

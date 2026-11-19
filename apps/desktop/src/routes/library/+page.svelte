@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { ModuleManifest } from '@mindwell/core';
-  import { Page, SectionLabel, Card, Button, WhySheet } from '$lib/ui';
+  import { Page, SectionLabel, Card, Button, WhySheet } from '@mindwell/ui';
   import { activation } from '$lib/activation.svelte';
 
   let error = $state<string | null>(null);

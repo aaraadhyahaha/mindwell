@@ -10,7 +10,7 @@
     reviewWeek,
     weekSummary
   } from '@mindwell/core';
-  import { Page, SectionLabel, Card, Button, LineChart } from '$lib/ui';
+  import { Page, SectionLabel, Card, Button, LineChart } from '@mindwell/ui';
   import { activation } from '$lib/activation.svelte';
   import { getStore } from '$lib/db';
   import { weekRangeLabel } from '$lib/week';

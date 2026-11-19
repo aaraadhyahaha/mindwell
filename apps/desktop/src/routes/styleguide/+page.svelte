@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Choice, SectionLabel, setTheme, theme, type ThemePreference } from '$lib/ui';
+  import { Choice, SectionLabel, setTheme, theme, type ThemePreference } from '@mindwell/ui';
   import Panel from './Panel.svelte';
 
   const options = [
