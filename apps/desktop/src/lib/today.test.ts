@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { PromptDef, PromptShownRecord } from '@mindwell/core';
 import { FALLBACK_INTENT_ID, FALLBACK_JOURNAL_ID } from '@mindwell/core';
-import { contextLines, dayHeading, isEveningOpen, selectionFromRows } from './today';
+import { contextLines, dayHeading, dayRunningHead, isEveningOpen, phaseLabel, selectionFromRows, todayPhase } from './today';
 
 function def(id: string, kind: 'intent' | 'journal'): PromptDef {
   return { id, module: 'core', kind, when: 'morning', technique: id, text: id, weight: 1, cooldownDays: 0, condition: () => true };
@@ -78,5 +78,36 @@ describe('contextLines', () => {
 describe('dayHeading', () => {
   it('formats weekday, date and month', () => {
     expect(dayHeading('2026-11-19')).toBe('Thursday 19 November');
+  });
+});
+
+describe('dayRunningHead', () => {
+  it('formats weekday, comma, date and month', () => {
+    expect(dayRunningHead('2026-11-19')).toBe('Thursday, 19 November');
+    expect(dayRunningHead('2027-01-03')).toBe('Sunday, 3 January');
+  });
+});
+
+describe('todayPhase', () => {
+  const at = (morningStage: 'basics' | 'prompts' | 'summary', eveningOpen: boolean, morningEditing = false) =>
+    todayPhase({ morningStage, eveningOpen, morningEditing });
+  it('shows the morning check-in until it is done', () => {
+    expect(at('basics', false)).toBe('morning');
+    expect(at('prompts', false)).toBe('morning');
+  });
+  it('then the day, then the evening once it opens', () => {
+    expect(at('summary', false)).toBe('day');
+    expect(at('summary', true)).toBe('evening');
+  });
+  it('opens the evening even when the morning was skipped', () => {
+    expect(at('basics', true)).toBe('evening');
+    expect(at('prompts', true)).toBe('evening');
+  });
+  it('shows the morning while it is being edited', () => {
+    expect(at('basics', true, true)).toBe('morning');
+    expect(at('basics', false, true)).toBe('morning');
+  });
+  it('labels each phase', () => {
+    expect([phaseLabel('morning'), phaseLabel('day'), phaseLabel('evening')]).toEqual(['Morning', 'During the day', 'Evening']);
   });
 });

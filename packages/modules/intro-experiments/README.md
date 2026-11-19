@@ -18,6 +18,8 @@
 ## Screens and Today cards
 - Screen `/m/intro`: active experiments (days left, check-in sparkline), past experiments with verdicts, "Start an experiment".
 - Today card (morning slot), visible when an experiment ends today or ended without a verdict: "Your experiment with {technique} has finished. Keep, drop or extend?"
+- Today margin note (`margin` slot, order 40), visible while an experiment runs: "Experiment", its label, "Day N of M" and a progress bar (`experimentProgress`).
+- Sidebar: Experiments shows the number running (`experimentsNavCount`).
 
 ## Signals published
 | Key | Value | Meaning |

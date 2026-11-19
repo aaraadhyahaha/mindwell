@@ -18,7 +18,9 @@
 ## Screens and Today cards
 - Capture window (separate small Tauri window, always-on-top, opened by shortcut).
 - Screen `/m/ch01`: stories list (count last 7 / 30 days, trend), capture history by day.
-- Today card (anytime): "Capture a thought" button + shortcut hint.
+- "Capture a thought" + shortcut hint: the Today toolbar's action (the app shell shows it while ch01 is active; it replaced the anytime card).
+- Today margin note (`margin` slot, order 20), visible when a story was captured this week: "Stories this week", the top 3 stories with counts and bars (`storyBars`).
+- Sidebar: Thoughts shows this week's captures as its count (`thoughtsNavCount`).
 - Today card (evening), visible when captures today > 0: today's captures grouped by story; unlinked ones show "link to story".
 
 ## Signals published
@@ -69,7 +71,7 @@ Decisions made while building Phase 1. Where these notes add to the tables above
 - **Screens:**
   - `path: ''` is "Thoughts" (`inNav: true`).
   - `path: 'capture'` is "Capture" (`inNav: false`). It is the capture form, and the capture window loads it.
-  - The Today card's "Capture a thought" links to `/m/ch01/capture` in the main window.
+  - The Today toolbar's "Capture a thought" links to `/m/ch01/capture` in the main window.
 - **Leaving capture:** modules can't import Tauri. When the capture form is done (saved, or Esc), it dispatches `window.dispatchEvent(new CustomEvent('mindwell:done'))`. The shell handles it: the capture window hides itself; the main window goes back to Today.
 - **Capture flow:**
   1. The input is focused on mount. Intensity 1–5 is optional (keys 1–5 while the text is empty, or click).

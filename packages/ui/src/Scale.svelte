@@ -4,13 +4,16 @@
     value = $bindable(null),
     mode,
     minLabel,
-    maxLabel
+    maxLabel,
+    labelledby
   }: {
     label: string;
     value?: number | null;
     mode: '1-5' | '0-100';
     minLabel?: string;
     maxLabel?: string;
+    /** Id of a visible heading that names the scale (e.g. a `Step` title); hides the built-in label. */
+    labelledby?: string;
   } = $props();
   const uid = $props.id();
 
@@ -34,16 +37,18 @@
 </script>
 
 <div class="scale">
-  <div class="head">
-    <span class="label" id="{uid}-label">{label}</span>
-    <span class="readout">{value === null ? 'not set' : value}</span>
-  </div>
+  {#if !labelledby}
+    <div class="head">
+      <span class="label" id="{uid}-label">{label}</span>
+      {#if mode === '0-100'}<span class="readout">{value === null ? 'not set' : value}</span>{/if}
+    </div>
+  {/if}
   {#if mode === '1-5'}
-    <div class="boxes" role="radiogroup" aria-labelledby="{uid}-label">
+    <div class="seg" role="radiogroup" aria-labelledby={labelledby ?? `${uid}-label`}>
       {#each steps as s, i (s)}
         <button
           type="button"
-          class="box"
+          class:on={value === s}
           role="radio"
           aria-checked={value === s}
           tabindex={i === tabStop ? 0 : -1}
@@ -59,7 +64,7 @@
       min="0"
       max="100"
       step="1"
-      aria-labelledby="{uid}-label"
+      aria-labelledby={labelledby ?? `${uid}-label`}
       class:unset={value === null}
       value={value ?? 50}
       {oninput}
@@ -74,57 +79,70 @@
   .scale {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
   }
   .head {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
   }
-  .label,
-  .readout,
-  .ends {
-    font-family: var(--font-sans);
-    font-size: var(--text-14);
+  .label {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: var(--muted);
+    font-weight: 600;
   }
   .readout {
+    font-size: 14px;
     color: var(--ink);
+  }
+  .seg {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+    max-width: 400px;
+    margin-top: 16px;
+  }
+  .seg button {
+    height: 44px;
+    border: 0;
+    border-right: 1px solid var(--rule);
+    background: none;
+    font: 400 17px var(--font-serif);
+    color: var(--ink);
+    cursor: pointer;
+    transition: background-color var(--motion-fast) var(--ease);
+  }
+  .seg button:last-child {
+    border-right: 0;
+  }
+  .seg button:hover:not(.on) {
+    background: var(--accent-soft);
+  }
+  .seg button.on {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  .seg button:focus-visible {
+    outline-offset: -3px;
   }
   .ends {
     display: flex;
     justify-content: space-between;
-    font-size: var(--text-12);
-  }
-  .boxes {
-    display: flex;
-    gap: var(--space-2);
-  }
-  .box {
-    flex: 1;
-    font-family: var(--font-sans);
-    font-size: var(--text-16);
-    padding: var(--space-3) 0;
-    border: 1px solid var(--rule);
-    border-radius: var(--radius);
-    background: var(--surface);
-    color: var(--ink);
-    cursor: pointer;
-    transition:
-      background-color var(--motion-fast) var(--ease),
-      border-color var(--motion-fast) var(--ease);
-  }
-  .box:hover {
-    border-color: var(--muted);
-  }
-  .box[aria-checked='true'] {
-    background: var(--accent-soft);
-    border-color: var(--accent);
+    max-width: 400px;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 8px;
+    font-family: var(--font-serif);
+    font-style: italic;
   }
   input[type='range'] {
     width: 100%;
     accent-color: var(--accent);
-    margin: var(--space-2) 0;
+    margin: 16px 0 0;
   }
   input[type='range'].unset {
     opacity: 0.5;

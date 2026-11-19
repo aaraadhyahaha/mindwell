@@ -85,3 +85,29 @@ export function dayHeading(day: string): string {
   const date = new Date(y, m - 1, d);
   return `${WEEKDAYS[date.getDay()]} ${d} ${MONTHS[m - 1]}`;
 }
+
+/** "Thursday, 19 November" for a `YYYY-MM-DD` day: the toolbar's running head. */
+export function dayRunningHead(day: string): string {
+  const [y, m, d] = day.split('-').map(Number) as [number, number, number];
+  return `${WEEKDAYS[new Date(y, m - 1, d).getDay()]}, ${d} ${MONTHS[m - 1]}`;
+}
+
+export type TodayPhase = 'morning' | 'day' | 'evening';
+
+/**
+ * Which part of the day Today shows. Editing the morning always shows the morning. Otherwise
+ * the evening close once the evening form is open (done morning or not), else the morning
+ * check-in until it is done, then the day.
+ */
+export function todayPhase(s: { morningStage: 'basics' | 'prompts' | 'summary'; morningEditing: boolean; eveningOpen: boolean }): TodayPhase {
+  if (s.morningEditing) return 'morning';
+  if (s.eveningOpen) return 'evening';
+  return s.morningStage === 'summary' ? 'day' : 'morning';
+}
+
+const PHASE_LABEL: Record<TodayPhase, string> = { morning: 'Morning', day: 'During the day', evening: 'Evening' };
+
+/** The toolbar subtitle for a phase. */
+export function phaseLabel(phase: TodayPhase): string {
+  return PHASE_LABEL[phase];
+}

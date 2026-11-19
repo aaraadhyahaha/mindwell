@@ -106,3 +106,33 @@ export const experimentsNavCount = (s: Signals): number | null => {
   const n = signalList(s, 'intro.active').length;
   return n > 0 ? n : null;
 };
+
+export interface ExperimentProgress {
+  id: string;
+  label: string;
+  /** Day of the experiment today, 1-based, clamped to 1…of. */
+  day: number;
+  of: number;
+  /** day / of. */
+  fraction: number;
+}
+
+/** Today's margin "Experiment": each running experiment's day count, from `intro.active`. Pure. */
+export function experimentProgress(s: Signals, today: string): ExperimentProgress[] {
+  return signalList(s, 'intro.active').flatMap((v) => {
+    if (v === null || typeof v !== 'object' || Array.isArray(v)) return [];
+    const e = v as { readonly [k: string]: SignalValue };
+    const { id, label, start_day: start, end_day: end } = e;
+    if (typeof id !== 'string' || typeof label !== 'string' || typeof start !== 'string' || typeof end !== 'string') return [];
+    try {
+      const of = Math.max(1, daysBetween(start, end) + 1);
+      const day = Math.min(of, Math.max(1, daysBetween(start, today) + 1));
+      return [{ id, label, day, of, fraction: day / of }];
+    } catch {
+      return [];
+    }
+  });
+}
+
+/** Margin note visibility: an experiment is running. Pure. */
+export const experimentNoteVisible = (s: Signals): boolean => signalList(s, 'intro.active').length > 0;

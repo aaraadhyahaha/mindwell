@@ -26,7 +26,8 @@ export interface ScreenDef<C> {
   navCount?: (signals: Signals) => number | null;
 }
 
-export type TodaySlot = 'morning' | 'anytime' | 'evening';
+/** Where a Today card sits. `margin`: a short note in Today's "In the margin" column. */
+export type TodaySlot = 'morning' | 'anytime' | 'evening' | 'margin';
 
 /** Props the shell passes to every module Today card and review section component. */
 export interface ModuleViewProps {
@@ -43,6 +44,8 @@ export interface TodayCardDef<C> {
   component: C;
   /** Pure. */
   visible: (signals: Signals) => boolean;
+  /** Position within the slot, ascending (default 0); ties keep registry order. */
+  order?: number;
 }
 
 export interface ReviewSectionDef<C> {

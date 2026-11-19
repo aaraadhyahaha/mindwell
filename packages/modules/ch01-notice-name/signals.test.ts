@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Signals } from '@mindwell/core';
-import { ch01SignalValues, eveningCardVisible, thoughtsNavCount, type CaptureRow, type StoryRow } from './signals';
+import { ch01SignalValues, eveningCardVisible, storiesNoteVisible, storyBars, thoughtsNavCount, type CaptureRow, type StoryRow } from './signals';
 
 const DAY = '2026-11-19';
 const stories: StoryRow[] = [
@@ -234,5 +234,30 @@ describe('thoughtsNavCount', () => {
   });
   it('ignores malformed entries', () => {
     expect(thoughtsNavCount({ 'ch01.story_counts_7d': [{ id: 'a' }, 'x', 3], 'ch01.unlinked_7d': 2 })).toBe(2);
+  });
+});
+
+describe('storyBars', () => {
+  const s: Signals = {
+    'ch01.story_counts_7d': [
+      { id: 'a', name: "I'll fail", count: 4 },
+      { id: 'b', name: 'Not good enough', count: 2 },
+      { id: 'c', name: "Everyone's ahead of me", count: 1 },
+      { id: 'd', name: 'Fourth', count: 1 },
+    ],
+  };
+  it('keeps the top three, scaled to the top count', () => {
+    expect(storyBars(s)).toEqual([
+      { name: "I'll fail", count: 4, fraction: 1 },
+      { name: 'Not good enough', count: 2, fraction: 0.5 },
+      { name: "Everyone's ahead of me", count: 1, fraction: 0.25 },
+    ]);
+  });
+  it('drops malformed or empty rows', () => {
+    expect(storyBars({ 'ch01.story_counts_7d': [{ name: 'x', count: 0 }, { name: 3, count: 2 }, 'y'] })).toEqual([]);
+  });
+  it('drives the margin note', () => {
+    expect(storiesNoteVisible(s)).toBe(true);
+    expect(storiesNoteVisible({})).toBe(false);
   });
 });

@@ -28,7 +28,7 @@ One accent only, used for the primary action and focus rings. No other colours e
 - Body: Source Sans 3 15px / 1.5. Serif is set explicitly on titles, prompts, intentions, notes and numerals.
 - Section labels (`SectionLabel`): sans 11px, weight 600, uppercase, letter-spacing .14em, `--muted` (the book's small-caps look).
 
-**Space:** 4 px base; common steps 8 / 12 / 16 / 24 / 40 / 64. Reading column max 64ch, centred. Radius 6 px for cards and inputs, 999px only for pills.
+**Space and radii:** copy the mockup values (common steps 4 / 8 / 10 / 12 / 16 / 22 / 28 / 44 px). Radii: 999px pills and tags, 10px the segmented scale, 9px buttons, icon buttons and boxed inputs, 8px nav rows, 6px cards and TOC rows.
 
 ## Shell (every screen)
 
@@ -42,12 +42,29 @@ The window is opaque: `--bg` edge to edge, no transparency or blur. (On Hyprland
 
 ## Components (in `packages/ui/src/`, package `@mindwell/ui`)
 
-`Shell` · `Sidebar` · `NavLabel` · `NavItem` · `Toc` · `Toolbar` · `Icon` (mockup stroke icons) · `Kbd` · `Page` (column + chapter-opener header) · `SectionLabel` · `Card` (surface, 1px `--rule` border, no shadow) · `PromptCard` (serif text, useful / not-useful / show another) · `Field` (label + input/textarea) · `Scale` (1–5 or 0–100, tap or keyboard) · `Choice` (pills, single/multi) · `Button` (600 14px; primary = accent fill 44px / padding 22, secondary = surface + rule outline 38px / padding 16, quiet = accent text; radius 9; optional `href` and leading `icon`) · `WhySheet` (manifest drawer) · `LineChart` (thin 1.5px ink line, direct labels, no legend boxes).
+Shell: `Shell` · `Sidebar` · `NavLabel` · `NavItem` · `Toc` · `Toolbar` · `Icon` (mockup stroke icons) · `Kbd`.
+
+Page and content (values copied from `today.html`):
+- `Page`: content under the toolbar, padding 52/64/72. Chapter opener: label (11px/600 uppercase .14em muted) → title Tinos 42px/1.12, -0.015em, 10px above → optional lede Tinos italic 18px muted, max 560px → 48px 1px ink rule (28px above, 40px below). With `margin`, a two-column grid: main `minmax(0, 660px)` + 280px margin, 80px gap, centred; the margin column has a 1px left rule, 32px padding and an "In the margin" label. Below 1220px window width the margin moves under the main column.
+- `Step`: italic roman numeral (Tinos 16px, accent) + Tinos 20px heading; 44px below each step.
+- `Choice`: pills 38px, radius 999, surface + rule, 500 14px; selected = accent-soft fill, accent border and text, 600. 16px below the heading. `labelledby` hides the built-in label when a `Step` names it.
+- `Scale` (1–5): one segmented control, max 400px, radius 10, 44px cells in Tinos 17px split by rules; selected = accent fill. End labels Tinos italic 12.5px muted. `labelledby` as for `Choice`.
+- `Field`: boxed (radius 9, surface) or `variant="line"`: Tinos 20px on a 1px ink underline, placeholder italic `--placeholder`; label in small caps, hint 12.5px muted.
+- `Ornament`: rule · four-point star · rule (36px below), between the check-in's basics and its prompts.
+- `Epigraph`: a set-off prompt in Tinos italic 23px/1.42, 28px indent, hanging accent quote mark (Tinos 56px); its source line 12.5px muted.
+- `PromptList` + `PromptCard`: ruled rows (1px rule above the list and under each row, 22px padding), columns 44px numeral (Tinos 30px accent) · Tinos 19px/1.45 text with a 12.5px source line · three 44px `IconButton`s (Useful ✓, Not useful ✕, Show another ↻); pressed = accent-soft fill + accent ring.
+- `IconButton`: 44px square, radius 9, 18px icon, `aria-label` required.
+- Margin: `MarginNote` (label and every paragraph in Tinos 15px/1.5; the label bold small caps .14em muted; `<p class="meta">` Tinos 12.5px muted; 30px apart) · `RatingDots` (11px dots, 1.25px ink ring, filled = ink) · `Tag` (600 11.5px pill, accent-soft) · `Meter` (3px rule track with accent fill; with `label`, an italic serif label and count above it).
+- Also: `SectionLabel` (11px/600 small caps) · `Card` (surface, 1px `--rule` border, no shadow; only for a focused side panel) · `Button` (600 14px; primary = accent fill 44px / padding 22, secondary = surface + rule outline 38px / padding 16, quiet = accent text; radius 9; optional `href` and leading `icon`) · `WhySheet` (manifest drawer) · `LineChart` (thin 1.5px ink line, direct labels, no legend boxes).
 
 ## Patterns
 
-- **Chapter opener** at the top of each module page: section label "CHAPTER 2", serif title 24px, a 40px thin rule.
-- **Prompts** are the visual centre of Today: serif 19px, generous space around them.
+- **Chapter opener** at the top of every page (`Page`): label → 42px serif title → italic lede → 48px rule.
+- **Two columns**: main column + margin column (`Page` with `margin`), or a two-up layout like Thoughts.
+- **Lists** are ruled rows (1px `--rule` between rows), not boxes inside boxes. Cards only for a focused side panel.
+- **Steps** are numbered with italic roman numerals (i., ii., iii.) in the accent colour.
+- **Dates** in words ("Today", "Yesterday", "Thursday, 19 November"), never ISO.
+- **Today** follows `today.html`: running head "Thursday, 19 November" + the part of the day; "Capture a thought" with its shortcut in the toolbar; steps i–iv; footer "Saved as you go." + the primary action; the margin column with Yesterday, module notes and Coming up.
 - **Empty states** explain what will appear and why, in one line ("Captured thoughts will gather here through the day.").
 - **Motion:** 150–200 ms fades only. No bounce, slide-ins, confetti, or celebration.
 - **Keyboard:** everything reachable without a mouse; the capture window opens focused and submits with Enter, closes with Esc.

@@ -139,6 +139,13 @@ async function shoot(browser, url, name, isApp) {
   const { page } = isApp ? await openApp(browser) : { page: await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 }) };
   await page.goto(url);
   await settle(page);
+  // The app's main column scrolls inside a 100vh shell: grow the window to its content so the
+  // shot shows the whole screen, like the mockup's full page.
+  const tall = await page.evaluate(() => Math.max(...[...document.querySelectorAll('main, .main')].map((m) => m.scrollHeight), 0));
+  if (tall > H) {
+    await page.setViewportSize({ width: W, height: tall });
+    await page.waitForTimeout(200);
+  }
   const file = join(out, `${name}.png`);
   await page.screenshot({ path: file, fullPage: true });
   console.log(file);

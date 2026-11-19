@@ -2,12 +2,12 @@
 
 ## Today page
 
-Three slots, filled top to bottom by time of day: **Morning**, **Anytime**, **Evening**. Core owns the morning check-in and evening close; modules add cards.
+Today shows one part of the day at a time (toolbar subtitle *Morning* / *During the day* / *Evening*): the **morning check-in** until it is done, then **the day** (intention, journal prompts, anytime cards), then the **evening close** from 17:00 or "Close now" (also when the morning was skipped). A right-hand **margin** column stays beside all three. Core owns the check-in and the close; modules add cards to the `morning`, `anytime`, `evening` and `margin` slots. Layout: `docs/design/mockups/today.html`.
 
 **Morning check-in** (target < 3 min)
 1. Day type, multi-select: `exam`, `heavy_study`, `stressful_event`, `social`, `light`, `busy_travel`.
 2. Energy 1–5.
-3. Context strip (read-only): yesterday's rating, intent result, top captured story, active series/events.
+3. The margin (read-only): yesterday's rating, intention and result; module margin notes (ch01 "Stories this week", intro "Experiment"); "Coming up" events.
 4. Intent prompt → user types one line (`days.intent_text`).
 5. Up to 3 journal prompts → user writes in the paper journal, then taps *useful* / *not useful* on each (optional).
 

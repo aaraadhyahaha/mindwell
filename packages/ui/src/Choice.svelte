@@ -4,11 +4,14 @@
     label,
     options,
     multiple = false,
+    labelledby,
     value = $bindable(null)
   }: {
     label: string;
     options: Option[];
     multiple?: boolean;
+    /** Id of a visible heading that names the group (e.g. a `Step` title); hides the built-in label. */
+    labelledby?: string;
     value?: string | string[] | null;
   } = $props();
   const uid = $props.id();
@@ -40,11 +43,11 @@
 </script>
 
 <div class="choice">
-  <span class="label" id="{uid}-label">{label}</span>
+  {#if !labelledby}<span class="label" id="{uid}-label">{label}</span>{/if}
   <div
     class="pills"
     role={multiple ? 'group' : 'radiogroup'}
-    aria-labelledby="{uid}-label"
+    aria-labelledby={labelledby ?? `${uid}-label`}
   >
     {#each options as o, i (o.value)}
       {#if multiple}
@@ -74,26 +77,27 @@
   .choice {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
   }
   .label {
-    font-family: var(--font-sans);
-    font-size: var(--text-14);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: var(--muted);
+    font-weight: 600;
   }
   .pills {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
+    gap: 8px;
+    margin-top: 16px;
   }
   .pill {
-    font-family: var(--font-sans);
-    font-size: var(--text-14);
-    line-height: var(--leading-body);
-    padding: var(--space-1) var(--space-4);
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 999px;
     border: 1px solid var(--rule);
-    border-radius: var(--radius-pill);
-    background: transparent;
+    background: var(--surface);
+    font: 500 14px var(--font-sans);
     color: var(--ink);
     cursor: pointer;
     transition:
@@ -107,5 +111,7 @@
   .pill[aria-checked='true'] {
     background: var(--accent-soft);
     border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 600;
   }
 </style>

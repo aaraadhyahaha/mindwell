@@ -1,11 +1,11 @@
 <script lang="ts">
   import {
-    Page, SectionLabel, Card, PromptCard, Field, Scale, Choice, Button, WhySheet, LineChart
+    Page, SectionLabel, Card, PromptCard, PromptList, Field, Scale, Choice, Button, WhySheet, LineChart
   } from '@mindwell/ui';
 
   let { theme }: { theme: 'day' | 'night' } = $props();
 
-  const tokens = ['--bg', '--surface', '--ink', '--muted', '--rule', '--accent', '--accent-soft'];
+  const tokens = ['--bg', '--side', '--surface', '--ink', '--muted', '--placeholder', '--rule', '--accent', '--accent-soft', '--on-accent'];
   const sizes = [12, 14, 16, 19, 24, 32];
   const spaces = [4, 8, 12, 16, 24, 40, 64];
 
@@ -130,10 +130,12 @@
     </section>
 
     <section>
-      <SectionLabel as="h2">PromptCard</SectionLabel>
-      <PromptCard text={prompt} bind:feedback={fb0} />
-      <PromptCard text={prompt} bind:feedback={fb1} />
-      <PromptCard text={prompt} bind:feedback={fb2} />
+      <SectionLabel as="h2">PromptList + PromptCard</SectionLabel>
+      <PromptList>
+        <PromptCard n={1} text={prompt} source="Chapter 1 · Notice and name" bind:feedback={fb0} />
+        <PromptCard n={2} text={prompt} bind:feedback={fb1} />
+        <PromptCard n={3} text={prompt} bind:feedback={fb2} />
+      </PromptList>
     </section>
 
     <section>

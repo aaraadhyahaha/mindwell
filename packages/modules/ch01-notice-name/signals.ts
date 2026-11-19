@@ -116,3 +116,25 @@ export const thoughtsNavCount = (s: Signals): number | null => {
   const total = linked + (signalNumber(s, 'ch01.unlinked_7d') ?? 0);
   return total > 0 ? total : null;
 };
+
+export interface StoryBar {
+  name: string;
+  count: number;
+  /** count / the week's top count, 0–1. */
+  fraction: number;
+}
+
+/** Today's margin "Stories this week": the top `limit` stories by captures in the last 7 days. Pure. */
+export function storyBars(s: Signals, limit = 3): StoryBar[] {
+  const rows = signalList(s, 'ch01.story_counts_7d').flatMap((v) => {
+    if (v === null || typeof v !== 'object' || Array.isArray(v)) return [];
+    const { name, count } = v as { readonly name?: SignalValue; readonly count?: SignalValue };
+    return typeof name === 'string' && typeof count === 'number' && count > 0 ? [{ name, count }] : [];
+  });
+  const top = rows.slice(0, limit);
+  const max = Math.max(0, ...top.map((r) => r.count));
+  return top.map((r) => ({ ...r, fraction: max > 0 ? r.count / max : 0 }));
+}
+
+/** Margin note visibility: some story was captured this week. Pure. */
+export const storiesNoteVisible = (s: Signals): boolean => storyBars(s).length > 0;

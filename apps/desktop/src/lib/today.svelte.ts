@@ -38,6 +38,8 @@ export interface ShownPrompt {
   rowId: string;
   text: string;
   feedback: Feedback | null;
+  /** Owning module id (`'core'` for core prompts), for the source line. */
+  module: string;
 }
 
 const EMPTY: Selection = { intent: null, journal: [] };
@@ -48,6 +50,8 @@ export class TodayState {
   store = $state.raw<Store | null>(null);
   signals = $state.raw<Signals>({});
   dayRow = $state.raw<DayRecord | null>(null);
+  /** Yesterday's day row, for the margin. */
+  yesterday = $state.raw<DayRecord | null>(null);
   context = $state.raw<string[]>([]);
   error = $state<string | null>(null);
   busy = $state(false);
@@ -149,6 +153,7 @@ export class TodayState {
 
   private async loadContext(store: Store): Promise<string[]> {
     const [y] = await store.list<DayRecord>(CORE_TABLES.days, { where: { day: addDays(this.day, -1) }, limit: 1 });
+    this.yesterday = y ?? null;
     return contextLines(this.signals, y ? { intent_text: y.intent_text, intent_result: y.intent_result } : null);
   }
 
@@ -266,20 +271,21 @@ export class TodayState {
 
   intentPrompt(slot: PromptSlot): ShownPrompt | null {
     const p = this.selections[slot].intent;
-    return p ? this.shown(slot, p.prompt.id, p.text) : null;
+    return p ? this.shown(slot, p.prompt.id, p.text, p.prompt.module) : null;
   }
 
   journalPrompts(slot: PromptSlot): ShownPrompt[] {
-    return this.selections[slot].journal.map((p) => this.shown(slot, p.prompt.id, p.text));
+    return this.selections[slot].journal.map((p) => this.shown(slot, p.prompt.id, p.text, p.prompt.module));
   }
 
-  private shown(slot: PromptSlot, promptId: string, text: string): ShownPrompt {
+  private shown(slot: PromptSlot, promptId: string, text: string, module: string): ShownPrompt {
     const row = this.rows[slot][promptId];
     return {
       promptId,
       rowId: row?.id ?? '',
       text,
       feedback: row?.feedback === 'useful' ? 'useful' : row?.feedback === 'not_useful' ? 'not-useful' : null,
+      module,
     };
   }
 
@@ -315,12 +321,14 @@ export class TodayState {
 
   // ---- Module cards ----
 
-  cards(slot: TodaySlot): { key: string; component: Component<{ store: Store; day: string; signals: Signals }> }[] {
-    return activation.active.flatMap((m) =>
-      m.todayCards
-        .filter((c) => c.slot === slot && safeVisible(c.visible, this.signals))
-        .map((c) => ({ key: `${m.manifest.id}.${c.id}`, component: c.component as Component<{ store: Store; day: string; signals: Signals }> })),
-    );
+  cards(slot: TodaySlot): { key: string; order: number; component: Component<{ store: Store; day: string; signals: Signals }> }[] {
+    return activation.active
+      .flatMap((m) =>
+        m.todayCards
+          .filter((c) => c.slot === slot && safeVisible(c.visible, this.signals))
+          .map((c) => ({ key: `${m.manifest.id}.${c.id}`, order: c.order ?? 0, component: c.component as Component<{ store: Store; day: string; signals: Signals }> })),
+      )
+      .sort((a, b) => a.order - b.order);
   }
 }
 

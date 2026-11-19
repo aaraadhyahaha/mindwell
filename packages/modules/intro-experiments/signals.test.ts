@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { experimentsNavCount, introSignalValues, midpoint } from './signals';
+import { experimentNoteVisible, experimentProgress, experimentsNavCount, introSignalValues, midpoint } from './signals';
 import type { CheckinRow, ExperimentRow } from './signals';
 
 function exp(over: Partial<ExperimentRow> & { id: string }): ExperimentRow {
@@ -253,5 +253,25 @@ describe('experimentsNavCount', () => {
   it('is null when none are running or the signal is missing', () => {
     expect(experimentsNavCount({ 'intro.active': [] })).toBeNull();
     expect(experimentsNavCount({})).toBeNull();
+  });
+});
+
+describe('experimentProgress', () => {
+  const entry = { id: 'e1', label: 'Notice and name daily', start_day: '2026-11-14', end_day: '2026-12-04' };
+  it('counts the day of a 21-day experiment', () => {
+    expect(experimentProgress({ 'intro.active': [entry] }, '2026-11-19')).toEqual([
+      { id: 'e1', label: 'Notice and name daily', day: 6, of: 21, fraction: 6 / 21 },
+    ]);
+  });
+  it('clamps before the start and after the end', () => {
+    expect(experimentProgress({ 'intro.active': [entry] }, '2026-11-10')[0]?.day).toBe(1);
+    expect(experimentProgress({ 'intro.active': [entry] }, '2026-12-20')[0]?.day).toBe(21);
+  });
+  it('skips malformed entries', () => {
+    expect(experimentProgress({ 'intro.active': [{ id: 'x' }, 'y', { ...entry, end_day: 'bad' }] }, '2026-11-19')).toEqual([]);
+  });
+  it('drives the margin note', () => {
+    expect(experimentNoteVisible({ 'intro.active': [entry] })).toBe(true);
+    expect(experimentNoteVisible({})).toBe(false);
   });
 });
