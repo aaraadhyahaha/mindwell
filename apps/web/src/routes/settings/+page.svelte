@@ -28,9 +28,7 @@
     exportMsg = '';
     const r = await exportRecords(format);
     exporting = false;
-    if (r.status === 'saved') exportMsg = `Saved to ${r.path}.`;
-    else if (r.status === 'unavailable') exportMsg = 'Export is not available yet.';
-    else if (r.status === 'error') exportMsg = 'Could not export. Please try again.';
+    exportMsg = r.status === 'saved' ? `Downloaded ${r.filename}.` : 'Could not export. Please try again.';
   }
 </script>
 
@@ -98,6 +96,7 @@
     <p class="muted">
       Everything you've recorded, as a file you keep. Markdown is easy to read; JSON is complete, including deleted
       records.
+      The file goes to your browser's downloads folder.
     </p>
     <div class="actions">
       <Button variant="secondary" disabled={exporting} onclick={() => void runExport('md')}>Export as Markdown</Button>

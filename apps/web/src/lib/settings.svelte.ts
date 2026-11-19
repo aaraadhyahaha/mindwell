@@ -13,6 +13,9 @@ export const SETTING_KEYS = {
   eveningOn: 'reminder.evening.on',
   theme: 'theme',
   sent: 'reminder.sent',
+  backupSince: 'backup.since',
+  lastExportAt: 'backup.last_export_at',
+  backupDismissedAt: 'backup.dismissed_at',
 } as const;
 
 const THEME_MIRROR_KEY = 'mindwell.theme';
@@ -39,6 +42,9 @@ export class SettingsState {
   eveningOn = $state(true);
   theme = $state<ThemePreference>('system');
   sent = $state.raw<ReminderSent>({ morning: null, evening: null });
+  backupSince = $state<string | null>(null);
+  lastExportAt = $state<string | null>(null);
+  backupDismissedAt = $state<string | null>(null);
   loaded = $state(false);
   error = $state<string | null>(null);
 
@@ -75,6 +81,17 @@ export class SettingsState {
       if (s && typeof s === 'object' && isDayOrNull(s.morning ?? null) && isDayOrNull(s.evening ?? null)) {
         this.sent = { morning: s.morning ?? null, evening: s.evening ?? null };
       }
+      const bs = get(SETTING_KEYS.backupSince);
+      if (typeof bs === 'string') this.backupSince = bs;
+      else {
+        const nowIso = new Date().toISOString();
+        this.backupSince = nowIso;
+        await this.save(SETTING_KEYS.backupSince, nowIso);
+      }
+      const le = get(SETTING_KEYS.lastExportAt);
+      if (typeof le === 'string') this.lastExportAt = le;
+      const bd = get(SETTING_KEYS.backupDismissedAt);
+      if (typeof bd === 'string') this.backupDismissedAt = bd;
       setTheme(this.theme);
       mirrorTheme(this.theme); // the Store value wins over any stale mirror
       this.loaded = true;
@@ -122,6 +139,11 @@ export class SettingsState {
     setTheme(p);
     mirrorTheme(p);
     return this.save(SETTING_KEYS.theme, p);
+  }
+  async dismissBackup(): Promise<boolean> {
+    const at = new Date().toISOString();
+    this.backupDismissedAt = at;
+    return this.save(SETTING_KEYS.backupDismissedAt, at);
   }
   async markSent(kind: 'morning' | 'evening', day: string): Promise<boolean> {
     this.sent = { ...this.sent, [kind]: day };

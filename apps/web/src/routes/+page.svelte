@@ -26,6 +26,10 @@
   import { moduleRunningHead } from '$lib/nav';
   import { activation } from '$lib/activation.svelte';
   import { capture } from '$lib/capture.svelte';
+  import { settings } from '$lib/settings.svelte';
+  import { backupDue } from '$lib/backup';
+  import { exportRecords } from '$lib/export';
+  import type { ExportFormat } from '$lib/export';
 
   const today = new TodayState();
   let now = $state(new Date());
@@ -79,6 +83,25 @@
     if (!m) return undefined;
     const h = moduleRunningHead(m.manifest);
     return `${h.head} · ${h.sub}`;
+  }
+
+  const showBackup = $derived(
+    settings.loaded &&
+      backupDue(now, {
+        since: settings.backupSince,
+        lastExportAt: settings.lastExportAt,
+        dismissedAt: settings.backupDismissedAt
+      })
+  );
+  let backupBusy = $state(false);
+  let backupError = $state(false);
+
+  async function backup(format: ExportFormat) {
+    backupBusy = true;
+    backupError = false;
+    const r = await exportRecords(format);
+    backupBusy = false;
+    backupError = r.status === 'error';
   }
 
   /** Once prompts are chosen, day type and energy save as they change. */
@@ -167,6 +190,20 @@
     </MarginNote>
   {/if}
   {@render cards('margin', 'after')}
+{/snippet}
+
+{#snippet backupCard()}
+  {#if showBackup}
+    <Step n="" title="Export a backup">
+      <p class="note">Your entries live only in this browser. Download a copy once a week, in case its data is cleared.</p>
+      <div class="foot-actions backup">
+        <Button disabled={backupBusy} onclick={() => void backup('json')}>Download JSON</Button>
+        <Button variant="secondary" disabled={backupBusy} onclick={() => void backup('md')}>Markdown</Button>
+        <Button variant="quiet" disabled={backupBusy} onclick={() => void settings.dismissBackup()}>Not now</Button>
+      </div>
+      {#if backupError}<p class="note" role="alert">Could not export. Please try again.</p>{/if}
+    </Step>
+  {/if}
 {/snippet}
 
 {#snippet beginActions()}
@@ -258,6 +295,7 @@
           <Step n="iv." title="For your journal">{@render journal('morning', morningJournal)}</Step>
         {/if}
         {@render foot('Saved as you go.', beginActions)}
+        {@render backupCard()}
       {:else}
         {@render foot(
           today.energy === null ? 'Choose your energy to continue.' : 'Next: one intention, and what to write about.',
@@ -280,6 +318,7 @@
     {/if}
     {@render cards('anytime')}
     {@render foot('Close the day here this evening.', dayActions)}
+    {@render backupCard()}
   </Page>
 {:else}
   <Page
@@ -325,6 +364,7 @@
             closedActions
           )}
         {/if}
+        {@render backupCard()}
       {/if}
     {/if}
   </Page>
@@ -369,6 +409,9 @@
     display: flex;
     align-items: center;
     gap: 10px;
+  }
+  .backup {
+    margin-top: 16px;
   }
   .note,
   .error {
