@@ -9,6 +9,7 @@
     "build": "pnpm --filter @mindwell/desktop tauri build"
   },
   "devDependencies": {
+    "playwright": "^1.65.1",
     "typescript": "~6.0.3",
     "vitest": "^5.1.1"
   }

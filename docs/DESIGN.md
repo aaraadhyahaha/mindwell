@@ -17,8 +17,9 @@ mindwell should feel like a companion to the book: calm, typographic, quiet. It 
 One accent only, used for the primary action and focus rings. No other colours except greys from these tokens. Follow the system light/dark setting, with a manual override.
 
 **Type** (fonts bundled in `packages/ui/src/fonts/`, OFL, never loaded from the web; the app imports `@mindwell/ui/fonts.css`, `/tokens.css` and `/base.css` once in `+layout.svelte`)
-- Serif: Literata (variable, OFL; opsz + wght axes, `font-optical-sizing: auto`) for titles, prompts, intent and reading text.
-- Sans: Source Sans 3 (variable, OFL) for small UI labels, buttons, numbers.
+- Serif: Tinos (OFL; static Regular, Bold, Italic, Bold Italic; metric-compatible with Times New Roman) for every serif element, including the `mindwell` wordmark. Stack: `'Tinos', 'Times New Roman', serif`. Only weights 400 and 700 exist; never ask for 500/600 in serif.
+- Sans: Source Sans 3 (variable, OFL; 400/500/600/700) for UI text, labels, buttons, numbers.
+- In `pnpm dev` the fonts are fetched from `packages/ui` by URL, so `apps/desktop/vite.config.js` allows `packages/` in `server.fs.allow`. Check with `node scripts/design-shots.mjs fonts <path> <selector>` that the rendered font is the bundled file, not a system fallback.
 - Scale (px): 12 · 14 · 16 (body) · 19 · 24 · 32. Line height 1.5 body, 1.25 headings.
 - Section labels: sans, 12 px, uppercase, letter-spacing 0.12em, `--muted` (the book's small-caps look).
 

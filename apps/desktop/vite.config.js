@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 const host = process.env.TAURI_DEV_HOST;
 
 /**
@@ -49,6 +50,12 @@ export default defineConfig(() => ({
     watch: {
       // 3. tell Vite to ignore watching `src-tauri`
       ignored: ["**/src-tauri/**"],
+    },
+    // 4. SvelteKit narrows the dev server's file access to this app. Workspace packages are
+    //    consumed as source, and their assets (the bundled fonts in packages/ui) are fetched
+    //    by URL, so allow packages/ too; without it every font 403s and falls back to the system.
+    fs: {
+      allow: [fileURLToPath(new URL("../../packages", import.meta.url))],
     },
   },
 }));
