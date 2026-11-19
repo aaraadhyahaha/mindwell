@@ -13,8 +13,8 @@ Three slots, filled top to bottom by time of day: **Morning**, **Anytime**, **Ev
 
 **Evening close** (target < 3 min)
 1. Show the morning intent → kept / partly / not.
-2. Day rating 1–5.
-3. Module evening cards (e.g. today's captures).
+2. Module evening cards (e.g. today's captures).
+3. Day rating 1–5.
 4. Optional: one evening reflection prompt.
 
 ## Prompt definition

@@ -138,45 +138,44 @@
           <p class="muted">Close the day here this evening.</p>
           <Button variant="quiet" onclick={() => (today.eveningRevealed = true)}>Close now</Button>
         </div>
-      {:else if today.eveningStage === 'basics'}
-        <div class="stack">
-          {#if hasIntentText}
-            <p class="intent">{today.dayRow?.intent_text}</p>
-            <Choice
-              label="Did you keep it?"
-              options={resultOptions}
-              bind:value={() => today.intentResult, (v) => (today.intentResult = v === 'kept' || v === 'partly' || v === 'not' ? v : null)}
-            />
-          {:else}
-            <p class="muted">No intent set this morning.</p>
-          {/if}
-          <Scale label="How was the day?" mode="1-5" bind:value={today.rating} />
-          <div class="row">
-            <Button onclick={() => void today.saveEveningBasics()}>Continue</Button>
-            {#if today.eveningEditing}
-              <Button variant="quiet" onclick={() => (today.eveningEditing = false)}>Cancel</Button>
-            {/if}
-          </div>
-        </div>
-      {:else if today.eveningStage === 'finish'}
-        <div class="stack">
-          {@render cards('evening')}
-          {#if eveningReflection}{@render prompt('evening', eveningReflection)}{/if}
-          <div class="row">
-            <Button onclick={() => void today.closeDay()}>Close the day</Button>
-            <Button variant="quiet" onclick={() => (today.eveningEditing = true)}>Edit</Button>
-          </div>
-        </div>
       {:else}
         <div class="stack">
-          <p class="muted">
-            Closed.{#if today.dayRow?.intent_result}
-              Intent: {intentResultLabel(today.dayRow.intent_result)} ·{/if}
-            Day: {today.dayRow?.rating ?? 'not rated'}{today.dayRow?.rating ? ' of 5' : ''}
-          </p>
+          {#if today.eveningStage === 'basics'}
+            {#if hasIntentText}
+              <p class="intent">{today.dayRow?.intent_text}</p>
+              <Choice
+                label="Did you keep it?"
+                options={resultOptions}
+                bind:value={() => today.intentResult, (v) => (today.intentResult = v === 'kept' || v === 'partly' || v === 'not' ? v : null)}
+              />
+            {:else}
+              <p class="muted">No intent set this morning.</p>
+            {/if}
+          {/if}
           {@render cards('evening')}
-          {#if eveningReflection}{@render prompt('evening', eveningReflection)}{/if}
-          <div class="row"><Button variant="quiet" onclick={() => (today.eveningEditing = true)}>Edit</Button></div>
+          {#if today.eveningStage === 'basics'}
+            <Scale label="How was the day?" mode="1-5" bind:value={today.rating} />
+            <div class="row">
+              <Button onclick={() => void today.saveEveningBasics()}>Continue</Button>
+              {#if today.eveningEditing}
+                <Button variant="quiet" onclick={() => (today.eveningEditing = false)}>Cancel</Button>
+              {/if}
+            </div>
+          {:else if today.eveningStage === 'finish'}
+            {#if eveningReflection}{@render prompt('evening', eveningReflection)}{/if}
+            <div class="row">
+              <Button onclick={() => void today.closeDay()}>Close the day</Button>
+              <Button variant="quiet" onclick={() => (today.eveningEditing = true)}>Edit</Button>
+            </div>
+          {:else}
+            <p class="muted">
+              Closed.{#if today.dayRow?.intent_result}
+                Intent: {intentResultLabel(today.dayRow.intent_result)} ·{/if}
+              Day: {today.dayRow?.rating ?? 'not rated'}{today.dayRow?.rating ? ' of 5' : ''}
+            </p>
+            {#if eveningReflection}{@render prompt('evening', eveningReflection)}{/if}
+            <div class="row"><Button variant="quiet" onclick={() => (today.eveningEditing = true)}>Edit</Button></div>
+          {/if}
         </div>
       {/if}
     </section>
