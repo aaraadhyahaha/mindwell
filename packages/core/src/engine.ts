@@ -185,7 +185,7 @@ export function showAnother(
   const otherTechniques = new Set(onScreen.filter((p) => p !== replaced).map((p) => p.prompt.technique));
   const kind = replaced.prompt.kind;
   const next = candidates(input, kind).find(
-    (c) => !exclude.has(c.prompt.id) && (kind === 'intent' || !otherTechniques.has(c.prompt.technique)),
+    (c) => !exclude.has(c.prompt.id) && !otherTechniques.has(c.prompt.technique),
   );
   if (!next) return null;
 
