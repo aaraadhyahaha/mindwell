@@ -3,8 +3,10 @@
 *::after {
   box-sizing: border-box;
 }
+/* The window is opaque: the page paints a solid background edge to edge (no transparency or blur). */
 html {
   -webkit-text-size-adjust: 100%;
+  background: var(--bg);
 }
 body {
   margin: 0;

@@ -16,7 +16,8 @@
         "title": "mindwell",
         "visible": false,
         "width": 1000,
-        "height": 720
+        "height": 720,
+        "transparent": false
       }
     ],
     "security": {
