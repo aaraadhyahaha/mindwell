@@ -1,0 +1,25 @@
+{
+  "name": "@mindwell/module-ch01",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "check": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings"
+  },
+  "dependencies": {
+    "@mindwell/core": "workspace:*",
+    "@mindwell/ui": "workspace:*"
+  },
+  "peerDependencies": {
+    "svelte": "^5.56.3"
+  },
+  "devDependencies": {
+    "svelte": "^5.56.3",
+    "@mindwell/storage-sqlite": "workspace:*",
+    "svelte-check": "^4.7.8",
+    "typescript": "~6.0.3"
+  }
+}
