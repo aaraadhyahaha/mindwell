@@ -18,6 +18,8 @@ Build in phases. Use each phase for 1–2 weeks before the next. Tags say who do
 - [ ] [main] Phase check: daily loop works end to end with a dummy module; check-in and close each < 3 min.
 
 ## Phase 1 — Introduction + Chapter 1 → `docs/modules/intro.md`, `docs/modules/ch01.md`
+
+- [x] Both modules built and registered (2026-11-19). Capture timing and tray capture still to check by hand.
 ## Phase 2 — Chapter 2 → `docs/modules/ch02.md`
 ## Phase 3 — Chapter 3 → `docs/modules/ch03.md`
 

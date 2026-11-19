@@ -45,15 +45,15 @@
 None of its own.
 
 ## Acceptance checks
-- [ ] Cannot start a 4th active experiment; message explains why (focus).
-- [ ] Ending day shows the verdict card; verdict stored; extend moves `end_day`.
-- [ ] Inactive module's techniques are not offered.
+- [x] Cannot start a 4th active experiment; message explains why (focus).
+- [x] Ending day shows the verdict card; verdict stored; extend moves `end_day`.
+- [x] Inactive module's techniques are not offered.
 
 ## Build checklist
-- [ ] [builder] migrations + schema + repo
-- [ ] [tester] signals, prompt conditions, suggestions
-- [ ] [builder] screen, Today card, review section
-- [ ] [main] register, end-to-end check
+- [x] [builder] migrations + schema + repo
+- [x] [tester] signals, prompt conditions, suggestions
+- [x] [builder] screen, Today card, review section
+- [x] [main] register, end-to-end check
 
 ## Implementation notes
 Decisions made while building Phase 1. Where these notes add to the tables above, they win.

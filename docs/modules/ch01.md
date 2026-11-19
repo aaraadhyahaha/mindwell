@@ -51,16 +51,16 @@
 | `notice_name` | Notice and name daily | 21 |
 
 ## Acceptance checks
-- [ ] Shortcut opens capture in < 300 ms with the input focused; Enter saves, Esc closes.
-- [ ] Capture works when the main window is closed (app in tray).
-- [ ] Story suggestion never auto-links without confirmation.
+- [ ] (verify by hand) Shortcut opens capture in < 300 ms with the input focused; Enter saves, Esc closes.
+- [ ] (verify by hand) Capture works when the main window is closed (app in tray).
+- [x] Story suggestion never auto-links without confirmation.
 
 ## Build checklist
-- [ ] [builder] migrations + schema + repo + story-match helper (word overlap)
-- [ ] [tester] signals, conditions, suggestions, story-match helper
-- [ ] [builder] capture window + global shortcut (Rust: register shortcut, show window)
-- [ ] [builder] screen, Today cards, review section
-- [ ] [main] register, end-to-end check
+- [x] [builder] migrations + schema + repo + story-match helper (word overlap)
+- [x] [tester] signals, conditions, suggestions, story-match helper
+- [x] [builder] capture window + global shortcut (Rust: register shortcut, show window)
+- [x] [builder] screen, Today cards, review section
+- [x] [main] register, end-to-end check
 
 ## Implementation notes
 Decisions made while building Phase 1. Where these notes add to the tables above, they win.

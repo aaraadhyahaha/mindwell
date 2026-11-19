@@ -20,6 +20,9 @@ importers:
       '@mindwell/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@mindwell/module-ch01':
+        specifier: workspace:*
+        version: link:../../packages/modules/ch01-notice-name
       '@mindwell/module-dev-test':
         specifier: workspace:*
         version: link:../../packages/modules/dev-test
