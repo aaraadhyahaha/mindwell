@@ -10,6 +10,17 @@ export interface StoryRow {
 export interface CaptureRow {
   story_id: string | null;
   day: string;
+  /** Present on stored rows; needed only for `captures_recent`. */
+  id?: string;
+  text?: string;
+}
+
+/** One entry of `ch01.captures_recent`: lets other modules start from a capture by id. */
+export interface RecentCapture {
+  id: string;
+  text: string;
+  story_id: string | null;
+  day: string;
 }
 
 export interface StoryCount {
@@ -26,6 +37,10 @@ export interface Ch01SignalValues {
   repeating_story: { id: string; name: string; days: number } | null;
   unlinked_7d: number;
   story_fortnights: { id: string; name: string; current: number; previous: number }[];
+  /** Every live story (archived too), by name: for other modules that store a story_id. */
+  stories: StoryRow[];
+  /** Captures in the last 7 days, newest day first. */
+  captures_recent: RecentCapture[];
 }
 
 const inRange = (d: string, from: string, to: string) => d >= from && d <= to;
@@ -74,6 +89,10 @@ export function ch01SignalValues(stories: readonly StoryRow[], captures: readonl
     repeating_story: repeating[0] ?? null,
     unlinked_7d: week.filter((c) => c.story_id === null).length,
     story_fortnights,
+    stories: stories.map((s) => ({ id: s.id, name: s.name })).sort((a, b) => a.name.localeCompare(b.name)),
+    captures_recent: week
+      .flatMap((c) => (c.id !== undefined && c.text !== undefined ? [{ id: c.id, text: c.text, story_id: c.story_id, day: c.day }] : []))
+      .sort((a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : 0)),
   };
 }
 
@@ -102,6 +121,8 @@ export const signals: SignalDef[] = [
   def('repeating_story'),
   def('unlinked_7d'),
   def('story_fortnights'),
+  def('stories'),
+  def('captures_recent'),
 ];
 
 /** Evening card visibility: something was captured today. Pure. */

@@ -27,7 +27,7 @@ export const module: Module = {
 | `screens` | Svelte components under `ui/`. Routes are mounted under `/m/<id>/...` by the shell (`path: ''` is `/m/<id>`). The component receives `ModuleViewProps` (`day` = today, `signals` = a fresh snapshot). An `inNav` screen may set `icon` (a `@mindwell/ui` `Icon` name for its sidebar row) and `navCount(signals)` (pure; the number shown beside the row, or null). |
 | `todayCards` | Small cards on Today. `visible(signals)` is pure. The component receives `ModuleViewProps` (`{ store, day, signals }`). `margin` cards are short notes in Today's margin column, built from `MarginNote` (label + serif lines); `order` sorts within a slot (core's "Coming up" sits at 30). |
 | `prompts` | See PROMPTS.md for fields. Each prompt's `module` = this module's id. |
-| `signals` | `{ key: '<id>.<name>', compute(ctx): Promise<value> }`. `compute` reads via `ctx.store` only. Keys are namespaced by module id. |
+| `signals` | `{ key: '<id>.<name>', compute(ctx): Promise<value> }`. `compute` reads its own tables via `ctx.store`, and other modules' data via `ctx.signals` (core's signals plus every key computed before it: modules compute in registry order, so a module reads only modules registered earlier). Keys are namespaced by module id. |
 | `reviewSections` | Read data via Store/signals. Writes only to the module's own tables (e.g. a weekly check-in); suggestions are accepted through core. The component receives `ModuleViewProps` (`day` = last day of the week). |
 | `suggestions` | `{ id, evaluate(signals, ctx) => Suggestion | null }`. Pure over its inputs; tested. |
 | `experiments` | Techniques the Introduction module can run as trials. Reach intro through core's `experiments.available` signal (active modules only). |

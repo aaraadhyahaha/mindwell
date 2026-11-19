@@ -21,7 +21,23 @@ describe('ch01SignalValues: basics', () => {
       repeating_story: null,
       unlinked_7d: 0,
       story_fortnights: [],
+      stories: [],
+      captures_recent: [],
     });
+  });
+
+  it('publishes stories by name and the last 7 days of captures, newest day first', () => {
+    const captures: CaptureRow[] = [
+      { id: 'c1', text: 'old', story_id: 's1', day: '2026-11-12' },
+      { id: 'c2', text: 'mid', story_id: null, day: '2026-11-15' },
+      { id: 'c3', text: 'new', story_id: 's2', day: DAY },
+    ];
+    const v = ch01SignalValues(stories, captures, DAY);
+    expect(v.stories.map((s) => s.name)).toEqual(['family', 'money worries', 'work deadline']);
+    expect(v.captures_recent).toEqual([
+      { id: 'c3', text: 'new', story_id: 's2', day: DAY },
+      { id: 'c2', text: 'mid', story_id: null, day: '2026-11-15' },
+    ]);
   });
 
   it('counts captures_today and captures_yesterday by exact day, linked or not', () => {

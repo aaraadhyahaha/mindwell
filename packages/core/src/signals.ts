@@ -137,6 +137,8 @@ export interface SignalsSnapshot {
  * Call it after the morning check-in's day types and energy are saved (and,
  * in the evening, after the day rating), since core's `day.*` signals read the
  * `days` row. A module signal that throws is left out and reported in `failed`.
+ * Modules compute in registry order; each `compute` sees core's signals and the
+ * keys computed before it in `ctx.signals`.
  */
 export async function buildSignals(opts: BuildSignalsOptions): Promise<SignalsSnapshot> {
   const { store, day, active } = opts;
@@ -149,12 +151,23 @@ export async function buildSignals(opts: BuildSignalsOptions): Promise<SignalsSn
     opts.chapters ? Promise.resolve(opts.chapters) : readChapters(store),
   ]);
 
+  const coreInput = {
+    today: todayRows[0] ?? null,
+    yesterday: yesterdayRows[0] ?? null,
+    userName: parseName(nameRows[0]?.value),
+    recentlyUnlocked: recentlyUnlocked(active, chapters, day),
+    chaptersRead: chaptersReadSignal(active, chapters),
+    experimentsAvailable: experimentsSignal(active),
+  };
+  // Core first (without upcoming_events), so module signals can read it and earlier modules' keys.
+  const baseCore = coreSignals({ ...coreInput, upcomingEvents: [] });
+
   const moduleSignals: Record<string, SignalValue> = {};
   const failed: SignalsSnapshot['failed'] = [];
   for (const m of active) {
     for (const def of m.signals) {
       try {
-        moduleSignals[def.key] = await def.compute({ store, day, now });
+        moduleSignals[def.key] = await def.compute({ store, day, now, signals: { ...moduleSignals, ...baseCore } });
       } catch (error) {
         failed.push({ key: def.key, error });
       }
@@ -165,15 +178,7 @@ export async function buildSignals(opts: BuildSignalsOptions): Promise<SignalsSn
     .filter(([key, v]) => key.endsWith(UPCOMING_EVENTS_SUFFIX) && Array.isArray(v))
     .flatMap(([, v]) => v as readonly SignalValue[]);
 
-  const core = coreSignals({
-    today: todayRows[0] ?? null,
-    yesterday: yesterdayRows[0] ?? null,
-    userName: parseName(nameRows[0]?.value),
-    recentlyUnlocked: recentlyUnlocked(active, chapters, day),
-    upcomingEvents,
-    chaptersRead: chaptersReadSignal(active, chapters),
-    experimentsAvailable: experimentsSignal(active),
-  });
+  const core = coreSignals({ ...coreInput, upcomingEvents });
 
   return { signals: { ...moduleSignals, ...core }, failed };
 }

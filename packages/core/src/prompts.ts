@@ -22,6 +22,13 @@ export interface SignalContext {
   day: string;
   /** ISO 8601 UTC time the snapshot is taken. */
   now: string;
+  /**
+   * Signals computed before this one: core's (except `upcoming_events`, which is
+   * gathered from modules afterwards) plus those of modules earlier in the registry.
+   * A module may read another module's published signal here; an inactive or
+   * later module's key is absent, so treat it as undefined.
+   */
+  signals: Signals;
 }
 
 export interface SignalDef {

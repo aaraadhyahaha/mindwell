@@ -16,7 +16,7 @@
 | `ch01_captures` | `text`, `story_id` (nullable), `intensity` (1–5, nullable), `captured_at`, `day` | |
 
 ## Screens and Today cards
-- Capture screen (a small card at `/m/ch01/capture`, opened by `/#capture`, `N` or Today).
+- Capture screen `/m/ch01/capture`, opened by `/#capture` or `N`.
 - Screen `/m/ch01`: stories list (count last 7 / 30 days, trend), capture history by day.
 - "Capture a thought" + shortcut hint: the Today toolbar's action (the app shell shows it while ch01 is active; it replaced the anytime card).
 - Today margin note (`margin` slot, order 20), visible when a story was captured this week: "Stories this week", the top 3 stories with counts and bars (`storyBars`).
@@ -30,6 +30,8 @@
 | `ch01.top_story_7d` | `{id, name, count} \| null` | most-captured story in last 7 days |
 | `ch01.story_counts_7d` | `{id, name, count}[]` | for other modules' conditions |
 | `ch01.repeating_story` | `{id, name, days} \| null` | a story captured on ≥ 5 of the last 7 days |
+| `ch01.stories` | `{id, name}[]` | every live story (archived too), by name; for modules that store a `story_id` |
+| `ch01.captures_recent` | `{id, text, story_id, day}[]` | captures in the last 7 days, newest first; for modules started from a capture |
 
 ## Prompts
 | id | kind | when | technique | text | condition | cooldown |
@@ -70,9 +72,9 @@ Decisions made while building Phase 1. Where these notes add to the tables above
 - **Package:** `packages/modules/ch01-notice-name/`, name `@mindwell/module-ch01`, id `ch01`, chapter 1.
 - **Screens:**
   - `path: ''` is "Thoughts" (`inNav: true`).
-  - `path: 'capture'` is "Capture" (`inNav: false`). It is the capture form, and the capture screen is it.
-  - The Today toolbar's "Capture a thought" links to `/m/ch01/capture` in the app.
-- **Leaving capture:** When the capture form is done (saved, or Esc), it dispatches `window.dispatchEvent(new CustomEvent('mindwell:done'))`. The shell handles it by going back to Today.
+  - `path: 'capture'` is "Capture" (`inNav: false`). It is the capture form.
+  - The Today toolbar's "Capture a thought" links to `/m/ch01/capture` in the main window.
+- **Leaving capture:** When the capture form is done (saved, or Esc), it dispatches `window.dispatchEvent(new CustomEvent('mindwell:done'))`. The shell handles it: in a tab opened by `/#capture` it tries `window.close()` and otherwise goes to Today; elsewhere it goes to Today.
 - **Capture flow:**
   1. The input is focused on mount. Intensity 1–5 is optional (keys 1–5 while the text is empty, or click).
   2. Enter saves. If the story matcher finds a match, one line appears: "Link to '{story}'?" with **Link** (Enter), **Other story** (a select) and **New story** (a name field). Esc leaves the capture unlinked and closes.
@@ -81,7 +83,13 @@ Decisions made while building Phase 1. Where these notes add to the tables above
   - Words are lowercased, split on non-letters, keeping words of ≥ 3 letters minus a small stopword list.
   - A story's score is the number of distinct words the new text shares with the story's name plus its past captures' texts. Archived stories are skipped.
   - The best score ≥ 1 wins. A tie goes to the story with the most recent capture.
-- **Triggers:** see the Triggers note in `docs/modules/ch01.md`; the app shell opens capture, not this module.
+- **Opening capture:**
+  - `/#capture` (any path with that hash): the shell opens `/m/ch01/capture` with `replaceState`, input focused. Capture is a browser tab; the 560×240 card sits in the page.
+  - In-app key `N` (no Ctrl/Alt/Meta, not in a text field; `isCaptureKey` in `apps/web/src/lib/capture-key.ts`) opens capture anywhere in the app. The "Capture a thought" buttons show it.
+- **Triggers:**
+  - The OS trigger is a compositor or desktop binding that opens the URL. Settings shows it with the page's real origin, e.g. Hyprland `bind = SUPER SHIFT, N, exec, xdg-open http://localhost:5173/#capture` (dev; the deployed origin in production), or `xdg-open <origin>/#capture` for other desktops.
+  - With a mindwell tab already open, the new tab saves through the leader tab; the open tab shows the capture after focus.
+  - The `capture.shortcut` setting is no longer used.
 - **Extra signals:**
   - `ch01.captures_today` (number) sets the evening card's visibility.
   - `ch01.unlinked_7d` (number) feeds `ch01.unlinked`.
