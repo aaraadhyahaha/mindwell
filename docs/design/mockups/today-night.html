@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>mindwell mockup: Today (night)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&amp;family=Schibsted+Grotesk:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+.mw{--bg:#F5F0E6;--side:#ECE5D6;--surface:#FBF8F2;--ink:#1F1B16;--muted:#655D52;--rule:#D9D0C1;--accent:#3E5C58;--soft:#E3EAE6;--on-accent:#FBF8F2;--placeholder:#8C8376;--leader:#B9AE9C;font-family:'Schibsted Grotesk',system-ui,sans-serif;color:var(--ink);background:var(--bg);display:grid;grid-template-columns:252px 1fr;min-height:900px;font-size:15px;line-height:1.5}
+.mw *{box-sizing:border-box}
+.serif{font-family:'Tinos','Times New Roman',serif}
+.side{background:var(--side);border-right:1px solid var(--rule);display:flex;flex-direction:column;padding:22px 12px 14px}
+.brand{padding:2px 12px 18px;border-bottom:1px solid var(--rule);margin:0 0 6px}
+.brand b{font-family:'Tinos','Times New Roman',serif;font-style:italic;font-weight:400;font-size:24px;display:block;letter-spacing:-0.01em;line-height:1.2}
+.brand span{font-size:12px;color:var(--muted);font-family:'Tinos','Times New Roman',serif;font-style:italic}
+.sec{font-size:12px;color:var(--muted);padding:16px 12px 6px;font-weight:600;margin:0}
+.nav{display:flex;align-items:center;gap:11px;height:36px;padding:0 12px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:14.5px;font-weight:500}
+.nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;color:var(--muted);flex:none}
+.nav.on{background:var(--soft);color:var(--accent);font-weight:600}
+.nav.on svg{color:var(--accent)}
+.nav .count{margin-left:auto;font-size:12px;color:var(--muted);font-weight:500}
+.toc{list-style:none;margin:2px 0 0;padding:0}
+.toc a{display:flex;gap:10px;align-items:baseline;padding:4px 12px;font-size:13.5px;color:var(--muted);text-decoration:none;border-radius:6px}
+.toc a i{font-family:'Tinos','Times New Roman',serif;font-style:normal;width:18px;text-align:right;font-size:13px;flex:none}
+.toc a.read{color:var(--ink)}
+.toc a.read::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);margin-left:auto;align-self:center}
+.side .spacer{flex:1}
+.main{display:flex;flex-direction:column;min-width:0}
+.bar{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:1px solid var(--rule);gap:16px}
+.runhead{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.runhead em{font-family:'Tinos','Times New Roman',serif;font-style:italic;text-transform:none;letter-spacing:0;font-size:14px;font-weight:400;margin-left:10px}
+.btn{font:600 14px/1 'Schibsted Grotesk',sans-serif;height:38px;padding:0 16px;border-radius:9px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);display:inline-flex;align-items:center;gap:10px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);height:44px;padding:0 22px}
+.btn.quiet{background:none;border-color:transparent;color:var(--accent);padding:0 8px}
+.kbd{font:500 11.5px/1 'Schibsted Grotesk',sans-serif;color:var(--muted);border:1px solid var(--rule);border-radius:5px;padding:4px 6px;background:var(--bg)}
+.label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0}
+h1.title{font-family:'Tinos','Times New Roman',serif;font-weight:400;font-size:42px;line-height:1.12;margin:10px 0 0;letter-spacing:-0.015em}
+.lede{font-family:'Tinos','Times New Roman',serif;font-style:italic;color:var(--muted);font-size:18px;line-height:1.5;margin:12px 0 0;max-width:560px}
+.opener-rule{width:48px;border:0;border-top:1px solid var(--ink);margin:28px 0 40px}
+.ornament{display:flex;align-items:center;gap:14px;color:var(--rule);margin:8px 0 36px}
+.ornament::before,.ornament::after{content:"";flex:1;border-top:1px solid var(--rule)}
+.ornament svg{width:14px;height:14px;fill:var(--muted)}
+.margin{border-left:1px solid var(--rule);padding-left:32px}
+.mnote{margin:0 0 30px}
+.mnote p{font-family:'Tinos','Times New Roman',serif;font-size:15px;line-height:1.5;margin:6px 0 0}
+.mnote .meta{font-size:12.5px;color:var(--muted);margin-top:4px}
+.tag{display:inline-block;font:600 11.5px/1 'Schibsted Grotesk',sans-serif;padding:4px 8px;border-radius:999px;background:var(--soft);color:var(--accent);vertical-align:2px}
+
+.mw.night{--bg:#1A1815;--side:#14120F;--surface:#221F1B;--ink:#E8E0D2;--muted:#A0968A;--rule:#3A352E;--accent:#8FB3AC;--soft:#2C3A37;--on-accent:#1A1815;--placeholder:#857B6E;--leader:#5A5248}
+
+.page{display:grid;grid-template-columns:minmax(0,660px) 280px;gap:80px;padding:52px 64px 72px;justify-content:center}
+.step{margin:0 0 44px}
+.step-head{display:flex;align-items:baseline;gap:12px}
+.step-head .n{font-family:'Tinos','Times New Roman',serif;font-style:italic;color:var(--accent);font-size:16px}
+.step-head h2{font-family:'Tinos','Times New Roman',serif;font-weight:400;font-size:20px;margin:0}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.pill{height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--rule);background:var(--surface);font:500 14px 'Schibsted Grotesk',sans-serif;color:var(--ink);cursor:pointer}
+.pill.on{background:var(--soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.seg{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--rule);border-radius:10px;background:var(--surface);overflow:hidden;max-width:400px;margin-top:16px}
+.seg button{height:44px;border:0;border-right:1px solid var(--rule);background:none;font:400 17px 'Tinos','Times New Roman',serif;color:var(--ink);cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--accent);color:var(--on-accent)}
+.ends{display:flex;justify-content:space-between;max-width:400px;font-size:12.5px;color:var(--muted);margin-top:8px;font-family:'Tinos','Times New Roman',serif;font-style:italic}
+.epigraph{margin:18px 0 0;padding:0 0 0 28px;position:relative}
+.epigraph::before{content:"\201C";position:absolute;left:-4px;top:-14px;font:400 56px/1 'Tinos','Times New Roman',serif;color:var(--accent)}
+.epigraph p{font-family:'Tinos','Times New Roman',serif;font-style:italic;font-size:23px;line-height:1.42;margin:0}
+.src{font-size:12.5px;color:var(--muted);margin:10px 0 0}
+.lineinput{display:block;width:100%;border:0;border-bottom:1px solid var(--ink);background:transparent;font:400 20px 'Tinos','Times New Roman',serif;padding:12px 0 10px;margin-top:26px;color:var(--ink);outline:none}
+.lineinput::placeholder{color:var(--placeholder);font-style:italic}
+.hint{font-size:12.5px;color:var(--muted);margin-top:8px}
+.prompts{list-style:none;margin:18px 0 0;padding:0;border-top:1px solid var(--rule)}
+.prompts li{display:grid;grid-template-columns:44px 1fr auto;gap:12px;padding:22px 0;border-bottom:1px solid var(--rule);align-items:start}
+.num{font-family:'Tinos','Times New Roman',serif;font-size:30px;line-height:1;color:var(--accent);font-weight:400}
+.ptext{font-family:'Tinos','Times New Roman',serif;font-size:19px;line-height:1.45;margin:0}
+.acts{display:flex;gap:2px;margin-top:-6px}
+.ib{width:44px;height:44px;border-radius:9px;border:1px solid transparent;background:none;display:grid;place-items:center;color:var(--muted);cursor:pointer}
+.ib svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ib.on{background:var(--soft);color:var(--accent);border-color:var(--accent)}
+.foot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.foot span{font-size:13px;color:var(--muted)}
+.dots{display:flex;gap:6px;margin-top:8px}
+.dot{width:11px;height:11px;border-radius:50%;border:1.25px solid var(--ink)}
+.dot.f{background:var(--ink)}
+.story{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;margin-top:10px}
+.story b{font-family:'Tinos','Times New Roman',serif;font-weight:400;font-style:italic;font-size:15px}
+.story span{font-size:12.5px;color:var(--muted)}
+.story .track{grid-column:1/-1;height:3px;background:var(--rule);border-radius:2px}
+.story .track div{height:3px;background:var(--accent);border-radius:2px}
+.progress{height:3px;background:var(--rule);border-radius:2px;margin-top:10px}
+.progress div{height:3px;width:29%;background:var(--accent);border-radius:2px}
+
+</style>
+<style></style>
+</head>
+<body>
+<div class="mw night"><nav class="side" aria-label="Sections">
+<div class="brand"><b>mindwell</b><span>a companion to Clear Mind, Steady Work</span></div>
+<p class="sec">Daily</p>
+<a class="nav on" href="#"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>Today</a>
+<a class="nav " href="#"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"></rect><path d="M3.5 10h17M8 3v4M16 3v4"></path></svg>This week</a>
+<p class="sec">Practice</p>
+<a class="nav " href="#"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5.5 9.5A1.5 1.5 0 0 0 5.8 21h12.4a1.5 1.5 0 0 0 1.3-2.5L14 9V3"></path><path d="M7.5 15h9"></path></svg>Experiments<span class="count">1</span></a>
+<a class="nav " href="#"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 12a7.5 7 0 0 1-11 6.2L4 20l1.6-4.2A7 7 0 1 1 20 12Z"></path></svg>Thoughts<span class="count">7</span></a>
+<p class="sec">The book</p>
+<a class="nav " href="#"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5Z"></path><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"></path></svg>Library</a>
+<ul class="toc">
+<li><a class="read" href="#"><i>·</i>Introduction</a></li>
+<li><a class="read" href="#"><i>1</i>Notice and name</a></li>
+<li><a href="#"><i>2</i>Talking back</a></li>
+<li><a href="#"><i>3</i>Making room</a></li>
+<li><a href="#"><i>4</i>Goals worth chasing</a></li>
+</ul>
+<div class="spacer"></div>
+<a class="nav " href="#"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z"></path></svg>Settings</a>
+</nav>
+<main class="main"><header class="bar">
+<div class="runhead">Thursday, 19 November<em>Morning</em></div>
+<div style="display:flex;gap:10px;align-items:center">
+<button class="btn" type="button"><svg aria-hidden="true" viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round"><path d="M12 5v14M5 12h14"></path></svg>Capture a thought<span class="kbd">Super Shift N</span></button>
+</div>
+</header>
+<div class="page">
+<section aria-label="Morning check-in">
+<p class="label">Morning check-in</p>
+<h1 class="title">Good morning.</h1>
+<p class="lede">Two minutes to read the day ahead, set one intention, and choose what to write about.</p>
+<hr class="opener-rule">
+
+<div class="step">
+<div class="step-head"><span class="n">i.</span><h2>What kind of day is it?</h2></div>
+<div class="pills">
+<button class="pill on" type="button" aria-pressed="true">Exam or test</button>
+<button class="pill" type="button" aria-pressed="false">Heavy study</button>
+<button class="pill on" type="button" aria-pressed="true">Stressful event</button>
+<button class="pill" type="button" aria-pressed="false">Social</button>
+<button class="pill" type="button" aria-pressed="false">Light day</button>
+<button class="pill" type="button" aria-pressed="false">Busy or travel</button>
+</div>
+</div>
+
+<div class="step">
+<div class="step-head"><span class="n">ii.</span><h2>How much energy do you have?</h2></div>
+<div class="seg" role="radiogroup" aria-label="Energy, 1 to 5">
+<button type="button" role="radio" aria-checked="false">1</button>
+<button type="button" role="radio" aria-checked="false">2</button>
+<button type="button" role="radio" aria-checked="false">3</button>
+<button class="on" type="button" role="radio" aria-checked="true">4</button>
+<button type="button" role="radio" aria-checked="false">5</button>
+</div>
+<div class="ends"><span>running on empty</span><span>fully charged</span></div>
+</div>
+
+<div class="ornament" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M7 0 9 5 14 7 9 9 7 14 5 9 0 7 5 5Z"></path></svg></div>
+
+<div class="step">
+<div class="step-head"><span class="n">iii.</span><h2>Today's intention</h2></div>
+<blockquote class="epigraph"><p>When the nerves come today, call them excitement. Your body is getting ready to perform.</p></blockquote>
+<p class="src">Chapter 3 · Reappraisal — chosen because you have an exam today</p>
+<label for="intent" class="label" style="display:block;margin-top:28px">My intention</label>
+<input id="intent" class="lineinput" type="text" value="Walk into the physics test calm, and treat the nerves as fuel." aria-label="My intention for today">
+<p class="hint">You'll see this again at the evening close.</p>
+</div>
+
+<div class="step">
+<div class="step-head"><span class="n">iv.</span><h2>For your journal</h2></div>
+<ol class="prompts">
+<li><span class="num">1</span><div><p class="ptext">"I'll fail" came up four times this week. When did that thought first start appearing in your life?</p><p class="src">Chapter 1 · Notice and name</p></div>
+<div class="acts"><button class="ib on" type="button" aria-label="Useful" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button><button class="ib" type="button" aria-label="Not useful"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></svg></button><button class="ib" type="button" aria-label="Show another"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"></path></svg></button></div></li>
+<li><span class="num">2</span><div><p class="ptext">Picture the first ten minutes of the test. Where will you sit, what will you read first, and what will you do if your mind goes blank?</p><p class="src">Introduction · Process, not outcome</p></div>
+<div class="acts"><button class="ib" type="button" aria-label="Useful"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></button><button class="ib" type="button" aria-label="Not useful"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></svg></button><button class="ib" type="button" aria-label="Show another"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"></path></svg></button></div></li>
+</ol>
+</div>
+
+<div class="foot"><span>Saved as you go.</span><button class="btn primary" type="button">Begin the day</button></div>
+</section>
+
+<aside class="margin" aria-label="In the margin">
+<p class="label" style="margin-bottom:22px">In the margin</p>
+<div class="mnote"><p class="label">Yesterday</p>
+<div class="dots" role="img" aria-label="Rated 3 of 5"><span class="dot f"></span><span class="dot f"></span><span class="dot f"></span><span class="dot"></span><span class="dot"></span></div>
+<p>Finish the chemistry worksheet before dinner.</p>
+<p class="meta"><span class="tag">Kept</span></p></div>
+<div class="mnote"><p class="label">Stories this week</p>
+<div class="story"><b>I'll fail</b><span>4</span><div class="track"><div style="width:100%"></div></div></div>
+<div class="story"><b>Not good enough</b><span>2</span><div class="track"><div style="width:50%"></div></div></div>
+<div class="story"><b>Everyone's ahead of me</b><span>1</span><div class="track"><div style="width:25%"></div></div></div>
+</div>
+<div class="mnote"><p class="label">Coming up</p><p>Physics test</p><p class="meta">Today at 11:00 · a reminder at 10:00</p></div>
+<div class="mnote"><p class="label">Experiment</p><p>Notice and name daily</p><p class="meta">Day 6 of 21</p><div class="progress"><div></div></div></div>
+</aside>
+</div>
+</main></div>
+</body>
+</html>

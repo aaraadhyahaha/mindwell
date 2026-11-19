@@ -28,16 +28,16 @@
   font-display: block;
 }
 @font-face {
-  font-family: "Source Sans 3";
-  src: url("./fonts/SourceSans3-wght.ttf") format("truetype");
-  font-weight: 200 900;
+  font-family: "Schibsted Grotesk";
+  src: url("./fonts/SchibstedGrotesk-wght.ttf") format("truetype");
+  font-weight: 400 900;
   font-style: normal;
   font-display: block;
 }
 @font-face {
-  font-family: "Source Sans 3";
-  src: url("./fonts/SourceSans3-Italic-wght.ttf") format("truetype");
-  font-weight: 200 900;
+  font-family: "Schibsted Grotesk";
+  src: url("./fonts/SchibstedGrotesk-Italic-wght.ttf") format("truetype");
+  font-weight: 400 900;
   font-style: italic;
   font-display: block;
 }

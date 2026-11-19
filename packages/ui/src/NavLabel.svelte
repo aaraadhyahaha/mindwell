@@ -8,9 +8,7 @@
 
 <style>
   .sec {
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    font-size: 12px;
     color: var(--muted);
     padding: 16px 12px 6px;
     font-weight: 600;

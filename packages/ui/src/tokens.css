@@ -12,41 +12,44 @@
   --accent: #3e5c58;
   --accent-soft: #e3eae6;
   --on-accent: #fbf8f2;
+  --leader: #b9ae9c;
 }
 
 [data-theme="night"] {
   color-scheme: dark;
   --bg: #1a1815;
-  --side: #15130f;
+  --side: #14120f;
   --surface: #221f1b;
   --ink: #e8e0d2;
-  --muted: #9a9082;
-  --placeholder: #7a7266;
+  --muted: #a0968a;
+  --placeholder: #857b6e;
   --rule: #3a352e;
   --accent: #8fb3ac;
   --accent-soft: #2c3a37;
   --on-accent: #1a1815;
+  --leader: #5a5248;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="day"]) {
     color-scheme: dark;
     --bg: #1a1815;
-    --side: #15130f;
+    --side: #14120f;
     --surface: #221f1b;
     --ink: #e8e0d2;
-    --muted: #9a9082;
-    --placeholder: #7a7266;
+    --muted: #a0968a;
+    --placeholder: #857b6e;
     --rule: #3a352e;
     --accent: #8fb3ac;
     --accent-soft: #2c3a37;
     --on-accent: #1a1815;
+    --leader: #5a5248;
   }
 }
 
 :root {
   --font-serif: "Tinos", "Times New Roman", serif;
-  --font-sans: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Schibsted Grotesk", system-ui, sans-serif;
 
   --text-12: 12px;
   --text-14: 14px;

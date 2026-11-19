@@ -8,6 +8,7 @@
 //   node scripts/design-shots.mjs app / today             -> .design-shots/app-today.png
 //   node scripts/design-shots.mjs seed                    -> fills .design-shots/mindwell.db
 //   node scripts/design-shots.mjs fonts <path|mockup:name> <selector>...
+//   node scripts/design-shots.mjs compare today /            -> every box/spacing/font difference
 //
 // Env: SHOT_W / SHOT_H (default 1440 × 900), SHOT_AT (page clock, default today 08:30).
 import { chromium } from 'playwright';
@@ -21,7 +22,7 @@ const out = join(root, '.design-shots');
 mkdirSync(out, { recursive: true });
 const W = Number(process.env.SHOT_W ?? 1440);
 const H = Number(process.env.SHOT_H ?? 900);
-const APP = 'http://localhost:1420';
+const APP = 'http://127.0.0.1:1420';
 const pad = (n) => String(n).padStart(2, '0');
 const now = new Date();
 const todayIso = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
@@ -174,6 +175,85 @@ async function fonts(browser, target, selectors) {
   }
 }
 
+/**
+ * Measures every element that carries its own text (and every svg/input/hr), in the mockup
+ * and in the app, pairs them by text (nth occurrence), and prints each box, spacing or font
+ * value that differs by more than 0.5px. Boxes are relative to the main column's left edge
+ * (`.main`) so a scroll container does not shift them.
+ */
+const MEASURE = () => {
+  const props = ['marginTop', 'marginRight', 'marginBottom', 'marginLeft', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'lineHeight', 'letterSpacing', 'textTransform', 'gap', 'borderTopWidth', 'borderBottomWidth', 'borderLeftWidth', 'borderRightWidth', 'borderRadius', 'color', 'backgroundColor'];
+  const own = (el) => [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('').replace(/\s+/g, ' ').trim();
+  const seen = {};
+  const out = [];
+  for (const el of document.body.querySelectorAll('*')) {
+    if (el.closest('script,style,head')) continue;
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 && r.height === 0) continue;
+    let key = own(el);
+    const tag = el.tagName.toLowerCase();
+    if (!key && tag === 'input') key = `input:${el.value || el.placeholder}`;
+    if (!key && tag === 'hr') key = 'hr';
+    if (!key && tag === 'svg') key = `svg:${el.closest('[aria-label]')?.getAttribute('aria-label') ?? ''}:${own(el.parentElement) || el.parentElement.textContent.trim().slice(0, 30)}`;
+    if (!key && el.matches('.dot,.track,.track>div,.progress,.progress>div')) key = `${el.className}`.replace(/svelte-\S+/g, '').trim() + ':' + (el.parentElement.textContent.trim().slice(0, 20));
+    if (!key) continue;
+    const n = (seen[key] = (seen[key] ?? 0) + 1);
+    const cs = getComputedStyle(el);
+    const s = {};
+    for (const p of props) s[p] = cs[p];
+    s.fontFamily = cs.fontFamily.split(',')[0].replace(/["']/g, '').trim();
+    out.push({ key: `${key}#${n}`, tag, x: r.left + window.scrollX, y: r.top + window.scrollY, w: r.width, h: r.height, s });
+  }
+  return out;
+};
+
+async function measure(page) {
+  const items = await page.evaluate(MEASURE);
+  // Re-base on the main column so the app's scrolling .main and the mockup's page agree.
+  const origin = await page.evaluate(() => {
+    const m = document.querySelector('main, .main');
+    if (!m) return { x: 0, y: 0 };
+    const r = m.getBoundingClientRect();
+    return { x: r.left + window.scrollX - m.scrollLeft, y: r.top + window.scrollY - m.scrollTop };
+  });
+  return new Map(items.map((i) => [i.key, { ...i, x: i.x - origin.x, y: i.y - origin.y }]));
+}
+
+async function compare(browser, mockup, path) {
+  const mp = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
+  await mp.goto(mockupUrl(mockup));
+  await settle(mp);
+  const { page: ap } = await openApp(browser);
+  await ap.goto(`${APP}${path}`);
+  await settle(ap);
+  const tall = await ap.evaluate(() => Math.max(...[...document.querySelectorAll('main, .main')].map((m) => m.scrollHeight), 0));
+  if (tall > H) await ap.setViewportSize({ width: W, height: tall });
+  const mtall = await mp.evaluate(() => document.documentElement.scrollHeight);
+  if (mtall > H) await mp.setViewportSize({ width: W, height: mtall });
+  await ap.waitForTimeout(200);
+  const [m, a] = [await measure(mp), await measure(ap)];
+  let diffs = 0;
+  const missing = [];
+  for (const [key, mi] of m) {
+    const ai = a.get(key);
+    if (!ai) {
+      missing.push(key);
+      continue;
+    }
+    const d = [];
+    for (const k of ['x', 'y', 'w', 'h']) if (Math.abs(mi[k] - ai[k]) > 0.5) d.push(`${k} ${mi[k].toFixed(1)}→${ai[k].toFixed(1)}`);
+    for (const k of Object.keys(mi.s)) if (mi.s[k] !== ai.s[k]) d.push(`${k} ${mi.s[k]}→${ai.s[k]}`);
+    if (d.length) {
+      diffs++;
+      console.log(`${mi.tag} "${key.slice(0, 60)}"  [mockup→app]\n   ${d.join('\n   ')}`);
+    }
+  }
+  const extra = [...a.keys()].filter((k) => !m.has(k));
+  console.log(`\n${m.size} mockup nodes, ${diffs} differ, ${missing.length} missing in app, ${extra.length} only in app`);
+  if (missing.length) console.log('missing in app:\n  ' + missing.join('\n  '));
+  if (extra.length) console.log('only in app:\n  ' + extra.join('\n  '));
+}
+
 const [mode, ...rest] = process.argv.slice(2);
 const browser = await chromium.launch();
 try {
@@ -181,6 +261,7 @@ try {
   else if (mode === 'mockup') await shoot(browser, mockupUrl(rest[0]), `mockup-${rest[0]}`, false);
   else if (mode === 'app') await shoot(browser, `${APP}${rest[0] ?? '/'}`, `app-${rest[1] ?? 'page'}`, true);
   else if (mode === 'fonts') await fonts(browser, rest[0], rest.slice(1));
+  else if (mode === 'compare') await compare(browser, rest[0], rest[1] ?? '/');
   else console.log('usage: design-shots.mjs seed | mockup <name> | app <path> <name> | fonts <path|mockup:name> <selector>...');
 } finally {
   await browser.close();

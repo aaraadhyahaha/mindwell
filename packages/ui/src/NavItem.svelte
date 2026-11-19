@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { IconName } from './Icon.svelte';
   import Icon from './Icon.svelte';
-  /** A sidebar row: 18px stroke icon, label, optional count. The current row gets the surface fill + rule ring. */
+  /** A sidebar row: 18px stroke icon, label, optional count. The current row gets the accent-soft fill and accent text. */
   let {
     href,
     label,
@@ -44,8 +44,8 @@
     background: color-mix(in srgb, var(--surface) 55%, transparent);
   }
   .nav.on {
-    background: var(--surface);
-    box-shadow: 0 0 0 1px var(--rule);
+    background: var(--accent-soft);
+    color: var(--accent);
     font-weight: 600;
   }
   .nav.on :global(svg) {
