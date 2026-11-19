@@ -15,6 +15,17 @@ export const SETTING_KEYS = {
   sent: 'reminder.sent',
 } as const;
 
+const THEME_MIRROR_KEY = 'mindwell.theme';
+
+/** Mirrors the theme to localStorage so app.html can apply it before first paint. */
+function mirrorTheme(p: ThemePreference): void {
+  try {
+    localStorage.setItem(THEME_MIRROR_KEY, p);
+  } catch {
+    // storage unavailable: the pre-paint script just does nothing
+  }
+}
+
 const THEMES: ThemePreference[] = ['system', 'day', 'night'];
 const isTime = (v: unknown): v is string => typeof v === 'string' && /^\d{2}:\d{2}$/.test(v);
 const isDayOrNull = (v: unknown): v is string | null => v === null || typeof v === 'string';
@@ -65,6 +76,7 @@ export class SettingsState {
         this.sent = { morning: s.morning ?? null, evening: s.evening ?? null };
       }
       setTheme(this.theme);
+      mirrorTheme(this.theme); // the Store value wins over any stale mirror
       this.loaded = true;
     } catch {
       this.error = 'Could not load your settings. Please try again.';
@@ -108,6 +120,7 @@ export class SettingsState {
   setThemePref(p: ThemePreference): Promise<boolean> {
     this.theme = p;
     setTheme(p);
+    mirrorTheme(p);
     return this.save(SETTING_KEYS.theme, p);
   }
   async markSent(kind: 'morning' | 'evening', day: string): Promise<boolean> {

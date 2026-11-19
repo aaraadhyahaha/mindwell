@@ -1,6 +1,7 @@
 export type ThemePreference = 'system' | 'day' | 'night';
 
-// Held in memory; the app's Settings store persists it through the Store and re-applies it on start.
+// Held in memory. The app's `settings` table is the source of truth and re-applies it on start;
+// the app also mirrors the preference to localStorage for the pre-paint script in app.html.
 export const theme = $state<{ preference: ThemePreference }>({ preference: 'system' });
 
 export function setTheme(p: ThemePreference): void {

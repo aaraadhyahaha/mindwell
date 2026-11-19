@@ -5,6 +5,12 @@
     <link rel="icon" href="%sveltekit.assets%/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>mindwell</title>
+    <script>
+      try {
+        var t = localStorage.getItem('mindwell.theme');
+        if (t === 'day' || t === 'night') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
     %sveltekit.head%
   </head>
   <body data-sveltekit-preload-data="hover">
