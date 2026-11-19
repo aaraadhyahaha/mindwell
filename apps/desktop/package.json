@@ -14,6 +14,7 @@
   "dependencies": {
     "@mindwell/core": "workspace:*",
     "@mindwell/module-dev-test": "workspace:*",
+    "@mindwell/module-intro": "workspace:*",
     "@mindwell/storage-sqlite": "workspace:*",
     "@mindwell/ui": "workspace:*",
     "@tauri-apps/api": "^2",

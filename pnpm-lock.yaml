@@ -23,6 +23,9 @@ importers:
       '@mindwell/module-dev-test':
         specifier: workspace:*
         version: link:../../packages/modules/dev-test
+      '@mindwell/module-intro':
+        specifier: workspace:*
+        version: link:../../packages/modules/intro-experiments
       '@mindwell/storage-sqlite':
         specifier: workspace:*
         version: link:../../packages/storage-sqlite

@@ -1,5 +1,5 @@
-import type { BaseRecord, SignalDef, SignalValue, Store } from '@mindwell/core';
-import { addDays, daysBetween } from '@mindwell/core';
+import type { BaseRecord, SignalDef, SignalValue, Signals, Store } from '@mindwell/core';
+import { addDays, daysBetween, signalNumber } from '@mindwell/core';
 
 /** The experiment fields signals read (structural, so tests can pass plain objects). */
 export interface ExperimentRow {
@@ -97,3 +97,6 @@ export const signals: SignalDef[] = [
   def('midpoint_today'),
   def('modules_tried'),
 ];
+
+/** Today card (morning) visibility: an experiment awaits a verdict. Pure. */
+export const verdictCardVisible = (s: Signals): boolean => (signalNumber(s, 'intro.awaiting_verdict') ?? 0) > 0;

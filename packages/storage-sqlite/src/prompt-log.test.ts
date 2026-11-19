@@ -80,6 +80,8 @@ describe('buildSignals', () => {
       'user.name': 'Sam',
       upcoming_events: [{ title: 'Exam' }],
       'chapters.recently_unlocked': ['dev'],
+      'chapters.read': [{ module: 'dev', chapter: 100, read_day: '2026-11-10' }],
+      'experiments.available': [],
     });
     expect(failed.map((f) => f.key)).toEqual(['dev.broken']);
   });
