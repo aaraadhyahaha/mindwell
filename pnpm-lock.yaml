@@ -20,6 +20,9 @@ importers:
       '@mindwell/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@mindwell/module-dev-test':
+        specifier: workspace:*
+        version: link:../../packages/modules/dev-test
       '@mindwell/storage-sqlite':
         specifier: workspace:*
         version: link:../../packages/storage-sqlite
@@ -60,6 +63,12 @@ importers:
       ulid:
         specifier: ^3.0.2
         version: 3.0.2
+
+  packages/modules/dev-test:
+    dependencies:
+      '@mindwell/core':
+        specifier: workspace:*
+        version: link:../../core
 
   packages/storage-sqlite:
     dependencies:

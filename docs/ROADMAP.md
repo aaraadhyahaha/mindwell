@@ -9,7 +9,7 @@ Build in phases. Use each phase for 1–2 weeks before the next. Tags say who do
 - [x] [builder] `storage-sqlite`: Store over SqlDriver, migrations table, soft delete; Tauri driver (plugin-sql) + better-sqlite3 test driver.
 - [x] [tester] Tests for Store (CRUD, soft delete, migrations idempotent) and `dates.ts`.
 - [x] [builder] Design system: tokens, bundled fonts, components from DESIGN.md, dev `/styleguide`. **Review before screens.**
-- [ ] [main] Module registry + Library (mark chapter read → module active) + core tables (`days`, `prompts_shown`, `prompt_scores`, `chapters`, `suggestions`, `settings`).
+- [x] [main] Module registry + Library (mark chapter read → module active) + core tables (`days`, `prompts_shown`, `prompt_scores`, `chapters`, `suggestions`, `settings`).
 - [ ] [main] Signals snapshot + prompt engine (PROMPTS.md) + core prompts.
 - [ ] [tester] Tests for selection: conditions, cooldowns, technique de-dup, scoring, fallbacks, seeded jitter stability.
 - [ ] [builder] Today: morning check-in, evening close, slots, PromptCard feedback, "show another".
