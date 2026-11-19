@@ -52,7 +52,8 @@ export interface InsertOptions {
 /**
  * Ordered SQL for one owner (`core`, `ch01`, ...). Versions start at 1 and
  * increase; applied versions are recorded in `_migrations(owner, version, applied_at)`.
- * `sql` may contain several statements separated by `;`.
+ * `sql` may contain several statements separated by `;`. It is split on every `;`,
+ * so no `;` inside string literals or trigger bodies.
  */
 export interface Migration {
   version: number;
