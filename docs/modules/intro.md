@@ -54,3 +54,25 @@ None of its own.
 - [ ] [tester] signals, prompt conditions, suggestions
 - [ ] [builder] screen, Today card, review section
 - [ ] [main] register, end-to-end check
+
+## Implementation notes
+Decisions made while building Phase 1. Where these notes add to the tables above, they win.
+
+- **Package:** `packages/modules/intro-experiments/`, name `@mindwell/module-intro`, id `intro`, chapter 0.
+- **Extra column:** `intro_experiments.label` is the technique's label, copied at start, so past experiments still read well if the offering module goes inactive.
+- **Days:** an experiment of length N runs `start_day … end_day`, both included: `end_day = start_day + N − 1`. `days_left = daysBetween(day, end_day)` (0 on the last day). The **midpoint** is `start_day + floor((end_day − start_day) / 2)`.
+- **Status:** `active` until a keep or drop verdict, then `ended`. **Awaiting verdict** means `status = 'active'` and `end_day ≤ day`. Extend adds 7 or 14 days to `end_day`, sets `verdict = 'extend'`, keeps the experiment `active` and appends the note. Keep or drop sets `verdict`, `note` and `status = 'ended'`. "End early" sets `end_day = day`, so the verdict card appears.
+- **Max 3 active** counts every `active` row, including ones awaiting a verdict. `startExperiment` throws `ExperimentLimitError` and the screen says: "Three experiments are running. End one first: with fewer at once, each result is easier to read."
+- **What can be started:** a technique comes from core's `experiments.available` signal (active modules only), minus techniques that already have an `active` experiment.
+- **Check-ins:** one per experiment per review week. Saving again within the 7 days ending on the review day updates that row instead of adding one.
+- **Signals** (all read `intro_*` tables through the Store; experiment data is live rows only):
+  - `intro.active`: `{id, module, technique, label, start_day, end_day, days_left, recent_ratings}[]` for every `active` row. `recent_ratings` holds up to the last 2 check-in ratings, oldest first.
+  - `intro.ending_within_3d`: any active row with `0 ≤ days_left ≤ 3`.
+  - `intro.awaiting_verdict`: a number. `intro.verdict_due`: `{id, technique, label}[]`, the same rows ordered by `end_day`.
+  - `intro.midpoint_today`: the label of the first active experiment whose midpoint is today, else `null`.
+  - `intro.modules_tried`: the distinct `module` values over all experiments, ever.
+- **Prompts:** `{technique}` is filled with the label. `verdict_reflect` uses `verdict_due[0]`. `mid_check` has the condition `midpoint_today` non-null.
+- **Suggestions:**
+  - `intro.low_ratings` takes the first active experiment whose `recent_ratings` has 2 entries, both ≤ 2. Key `intro.low_ratings:<experiment id>`.
+  - `intro.try_new` takes the lowest chapter in `chapters.read` with `read_day ≤ day − 7`, at least one entry in `experiments.available`, and its module not in `intro.modules_tried`. Key `intro.try_new:<module>`, with `{n}` = the chapter.
+- **Screen:** `path: ''`, title "Experiments", `inNav: true`.
