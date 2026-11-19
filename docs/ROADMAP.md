@@ -10,7 +10,7 @@ Build in phases. Use each phase for 1–2 weeks before the next. Tags say who do
 - [x] [tester] Tests for Store (CRUD, soft delete, migrations idempotent) and `dates.ts`.
 - [x] [builder] Design system: tokens, bundled fonts, components from DESIGN.md, dev `/styleguide`. **Review before screens.**
 - [x] [main] Module registry + Library (mark chapter read → module active) + core tables (`days`, `prompts_shown`, `prompt_scores`, `chapters`, `suggestions`, `settings`).
-- [ ] [main] Signals snapshot + prompt engine (PROMPTS.md) + core prompts.
+- [x] [main] Signals snapshot + prompt engine (PROMPTS.md) + core prompts.
 - [ ] [tester] Tests for selection: conditions, cooldowns, technique de-dup, scoring, fallbacks, seeded jitter stability.
 - [ ] [builder] Today: morning check-in, evening close, slots, PromptCard feedback, "show another".
 - [ ] [builder] Weekly review frame (sections + suggestions accept/dismiss), Settings (name, reminder times 07:30 / 21:30, theme), reminders via notification plugin.

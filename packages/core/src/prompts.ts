@@ -50,6 +50,12 @@ export interface PromptDef {
   cooldownDays: number;
   /** Pure. */
   condition: (signals: Signals) => boolean;
+  /**
+   * Pure. Values for the text's placeholders other than `{name}` (core fills that
+   * from `user.name`), read from signals only. Return null to skip the prompt.
+   * A prompt whose text keeps an unresolved placeholder is not a candidate.
+   */
+  fill?: (signals: Signals) => Readonly<Record<string, string | number>> | null;
 }
 
 /** Inputs a suggestion rule may use besides signals. Plain data, so rules stay pure. */
