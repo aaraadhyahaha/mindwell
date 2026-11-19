@@ -1,6 +1,6 @@
 # Module contract
 
-Each book chapter is one module in `packages/modules/<id>-<slug>/`. Adding a chapter = write its spec, build one folder, add one line to `apps/desktop/src/lib/registry.ts`. Nothing else changes.
+Each book chapter is one module in `packages/modules/<id>-<slug>/`. Adding a chapter = write its spec, build one folder, add one line to `apps/web/src/lib/registry.ts`. Nothing else changes.
 
 ## What a module exports
 
@@ -51,7 +51,7 @@ packages/modules/ch02-thought-records/
 
 ## Rules
 
-- A module may import only `@mindwell/core` and `@mindwell/ui`: never other modules, the app, Tauri or SQL. Its `package.json` lists those two plus `svelte` as a peer, and its `check` script is `svelte-check --fail-on-warnings`.
+- A module may import only `@mindwell/core` and `@mindwell/ui`: never other modules, the app or SQL. Its `package.json` lists those two plus `svelte` as a peer, and its `check` script is `svelte-check --fail-on-warnings`.
 - No imports from other modules. To use another module's data, read its **published signals**, or reference a core-visible record by id (e.g. ch02 stores `capture_id` from ch01). Read other modules' tables only through a signal they publish, never directly.
 - Never alter another module's tables. Extra data about someone else's record goes in your own table keyed by that id (e.g. `ch03_defusions.capture_id`).
 - A module is active only when its chapter is marked read in the Library. Inactive modules contribute nothing: no prompts, cards, signals, nav items.

@@ -24,7 +24,7 @@ One accent only, used for the primary action and focus rings. No other colours e
 **Type** (fonts bundled in `packages/ui/src/fonts/`, OFL, never loaded from the web; the app imports `@mindwell/ui/fonts.css`, `/tokens.css` and `/base.css` once in `+layout.svelte`)
 - Serif: Tinos (OFL; static Regular, Bold, Italic, Bold Italic; metric-compatible with Times New Roman) for every serif element, including the `mindwell` wordmark. Stack: `'Tinos', 'Times New Roman', serif`. Only weights 400 and 700 exist; never ask for 500/600 in serif.
 - Sans: Schibsted Grotesk (variable, OFL; 400/500/600/700) for UI text, labels, buttons, numbers.
-- In `pnpm dev` the fonts are fetched from `packages/ui` by URL, so `apps/desktop/vite.config.js` allows `packages/` in `server.fs.allow`. Check with `node scripts/design-shots.mjs fonts <path> <selector>` that the rendered font is the bundled file, not a system fallback.
+- In `pnpm dev` the fonts are fetched from `packages/ui` by URL, so `apps/web/vite.config.js` allows `packages/` in `server.fs.allow`. Check with `node scripts/design-shots.mjs fonts <path> <selector>` that the rendered font is the bundled file, not a system fallback.
 - Body: Schibsted Grotesk 15px / 1.5. Serif is set explicitly on titles, prompts, intentions, notes and numerals.
 - Section labels (`SectionLabel`): sans 11px, weight 600, uppercase, letter-spacing .14em, `--muted` (the book's small-caps look).
 
@@ -32,7 +32,7 @@ One accent only, used for the primary action and focus rings. No other colours e
 
 ## Shell (every screen)
 
-The window is opaque: `--bg` edge to edge, no transparency or blur. (On Hyprland a global `active_opacity` still fades every window; that is fixed by a compositor window rule for `app.mindwell.desktop`, not by the app.)
+The page is opaque: `--bg` edge to edge, no transparency or blur.
 
 - `Shell`: full-window grid, 252px sidebar + fluid main column (`100vh`; the main column scrolls, the sidebar stays).
 - `Sidebar` (`--side`, 1px right rule, padding 22/12/14): wordmark `mindwell` (Tinos italic 24px, -0.01em) over the subtitle "a companion to Clear Mind, Steady Work" (Tinos italic 12px, muted), rule below; then `NavLabel` sections Daily · Practice · The book (12px/600 muted, sentence case, padding 16/12/6); `footer` pins Settings to the bottom.
@@ -48,7 +48,7 @@ Page and content (values copied from `today.html`):
 - `Page`: content under the toolbar, padding 52/64/72. Chapter opener: label (11px/600 uppercase .14em muted) → title Tinos 42px/1.12, -0.015em, 10px above → optional lede Tinos italic 18px muted, max 560px → 48px 1px ink rule (28px above, 40px below). With `margin`, a two-column grid: main `minmax(0, 660px)` + 280px margin, 80px gap, centred; the margin column has a 1px left rule, 32px padding and an "In the margin" label. Below 1220px window width the margin moves under the main column.
 - `Opener`: the chapter opener on its own, for screens with their own grid. `ruleBelow` sets the space under the rule (Today 40, Library 8, Thoughts 0); `aside` sits right, bottom-aligned (Thoughts puts `WhyLink` there). Library page: `minmax(0, 1fr)` + 360px detail card, 72px gap, max 1188px centred. Thoughts page: two equal columns, 72px gap, max 1188px; the opener spans both.
 - `WhyLink`: "Why this exists" (13.5px/600 accent, 16px info icon, 6px gap) that opens the module's `WhySheet`. A screen that shows it sets `whyInOpener` so the shell adds no second link.
-- Capture window: a 560×240 card (surface, 1px rule, 14px radius, padding 22/26/18, `line-height: normal`). The native window is transparent so the corners show; in the main window the card sits 40px in from the page edge.
+- Capture screen: a 560×240 card (surface, 1px rule, 14px radius, padding 22/26/18, `line-height: normal`). The card sits 40px in from the page edge.
 - `Step`: italic roman numeral (Tinos 16px, accent) + Tinos 20px heading; 44px below each step.
 - `Choice`: pills 38px, radius 999, surface + rule, 500 14px; selected = accent-soft fill, accent border and text, 600. 16px below the heading. `labelledby` hides the built-in label when a `Step` names it.
 - `Scale` (1–5): one segmented control, max 400px, radius 10, 44px cells in Tinos 17px split by rules; selected = accent fill. End labels Tinos italic 12.5px muted. `labelledby` as for `Choice`.
@@ -70,7 +70,7 @@ Page and content (values copied from `today.html`):
 - **Today** follows `today.html`: running head "Thursday, 19 November" + the part of the day; "Capture a thought" with its shortcut in the toolbar; steps i–iv; footer "Saved as you go." + the primary action; the margin column with Yesterday, module notes and Coming up.
 - **Empty states** explain what will appear and why, in one line ("Captured thoughts will gather here through the day.").
 - **Motion:** 150–200 ms fades only. No bounce, slide-ins, confetti, or celebration.
-- **Keyboard:** everything reachable without a mouse; the capture window opens focused and submits with Enter, closes with Esc.
+- **Keyboard:** everything reachable without a mouse; the capture screen opens focused and submits with Enter, closes with Esc.
 
 ## Never
 

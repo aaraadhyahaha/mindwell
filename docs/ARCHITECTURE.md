@@ -4,12 +4,13 @@
 
 ```
 mindwell/
-  apps/desktop/                 # SvelteKit (adapter-static) + Tauri 2
-    src/                        # shell UI: routes, layout
+  apps/web/                     # SvelteKit (adapter-static SPA) + PWA
+    src/                        # shell UI: routes, layout, service worker
       lib/registry.ts           # THE list of enabled modules
-    src-tauri/                  # thin Rust: plugins + tiny commands
+    static/                     # manifest, icons
   packages/core/                # plain TS: types, Store interface, signals, prompt engine, registry, dates
   packages/storage-sqlite/      # Store implementation over a SqlDriver
+    src/browser/                # browser driver: SQLite WASM in a Web Worker, tab leader election
   packages/ui/                  # design system: tokens, base styles, bundled fonts, components (Card, Field, Scale, ...)
   packages/modules/
     intro-experiments/
@@ -25,12 +26,12 @@ pnpm workspaces. Package names: `@mindwell/core`, `@mindwell/storage-sqlite`, `@
 
 | Layer | Knows about | Never imports |
 | --- | --- | --- |
-| `packages/core` | its own types | Tauri, Svelte, SQL, any module |
-| `packages/ui` | Svelte (peer) only | the app, Tauri, SQL, any module |
-| `packages/modules/*` | `@mindwell/core`, `@mindwell/ui` (+ Svelte for `ui/`) | other modules, the app, Tauri, storage internals |
+| `packages/core` | its own types | Svelte, SQL, any module |
+| `packages/ui` | Svelte (peer) only | the app, SQL, any module |
+| `packages/modules/*` | `@mindwell/core`, `@mindwell/ui` (+ Svelte for `ui/`) | other modules, the app, storage internals |
 | `packages/storage-sqlite` | `Store` + `SqlDriver` from core | UI, modules |
-| `apps/desktop` (Svelte) | core, ui, registry, modules | SQL |
-| `src-tauri` (Rust) | plugins | domain logic |
+| `apps/web` (Svelte) | core, ui, registry, modules | SQL |
+| `packages/storage-sqlite/src/browser` | worker, OPFS, Web Locks, BroadcastChannel | domain logic |
 
 ## Key interfaces (in `packages/core`)
 
@@ -55,7 +56,7 @@ interface Store {
   transaction<R>(fn: (tx: Store) => Promise<R>): Promise<R>;
 }
 
-// Thin SQL seam so storage is testable without Tauri.
+// Thin SQL seam so storage is testable without a browser.
 interface SqlDriver {
   execute(sql: string, params?: unknown[]): Promise<{ rowsAffected: number }>;
   select<T>(sql: string, params?: unknown[]): Promise<T[]>;
@@ -69,8 +70,8 @@ interface Importer {
 }
 ```
 
-- Desktop provides a `SqlDriver` backed by `@tauri-apps/plugin-sql` (database `sqlite:mindwell.db` in the app data dir).
-- Tests use a `SqlDriver` backed by `better-sqlite3` (in-memory), so storage and modules are tested without Tauri.
+- The app provides a `SqlDriver` from `createBrowserDriver()` (`@mindwell/storage-sqlite/browser`): SQLite WASM on OPFS (see Browser).
+- Tests use a `SqlDriver` backed by `better-sqlite3` (in-memory), so storage and modules are tested without a browser.
 - Migrations: each owner (`core`, `ch01`, ...) has ordered SQL migrations; applied versions are tracked in a `_migrations(owner, version, applied_at)` table.
 
 ## Data rules
@@ -81,18 +82,32 @@ interface Importer {
 - Validation with `zod` schemas in each module's `schema.ts`.
 - Table names are prefixed by owner except core: `ch01_captures`, `ch02_thought_records`, `intro_experiments`, `days`.
 
-## Native (src-tauri)
+## Browser
 
-Plugins: `sql` (sqlite), `global-shortcut` (capture), `single-instance` (capture from the command line), `notification` (reminders, reappraisal cards), `dialog` + `fs` (export). Small commands only. Optional app lock is deferred (not needed for v1).
+**Storage.** `createBrowserDriver()` runs the official SQLite WASM (`@sqlite.org/sqlite-wasm`) on the `opfs-sahpool` VFS (OPFS; no COOP/COEP headers needed). The file is `/mindwell.db`, opened in a dedicated Web Worker (`worker.ts`). `navigator.storage.persist()` is requested once, on first run.
+- OPFS access handles allow one connection per origin, so tabs elect a leader with the Web Locks API (`mindwell-sql-leader`). The leader runs the worker; other tabs send SQL over a BroadcastChannel (`mindwell-sql`) and the leader relays. When the leader tab closes, another takes over (the worker retries while the old handles are released).
+- The worker's `createSqlHost` (`host.ts`, pure, tested with better-sqlite3) holds other tabs' calls while one tab's transaction (BEGIN…COMMIT/ROLLBACK; savepoints don't release) is open. An owner idle for 10 s is rolled back.
+- Store, migrations and the better-sqlite3 test driver are unchanged.
 
-**Windows.** `main` (hidden on close; the app lives in the tray) and `capture` (ch01). Both are created at startup. `main` is shown unless the app was started with `--capture`. `capture` is created hidden at 560×240, with no decorations, transparent (only the rounded corners of its card show through; `main` stays opaque), always on top and kept off the taskbar, and loads `/m/ch01/capture`. In a non-`main` window the shell renders the screen alone (no nav, no reminders). Opening capture shows and focuses the window, then emits `capture:open` to it; the shell remounts the form so it starts empty with the input focused. The form dispatches the DOM event `mindwell:done` when finished, and the shell hides the window (in `main` it goes back to Today).
+**Export.** Markdown or JSON as a normal file download (`mindwell-YYYY-MM-DD.md|json`). Today shows an "Export a backup" section (Download JSON / Markdown / Not now) when the latest of first run, last export and last dismissal is 7 or more days old (`backupDue` in `apps/web/src/lib/backup.ts`; settings keys `backup.since`, `backup.last_export_at`, `backup.dismissed_at`).
 
-**Capture triggers.**
-- **Global shortcut** (X11, macOS, Windows): the main window reads `capture.shortcut` from core settings (default `Super+Shift+N`) and calls `set_capture_shortcut(accelerator | null)` while ch01 is active. Rust re-registers it and opens capture on key press.
-- **`mindwell --capture`** (every platform, and the way to do it on Wayland, where global shortcuts generally don't fire): `single-instance` forwards a second launch's args to the running app, which opens capture. With no running app, the process starts in the tray with `main` hidden and opens capture. `capture_info` returns `{ command, wayland }`: the executable path (`$APPIMAGE` when set) and whether the session is Wayland. Settings uses it to show the exact compositor binding, e.g. Hyprland `bind = SUPER SHIFT, N, exec, <path> --capture`.
+**Capture triggers.** No separate window: capture opens as a tab (details in `docs/modules/ch01.md`).
+- `/#capture` (any path with that hash): the shell opens `/m/ch01/capture` with `replaceState`, input focused. When the form dispatches `mindwell:done` in such a tab, the shell tries `window.close()` and otherwise goes to Today.
+- In-app key `N` (`isCaptureKey` in `apps/web/src/lib/capture-key.ts`): no Ctrl/Alt/Meta, not in a text field.
+- Settings shows the compositor binding with the page's real origin, e.g. Hyprland `bind = SUPER SHIFT, N, exec, xdg-open <origin>/#capture`.
+
+**Reminders.** Web Notifications while a mindwell tab is open: checked every 60 s with `dueReminders` (window [time, time + 60 min)). Permission is requested only from a Settings button. `catchUpReminder` runs on start, window focus and the tab becoming visible, and fires one notification for a reminder missed earlier that day (latest kind wins; a caught-up evening also marks morning sent). Notifications go through the service worker registration when present; clicking focuses the app.
+
+**PWA and offline.** `static/manifest.webmanifest` and icons in `static/icons`; `src/service-worker.ts` (SvelteKit built-in) precaches the build, static files and `/`, serves navigations network-first with an offline fallback, and caches hashed `/_app/immutable/` files cache-first at runtime (worker and SQLite wasm). The app is installable and works offline.
+
+**Limits.**
+- Data is per browser profile and origin. Back it up (export).
+- Private windows may not persist.
+- One OPFS connection per origin, handled by the leader tab.
+- Notifications only fire while a tab is open.
 
 ## Planned extensions (don't build yet; don't block them)
 
-- **Phone:** reuse `core` + modules with another `SqlDriver`/`Store` (Tauri 2 mobile target, or a web companion + a sync adapter). ULIDs, `updated_at` and soft deletes make sync possible later.
+- **Phone:** reuse `core` + modules with another `SqlDriver`/`Store` (the web app already runs in mobile browsers; a sync adapter comes later). ULIDs, `updated_at` and soft deletes make sync possible.
 - **Integrations:** `Importer`s write declared record types. The app never depends on another app being installed.
 - **Export:** Markdown + JSON export of all records ships in Phase 0.

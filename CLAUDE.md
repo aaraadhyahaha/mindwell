@@ -1,8 +1,8 @@
 # mindwell
 
-Native desktop companion to the book *Clear Mind, Steady Work*. Each book chapter is one self-contained module, unlocked when the user marks the chapter read. The app sets the day's intent and picks journal prompts; free writing happens in the user's paper journal.
+Web app companion to the book *Clear Mind, Steady Work*; it runs in the browser and is installable (PWA). Each book chapter is one self-contained module, unlocked when the user marks the chapter read. The app sets the day's intent and picks journal prompts; free writing happens in the user's paper journal.
 
-Stack: Tauri 2 · SvelteKit (adapter-static, SPA) + Svelte 5 runes · TypeScript (strict) · SQLite via `tauri-plugin-sql` · pnpm workspaces · Vitest.
+Stack: SvelteKit (adapter-static, SPA) + Svelte 5 runes · TypeScript (strict) · SQLite WASM (opfs-sahpool) in a Web Worker · PWA via the SvelteKit service worker · pnpm workspaces · Vitest.
 
 ## Read only what the task needs
 
@@ -11,7 +11,7 @@ Stack: Tauri 2 · SvelteKit (adapter-static, SPA) + Svelte 5 runes · TypeScript
 | Anything | this file |
 | A module | `docs/modules/<id>.md` + `docs/MODULE_CONTRACT.md` |
 | Prompts, signals, Today | `docs/PROMPTS.md` |
-| Storage, packages, native | `docs/ARCHITECTURE.md` |
+| Storage, packages, browser | `docs/ARCHITECTURE.md` |
 | UI or styling | `docs/DESIGN.md` (design system lives in `packages/ui`) |
 | Should this feature exist? | `docs/PHILOSOPHY.md` |
 | What's next | `docs/ROADMAP.md` |
@@ -20,13 +20,13 @@ Do not read the whole repo or every doc "for context".
 
 ## Hard rules
 
-1. `packages/core` is plain TypeScript: never imports Tauri, Svelte, SQL, or any module.
+1. `packages/core` is plain TypeScript: never imports Svelte, SQL, or any module.
 2. Modules never import each other or the app; they may import only `@mindwell/core` and `@mindwell/ui`. They share data only through core records (by id) and published signals.
 3. A module never alters another module's tables.
 4. All persistence goes through the `Store` interface. No SQL in UI code.
 5. Signals, prompt conditions and suggestion rules are pure functions with unit tests.
 6. Every record has the shared columns (`id` ULID, `created_at`, `updated_at`, `deleted_at`, `schema_version`). Soft delete only.
-7. Rust (`src-tauri`) stays thin: plugins + small commands. No domain logic in Rust.
+7. Browser-only code (worker, OPFS, notifications, service worker) lives in `apps/web` and `packages/storage-sqlite/src/browser`; no domain logic there.
 8. No feature without a chapter. No streaks, badges, confetti, quotes, emoji, gradients (see PHILOSOPHY).
 
 ## Working efficiently (keep token use low)
@@ -51,13 +51,13 @@ Habits:
 
 ## Commands
 
-Run from the repo root. Needs Node ≥ 22, pnpm, and a Rust toolchain (for `dev` / `build`).
+Run from the repo root. Needs Node ≥ 22 and pnpm. No Rust.
 
 - `pnpm install` — install all workspace packages
-- `pnpm dev` — run the desktop app (`tauri dev`: Vite on :1420 + the native window)
+- `pnpm dev` — run the web app (Vite on http://localhost:5173, strict port) · `pnpm preview` — serve the build on :4173
 - `pnpm test` — all unit tests (Vitest, one root config) · `pnpm vitest run <path>` — one file or folder
-- `pnpm check` — runs each package's `check`: `tsc` for `packages/core` and `packages/storage-sqlite`; `svelte-check --fail-on-warnings` for `packages/ui`, every module package and `apps/desktop`
-- `pnpm build` — release build (`tauri build`; bundles land in `apps/desktop/src-tauri/target/release/bundle/`). The dev test module is registered only in dev builds; a Vite plugin in `apps/desktop/vite.config.js` fails the release build if its code reaches the bundle.
+- `pnpm check` — runs each package's `check`: `tsc` for `packages/core` and `packages/storage-sqlite`; `svelte-check --fail-on-warnings` for `packages/ui`, every module package and `apps/web`
+- `pnpm build` — release build (`vite build`; static files land in `apps/web/build/`, host anywhere). The dev test module is registered only in dev builds; a Vite plugin in `apps/web/vite.config.js` fails the release build if its code reaches the bundle.
 - `pnpm --filter <pkg> add <dep>` — add a dependency to one package (e.g. `@mindwell/core`)
 
 Workspace packages are consumed as TypeScript source (`exports` → `src/index.ts`); there is no package build step.

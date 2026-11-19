@@ -5,7 +5,7 @@
 **References:** Baumeister et al. 2001; Wegner et al. 1987; Lieberman et al. 2007.
 
 ## What the user does
-1. Presses the global shortcut (default `Super+Shift+N`, changeable) anywhere. A small window opens: "There's the ___ thought." Types a few words, optional intensity 1–5, Enter. Under 5 seconds.
+1. Presses the compositor binding (opens `<origin>/#capture` in the browser) anywhere, or `N` inside the app. Capture opens in a tab with the input focused: "There's the ___ thought." Types a few words, optional intensity 1–5, Enter. Under 5 seconds.
 2. Links captures to named **stories** (recurring thoughts like "not good enough"). On save, the app suggests a story whose past captures share words; the user confirms, picks another, or creates one. Linking can also be done later in the evening.
 3. Evening: sees today's captures grouped by story.
 
@@ -16,7 +16,7 @@
 | `ch01_captures` | `text`, `story_id` (nullable), `intensity` (1–5, nullable), `captured_at`, `day` | |
 
 ## Screens and Today cards
-- Capture screen (a small card at `/m/ch01/capture`, opened from Today or a shortcut).
+- Capture screen (a small card at `/m/ch01/capture`, opened by `/#capture`, `N` or Today).
 - Screen `/m/ch01`: stories list (count last 7 / 30 days, trend), capture history by day.
 - "Capture a thought" + shortcut hint: the Today toolbar's action (the app shell shows it while ch01 is active; it replaced the anytime card).
 - Today margin note (`margin` slot, order 20), visible when a story was captured this week: "Stories this week", the top 3 stories with counts and bars (`storyBars`).
@@ -53,14 +53,14 @@
 | `notice_name` | Notice and name daily | 21 |
 
 ## Acceptance checks
-- [ ] (verify by hand) Shortcut opens capture in < 300 ms with the input focused; Enter saves, Esc closes.
-- [ ] (verify by hand) Capture works when the main window is closed (app in tray).
+- [ ] (verify by hand) `/#capture` (and `N` in the app) opens capture in < 300 ms with the input focused; Enter saves, Esc closes (and closes a tab opened by `/#capture`).
+- [ ] (verify by hand) The compositor binding captures with a mindwell tab already open (saved through the leader tab; it shows on Thoughts after focus) and with none open.
 - [x] Story suggestion never auto-links without confirmation.
 
 ## Build checklist
 - [x] [builder] migrations + schema + repo + story-match helper (word overlap)
 - [x] [tester] signals, conditions, suggestions, story-match helper
-- [x] [builder] capture window + global shortcut (Rust: register shortcut, show window)
+- [x] [builder] capture window + global shortcut (Tauri; replaced 2026-11-19 by `/#capture`, `N` and the compositor binding)
 - [x] [builder] screen, Today cards, review section
 - [x] [main] register, end-to-end check
 
@@ -81,7 +81,7 @@ Decisions made while building Phase 1. Where these notes add to the tables above
   - Words are lowercased, split on non-letters, keeping words of ≥ 3 letters minus a small stopword list.
   - A story's score is the number of distinct words the new text shares with the story's name plus its past captures' texts. Archived stories are skipped.
   - The best score ≥ 1 wins. A tie goes to the story with the most recent capture.
-- **Triggers:** the capture screen is a route; how it is opened (shortcut, `/#capture`) is handled by the app shell, not this module.
+- **Triggers:** see the Triggers note in `docs/modules/ch01.md`; the app shell opens capture, not this module.
 - **Extra signals:**
   - `ch01.captures_today` (number) sets the evening card's visibility.
   - `ch01.unlinked_7d` (number) feeds `ch01.unlinked`.
