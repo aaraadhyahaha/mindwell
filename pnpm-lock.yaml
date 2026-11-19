@@ -26,6 +26,9 @@ importers:
       '@mindwell/module-ch01':
         specifier: workspace:*
         version: link:../../packages/modules/ch01-notice-name
+      '@mindwell/module-ch02':
+        specifier: workspace:*
+        version: link:../../packages/modules/ch02-thought-records
       '@mindwell/module-dev-test':
         specifier: workspace:*
         version: link:../../packages/modules/dev-test

@@ -71,7 +71,7 @@
     />
   {/if}
   {#if minLabel || maxLabel}
-    <div class="ends"><span>{minLabel ?? ''}</span><span>{maxLabel ?? ''}</span></div>
+    <div class="ends" class:wide={mode === '0-100'}><span>{minLabel ?? ''}</span><span>{maxLabel ?? ''}</span></div>
   {/if}
 </div>
 
@@ -138,6 +138,9 @@
     margin-top: 8px;
     font-family: var(--font-serif);
     font-style: italic;
+  }
+  .ends.wide {
+    max-width: none;
   }
   input[type='range'] {
     width: 100%;

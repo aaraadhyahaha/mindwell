@@ -70,6 +70,6 @@ Via `ctx.signals` (signals) and the screen's `signals` snapshot (UI), never ch01
 ## Build checklist
 - [x] [builder] migrations + schema + repo
 - [x] [tester] signals, conditions, suggestions
-- [ ] [builder] stepped form with three-Ps hints and coach line
+- [x] [main] stepped form with three-Ps hints and coach line
 - [ ] [builder] history + per-story chart, Today card, review section
 - [ ] [main] register, end-to-end check
