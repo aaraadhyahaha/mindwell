@@ -15,7 +15,7 @@ export const module: Module<Component<ModuleViewProps>> = {
   manifest,
   migrations,
   screens: [
-    { path: '', title: 'Thoughts', component: ThoughtsScreen, inNav: true, icon: 'thoughts', navCount: thoughtsNavCount },
+    { path: '', title: 'Thoughts', component: ThoughtsScreen, inNav: true, icon: 'thoughts', navCount: thoughtsNavCount, whyInOpener: true },
     { path: 'capture', title: 'Capture', component: CaptureScreen, inNav: false },
   ],
   todayCards: [

@@ -8,6 +8,7 @@ export { default as Scale } from './Scale.svelte';
 export { default as Choice } from './Choice.svelte';
 export { default as Button } from './Button.svelte';
 export { default as WhySheet } from './WhySheet.svelte';
+export { default as WhyLink } from './WhyLink.svelte';
 export { default as LineChart } from './LineChart.svelte';
 export { default as Shell } from './Shell.svelte';
 export { default as Sidebar } from './Sidebar.svelte';

@@ -75,16 +75,19 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .setup(|app| {
-            WebviewWindowBuilder::new(app, "capture", WebviewUrl::App("/m/ch01/capture".into()))
+            let capture = WebviewWindowBuilder::new(app, "capture", WebviewUrl::App("/m/ch01/capture".into()))
                 .title("Capture")
-                .inner_size(460.0, 170.0)
+                .inner_size(560.0, 240.0)
                 .decorations(false)
                 .always_on_top(true)
                 .skip_taskbar(true)
                 .resizable(false)
                 .center()
-                .visible(false)
-                .build()?;
+                .visible(false);
+            // Transparent so the card's rounded corners show (macOS would need the private API).
+            #[cfg(not(target_os = "macos"))]
+            let capture = capture.transparent(true);
+            capture.build()?;
             if std::env::args().any(|a| a == "--capture") {
                 show_capture(app.handle());
             } else {

@@ -10,7 +10,8 @@
 //   node scripts/design-shots.mjs fonts <path|mockup:name> <selector>...
 //   node scripts/design-shots.mjs compare today /            -> every box/spacing/font difference
 //
-// Env: SHOT_W / SHOT_H (default 1440 × 900), SHOT_AT (page clock, default today 08:30).
+// Env: SHOT_W / SHOT_H (default 1440 × 900), SHOT_AT (page clock, default today 08:30),
+//      SHOT_WINDOW (window label, default main; `capture` renders the bare capture window).
 import { chromium } from 'playwright';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync, rmSync } from 'node:fs';
@@ -32,7 +33,7 @@ const mockupUrl = (name) => pathToFileURL(join(root, 'docs/design/mockups', `${n
 
 const TAURI_MOCK = `
   window.__TAURI_INTERNALS__ = {
-    metadata: { currentWindow: { label: 'main' }, currentWebview: { windowLabel: 'main', label: 'main' } },
+    metadata: { currentWindow: { label: '${process.env.SHOT_WINDOW ?? 'main'}' }, currentWebview: { windowLabel: '${process.env.SHOT_WINDOW ?? 'main'}', label: '${process.env.SHOT_WINDOW ?? 'main'}' } },
     transformCallback(cb) { const id = Math.floor(Math.random() * 1e9); window['_' + id] = cb; return id; },
     unregisterCallback() {},
     convertFileSrc: (p) => p,
@@ -211,7 +212,7 @@ async function measure(page) {
   const items = await page.evaluate(MEASURE);
   // Re-base on the main column so the app's scrolling .main and the mockup's page agree.
   const origin = await page.evaluate(() => {
-    const m = document.querySelector('main, .main');
+    const m = document.querySelector('.cw') ?? document.querySelector('main, .main');
     if (!m) return { x: 0, y: 0 };
     const r = m.getBoundingClientRect();
     return { x: r.left + window.scrollX - m.scrollLeft, y: r.top + window.scrollY - m.scrollTop };

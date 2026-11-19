@@ -22,6 +22,8 @@
 
   // Small extra windows (the capture window) render the screen alone: no nav, no reminders.
   const bare = isAuxWindow();
+  // An extra window paints no page background of its own: its screen draws the whole window.
+  if (bare && typeof document !== 'undefined') document.documentElement.dataset.window = 'aux';
 
   const practice = $derived(moduleNavLinks(activation.active));
   const toc = $derived<TocEntry[]>(

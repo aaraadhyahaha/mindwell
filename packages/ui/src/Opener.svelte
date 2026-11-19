@@ -1,18 +1,41 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte';
   /**
    * Chapter opener: small-caps label → 42px serif title → italic lede → 48px ink rule.
    * `ruleBelow` is the space under the rule (40px on Today, 8px in the Library, 0 on Thoughts).
+   * `aside` sits at the right, bottom-aligned with the rule (e.g. `WhyLink`).
    */
-  let { label, title, lede, ruleBelow = 40 }: { label?: string; title: string; lede?: string; ruleBelow?: number } =
-    $props();
+  let {
+    label,
+    title,
+    lede,
+    ruleBelow = 40,
+    aside
+  }: { label?: string; title: string; lede?: string; ruleBelow?: number; aside?: Snippet } = $props();
 </script>
 
-{#if label}<p class="label">{label}</p>{/if}
-<h1 class="title">{title}</h1>
-{#if lede}<p class="lede">{lede}</p>{/if}
-<hr class="opener-rule" style:margin-bottom="{ruleBelow}px" />
+{#snippet head()}
+  {#if label}<p class="label">{label}</p>{/if}
+  <h1 class="title">{title}</h1>
+  {#if lede}<p class="lede">{lede}</p>{/if}
+  <hr class="opener-rule" style:margin-bottom="{ruleBelow}px" />
+{/snippet}
+
+{#if aside}
+  <div class="opener">
+    <div>{@render head()}</div>
+    {@render aside()}
+  </div>
+{:else}
+  {@render head()}
+{/if}
 
 <style>
+  .opener {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
   .label {
     font-size: 11px;
     letter-spacing: 0.14em;

@@ -26,6 +26,8 @@ export interface ScreenDef<C> {
   icon?: string;
   /** Pure. The number shown after the nav label (e.g. active experiments), or null for none. */
   navCount?: (signals: Signals) => number | null;
+  /** The screen shows "Why this exists" in its own opener (`WhyLink`); the shell then adds none. */
+  whyInOpener?: boolean;
 }
 
 /** Where a Today card sits. `margin`: a short note in Today's "In the margin" column. */

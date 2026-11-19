@@ -3,7 +3,7 @@
   import type { ModuleViewProps, Signals, Store } from '@mindwell/core';
   import { buildSignals, localDay } from '@mindwell/core';
   import { page } from '$app/state';
-  import { Page, WhySheet, Toolbar } from '@mindwell/ui';
+  import { Page, WhySheet, Toolbar, Button, Kbd } from '@mindwell/ui';
   import { moduleRunningHead } from '$lib/nav';
   import { activation } from '$lib/activation.svelte';
   import { getStore } from '$lib/db';
@@ -17,6 +17,9 @@
   const screen = $derived(mod?.screens.find((s) => s.path === (page.params.path ?? '')) ?? null);
   const Screen = $derived(screen?.component as Component<ModuleViewProps> | undefined);
   const head = $derived(mod ? moduleRunningHead(mod.manifest) : null);
+  const canCapture = $derived(
+    activation.active.some((m) => m.manifest.id === 'ch01') && !(page.params.id === 'ch01' && page.params.path === 'capture')
+  );
 
   let store = $state<Store | null>(null);
   let signals = $state<Signals | null>(null);
@@ -46,7 +49,15 @@
   }
 </script>
 
-{#if !bare}<Toolbar head={head?.head ?? 'mindwell'} sub={head?.sub} />{/if}
+{#if !bare}
+  <Toolbar head={head?.head ?? 'mindwell'} sub={head?.sub}>
+    {#snippet actions()}
+      {#if canCapture}
+        <Button variant="secondary" icon="plus" href="/m/ch01/capture">Capture a thought<Kbd keys={capture.shortcut} /></Button>
+      {/if}
+    {/snippet}
+  </Toolbar>
+{/if}
 {#if error}
   <Page title="Not available"><p class="note">{error}</p></Page>
 {:else if activation.loaded && (!mod || !screen)}
@@ -57,7 +68,7 @@
   {#key `${page.url.pathname}:${capture.openCount}`}
     <Screen {store} {day} {signals} />
   {/key}
-  {#if !bare}
+  {#if !bare && !screen?.whyInOpener}
   <p class="why-row"><button type="button" class="why" onclick={() => (whyOpen = true)}>Why this exists</button></p>
   {/if}
   <WhySheet bind:open={whyOpen} title={mod.manifest.title}>

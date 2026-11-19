@@ -340,10 +340,14 @@
     align-items: center;
     gap: 12px;
   }
+  /* 44px buttons that take up one 12.5px/1.5 text line (18.75px), so the row is as tall as the mockup's source line. */
+  .src-row {
+    min-height: 18.75px;
+  }
   .src-row .acts {
     display: flex;
     gap: 2px;
-    margin: -12px 0;
+    margin: -12.625px 0;
   }
   .src {
     font-size: 12.5px;

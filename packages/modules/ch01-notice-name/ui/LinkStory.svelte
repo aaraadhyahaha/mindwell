@@ -41,7 +41,7 @@
 </script>
 
 {#if !open}
-  <Button variant="quiet" onclick={() => (open = true)}>Link to story</Button>
+  <button type="button" class="open" onclick={() => (open = true)}>Link to a story</button>
 {:else}
   <span class="link">
     {#if stories.length > 0}
@@ -64,6 +64,18 @@
 {/if}
 
 <style>
+  .open {
+    font: 600 12.5px var(--font-sans);
+    color: var(--accent);
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    min-height: 24px;
+  }
+  .open:hover {
+    text-decoration: underline;
+  }
   .link {
     display: inline-flex;
     flex-wrap: wrap;

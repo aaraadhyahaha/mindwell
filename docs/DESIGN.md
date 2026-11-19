@@ -46,6 +46,9 @@ Shell: `Shell` · `Sidebar` · `NavLabel` · `NavItem` · `Toc` · `Toolbar` · 
 
 Page and content (values copied from `today.html`):
 - `Page`: content under the toolbar, padding 52/64/72. Chapter opener: label (11px/600 uppercase .14em muted) → title Tinos 42px/1.12, -0.015em, 10px above → optional lede Tinos italic 18px muted, max 560px → 48px 1px ink rule (28px above, 40px below). With `margin`, a two-column grid: main `minmax(0, 660px)` + 280px margin, 80px gap, centred; the margin column has a 1px left rule, 32px padding and an "In the margin" label. Below 1220px window width the margin moves under the main column.
+- `Opener`: the chapter opener on its own, for screens with their own grid. `ruleBelow` sets the space under the rule (Today 40, Library 8, Thoughts 0); `aside` sits right, bottom-aligned (Thoughts puts `WhyLink` there). Library page: `minmax(0, 1fr)` + 360px detail card, 72px gap, max 1188px centred. Thoughts page: two equal columns, 72px gap, max 1188px; the opener spans both.
+- `WhyLink`: "Why this exists" (13.5px/600 accent, 16px info icon, 6px gap) that opens the module's `WhySheet`. A screen that shows it sets `whyInOpener` so the shell adds no second link.
+- Capture window: a 560×240 card (surface, 1px rule, 14px radius, padding 22/26/18, `line-height: normal`). The native window is transparent so the corners show; in the main window the card sits 40px in from the page edge.
 - `Step`: italic roman numeral (Tinos 16px, accent) + Tinos 20px heading; 44px below each step.
 - `Choice`: pills 38px, radius 999, surface + rule, 500 14px; selected = accent-soft fill, accent border and text, 600. 16px below the heading. `labelledby` hides the built-in label when a `Step` names it.
 - `Scale` (1–5): one segmented control, max 400px, radius 10, 44px cells in Tinos 17px split by rules; selected = accent fill. End labels Tinos italic 12.5px muted. `labelledby` as for `Choice`.

@@ -13,6 +13,7 @@
     cross: '<path d="M6 6l12 12M18 6 6 18"/>',
     another: '<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
     dot: '<circle cx="12" cy="12" r="3.5"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
   } as const;
 
   export type IconName = keyof typeof PATHS;
