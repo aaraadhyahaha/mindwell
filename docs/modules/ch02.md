@@ -71,5 +71,5 @@ Via `ctx.signals` (signals) and the screen's `signals` snapshot (UI), never ch01
 - [x] [builder] migrations + schema + repo
 - [x] [tester] signals, conditions, suggestions
 - [x] [main] stepped form with three-Ps hints and coach line
-- [ ] [builder] history + per-story chart, Today card, review section
+- [x] [builder] history + per-story chart, Today card, review section
 - [ ] [main] register, end-to-end check
