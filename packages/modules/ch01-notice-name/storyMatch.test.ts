@@ -35,3 +35,22 @@ describe('suggestStory', () => {
     expect(suggestStory('sunshine', stories, [])).toBeNull();
   });
 });
+
+describe('suggestStory edge cases', () => {
+  const stories = [story('a', 'not good enough'), story('b', 'money worries')];
+  it('returns null for empty text', () => {
+    expect(suggestStory('', stories, [])).toBeNull();
+  });
+  it('ignores case and punctuation', () => {
+    expect(suggestStory('MONEY!!! worries...', stories, [])).toBe('b');
+    expect(suggestStory('money-worries', stories, [])).toBe('b');
+  });
+  it('ignores words under 3 letters', () => {
+    const s = [story('a', 'go it ok')];
+    expect(suggestStory('go it ok', s, [])).toBeNull();
+    expect(words('ok go it')).toEqual(new Set());
+  });
+  it('matches a story name with no past captures', () => {
+    expect(suggestStory('worries', [story('b', 'money worries')], [])).toBe('b');
+  });
+});
