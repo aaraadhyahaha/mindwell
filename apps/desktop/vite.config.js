@@ -7,6 +7,7 @@ const host = process.env.TAURI_DEV_HOST;
  * Release guard: the dev test module is registered only when `import.meta.env.DEV`
  * (see src/lib/registry.ts). Fails a production build if any of its files reach a chunk.
  */
+/** @returns {import("vite").Plugin} */
 function noDevModuleInRelease() {
   return {
     name: "mindwell:no-dev-module-in-release",
