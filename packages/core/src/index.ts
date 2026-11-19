@@ -61,3 +61,7 @@ export {
 } from './engine';
 export type { PromptHistory } from './prompt-log';
 export { loadPromptHistory, shownInSlot, recordShown, recordSwap, setFeedback } from './prompt-log';
+export type { WeekSummary, ProposedSuggestion, SuggestionEvaluation, ReviewSuggestionsOptions } from './review';
+export { REVIEW_DAYS, reviewWeek, weekSummary, evaluateSuggestions, reviewSuggestions, decideSuggestion } from './review';
+export type { RecordDump } from './export';
+export { EXPORT_FORMAT_VERSION, collectRecords, exportJson, exportMarkdown } from './export';
