@@ -67,8 +67,13 @@ async function catchUp(): Promise<void> {
 
 /** Checks every 60 s for due reminders, and once a day on return to the tab. Returns a stop function. */
 export function startReminders(): () => void {
-  const run = () => void tick().catch(() => {});
-  const catchUpRun = () => void catchUp().catch(() => {});
+  // One at a time: the tick and a catch-up must not both see a reminder as unsent.
+  let chain: Promise<void> = Promise.resolve();
+  const queue = (task: () => Promise<void>) => {
+    chain = chain.then(task).catch(() => {});
+  };
+  const run = () => queue(tick);
+  const catchUpRun = () => queue(catchUp);
   const onVisible = () => {
     if (document.visibilityState === 'visible') catchUpRun();
   };

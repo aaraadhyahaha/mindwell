@@ -52,9 +52,9 @@ sw.addEventListener('fetch', (event) => {
     return;
   }
 
-  // The sqlite wasm is emitted by the worker build, so it is not in `build`. Its name is content-hashed,
-  // so it is cached the first time it is fetched.
-  if (url.pathname.startsWith('/_app/immutable/workers/assets/')) {
+  // The database worker and the sqlite wasm come from the worker build, so they are not in `build`.
+  // Everything under /_app/immutable/ is content-hashed, so cache it the first time it is fetched.
+  if (url.pathname.startsWith('/_app/immutable/') && !PRECACHED.has(url.pathname)) {
     event.respondWith(
       (async () => {
         const cache = await caches.open(CACHE);
