@@ -16,13 +16,14 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 | Add an app route | `apps/web/src/routes/`; nav in `apps/web/src/lib/nav.ts` |
 | Change a token / font | `packages/ui/src/tokens.css`, `packages/ui/src/fonts.css`; spec `docs/DESIGN.md#tokens` |
 | Export | `packages/core/src/export.ts`; app side `apps/web/src/lib/export.ts`, `apps/web/src/lib/backup.ts` |
+| Import (restore from backup) | `packages/core/src/import.ts`; app side `apps/web/src/lib/import.ts`; UI in `apps/web/src/routes/settings/+page.svelte` |
 | Notifications | `apps/web/src/lib/reminders.ts`, `apps/web/src/lib/reminders.svelte.ts`, `apps/web/src/service-worker.ts` |
 | Capture | key/overlay `apps/web/src/lib/capture.svelte.ts`, `apps/web/src/lib/capture-key.ts`; screen `packages/modules/ch01-notice-name/ui/CaptureScreen.svelte` |
 | Register a module | `apps/web/src/lib/registry.ts`; contract `docs/MODULE_CONTRACT.md#what-a-module-exports` |
 
 ## core (`packages/core/src`)
 
-- Store interface, base record → `packages/core/src/store.ts` → `BaseRecord`, `Store`, `Query`, `Migration`, `SqlDriver`, `Importer` → — → `docs/ARCHITECTURE.md#key-interfaces-in-packagescore`
+- Store interface, base record → `packages/core/src/store.ts` → `BaseRecord`, `Store`, `put`, `Query`, `Migration`, `SqlDriver`, `Importer` → — → `docs/ARCHITECTURE.md#key-interfaces-in-packagescore`
 - ULID ids → `packages/core/src/id.ts` → `newId`, `isId` → — → `docs/ARCHITECTURE.md#data-rules`
 - Core records and tables → `packages/core/src/records.ts` → `CORE_TABLES`, `DAY_TYPES`, `DayRecord`, `PromptShownRecord`, `SuggestionRecord`, `SettingRecord` → `packages/storage-sqlite/src/core-tables.test.ts` → `docs/ARCHITECTURE.md#data-rules`
 - Core migrations → `packages/core/src/migrations.ts` → `coreMigrations` → `packages/storage-sqlite/src/core-tables.test.ts` → —
@@ -41,10 +42,11 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 - Weekly review data → `packages/core/src/review.ts` → `reviewWeek`, `weekSummary`, `REVIEW_DAYS`, `WeekSummary` → `packages/core/src/review.test.ts`, `packages/storage-sqlite/src/review.test.ts` → —
 - Module reminder pick (latest pending, dedupe) → `packages/core/src/reminders.ts` → `pickReminder`, `pruneSent`, `ReminderPick` → `packages/core/src/reminders.test.ts` → `docs/MODULE_CONTRACT.md#what-a-module-exports`
 - Export → `packages/core/src/export.ts` → `collectRecords`, `exportJson`, `exportMarkdown`, `EXPORT_FORMAT_VERSION`, `RecordDump` → `packages/core/src/export.test.ts` → —
+- Import: parse, summary, restore (upsert + soft-delete, dry run) → `packages/core/src/import.ts` → `parseBackup`, `backupSummary`, `restoreBackup`, `Backup`, `BackupRow`, `BackupSummary`, `TableCount` → `packages/core/src/import.test.ts`, `packages/storage-sqlite/src/import.test.ts` → —
 
 ## storage (`packages/storage-sqlite/src`)
 
-- Store implementation + migrate (`_migrations` table) → `packages/storage-sqlite/src/store.ts`, `packages/storage-sqlite/src/index.ts` → `createStore` → `packages/storage-sqlite/src/store.test.ts` → `docs/ARCHITECTURE.md#layers`
+- Store implementation + migrate (`_migrations` table), verbatim `put` → `packages/storage-sqlite/src/store.ts`, `packages/storage-sqlite/src/index.ts` → `createStore`, `put` → `packages/storage-sqlite/src/store.test.ts`, `packages/storage-sqlite/src/import.test.ts` → `docs/ARCHITECTURE.md#layers`
 - Test driver (better-sqlite3) → `packages/storage-sqlite/src/better-sqlite-driver.ts` → `createBetterSqliteDriver` → `packages/storage-sqlite/src/store.test.ts` → —
 - Browser driver (main thread) → `packages/storage-sqlite/src/browser/browser.ts` → `createBrowserDriver`, `requestPersistentStorage`, `BrowserDriverStatus` → — → `docs/ARCHITECTURE.md#browser`
 - RPC client (tab side) → `packages/storage-sqlite/src/browser/client.ts` → `createRpcDriver`, `RpcDriver` → `packages/storage-sqlite/src/browser/host.test.ts` → `docs/ARCHITECTURE.md#browser`
@@ -77,6 +79,7 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 - Service worker, PWA → `apps/web/src/service-worker.ts`, `apps/web/static/manifest.webmanifest` → `CACHE` → — → `docs/ARCHITECTURE.md#browser`
 - Reminders, notifications → `apps/web/src/lib/reminders.ts`, `apps/web/src/lib/reminders.svelte.ts` → `dueReminders`, `catchUpReminder`, `REMINDER_WINDOW_MIN`, `ReminderConfig`, `requestNotificationPermission`, `startReminders`, `moduleTick` → `apps/web/src/lib/reminders.test.ts` → —
 - Export, backup nudge → `apps/web/src/lib/export.ts`, `apps/web/src/lib/backup.ts` → `exportRecords`, `ExportFormat`, `ExportResult`, `BACKUP_INTERVAL_DAYS`, `backupDue` → `apps/web/src/lib/backup.test.ts` → —
+- Restore from backup (Settings) → `apps/web/src/lib/import.ts`, `apps/web/src/routes/settings/+page.svelte` → `checkBackupFile`, `restoreFromBackup`, `ImportCheck` → `packages/storage-sqlite/src/import.test.ts` → —
 - Quick capture → `apps/web/src/lib/capture.svelte.ts`, `apps/web/src/lib/capture-key.ts` → `CAPTURE_KEY`, `capture`, `openCapture`, `isCaptureKey`, `CaptureKeyEvent` → `apps/web/src/lib/capture-key.test.ts` → —
 - Weekly review (`/week`) → `apps/web/src/routes/week/+page.svelte`, `apps/web/src/lib/week.ts` → `weekRangeLabel` → `apps/web/src/lib/week.test.ts` → —
 - Settings (`/settings`) → `apps/web/src/routes/settings/+page.svelte`, `apps/web/src/lib/settings.svelte.ts` → `SETTING_KEYS`, `SettingsState`, `settings` → — → —

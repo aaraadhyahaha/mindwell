@@ -69,3 +69,5 @@ export type { RecordDump } from './export';
 export { EXPORT_FORMAT_VERSION, collectRecords, exportJson, exportMarkdown } from './export';
 export type { ReminderPick } from './reminders';
 export { pickReminder, pruneSent } from './reminders';
+export type { Backup, BackupRow, BackupSummary, ParseResult, TableCount } from './import';
+export { parseBackup, backupSummary, restoreBackup } from './import';

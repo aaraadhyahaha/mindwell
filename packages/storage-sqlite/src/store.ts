@@ -219,6 +219,18 @@ function build(driver: SqlDriver, run: Serial, depth: number): Store {
       });
     },
 
+    put(table: string, row: BaseRecord & Record<string, SqlValue>): Promise<void> {
+      return run(async () => {
+        const cols = Object.keys(row).map(ident);
+        const updates = cols.filter((c) => c !== 'id').map((c) => `${c} = excluded.${c}`);
+        await driver.execute(
+          `INSERT INTO ${ident(table)} (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})` +
+            ` ON CONFLICT(id) DO UPDATE SET ${updates.join(', ')}`,
+          cols.map((c) => row[c] as SqlValue),
+        );
+      });
+    },
+
     transaction<R>(fn: (tx: Store) => Promise<R>): Promise<R> {
       return run(() => inTransaction(fn));
     },

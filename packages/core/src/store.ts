@@ -79,6 +79,12 @@ export interface Store {
   tables(): Promise<string[]>;
   /** Applies, in version order, each migration not yet recorded for `owner`. Safe to call repeatedly. */
   migrate(owner: string, migrations: Migration[]): Promise<void>;
+  /**
+   * Writes a complete row verbatim (its own id, timestamps and schema_version), replacing
+   * the columns of any row with the same id. For restoring a backup only; app code uses
+   * `insert`/`update`. Never removes rows.
+   */
+  put(table: string, row: BaseRecord & Record<string, SqlValue>): Promise<void>;
   /** Runs `fn` atomically: commits if it resolves, rolls back if it throws. */
   transaction<R>(fn: (tx: Store) => Promise<R>): Promise<R>;
 }
