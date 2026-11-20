@@ -31,3 +31,4 @@ export { default as Tag } from './Tag.svelte';
 export { default as Meter } from './Meter.svelte';
 export { theme, setTheme } from './theme.svelte';
 export type { ThemePreference } from './theme.svelte';
+export { setBasePath, appHref } from './paths';

@@ -1,4 +1,5 @@
 import { goto } from '$app/navigation';
+import { base } from '$app/paths';
 import { activation } from '$lib/activation.svelte';
 
 /** Key (with no modifier) that opens capture anywhere in the app. */
@@ -16,8 +17,8 @@ export const capture = new CaptureState();
 export function openCapture(opts?: { replace?: boolean }): void {
   if (activation.active.some((m) => m.manifest.id === 'ch01')) {
     capture.openCount += 1;
-    void goto('/m/ch01/capture', { replaceState: opts?.replace ?? false });
+    void goto(`${base}/m/ch01/capture`, { replaceState: opts?.replace ?? false });
   } else {
-    void goto('/', { replaceState: true });
+    void goto(`${base}/`, { replaceState: true });
   }
 }

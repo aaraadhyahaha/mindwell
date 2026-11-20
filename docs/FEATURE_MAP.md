@@ -19,6 +19,7 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 | Import (restore from backup) | `packages/core/src/import.ts`; app side `apps/web/src/lib/import.ts`; UI in `apps/web/src/routes/settings/+page.svelte` |
 | Notifications | `apps/web/src/lib/reminders.ts`, `apps/web/src/lib/reminders.svelte.ts`, `apps/web/src/service-worker.ts` |
 | Capture | key/overlay `apps/web/src/lib/capture.svelte.ts`, `apps/web/src/lib/capture-key.ts`; screen `packages/modules/ch01-notice-name/ui/CaptureScreen.svelte` |
+| Deploy (GitHub Pages) | `.github/workflows/deploy.yml`; base path `apps/web/svelte.config.js`, set in `apps/web/src/routes/+layout.ts` |
 | Register a module | `apps/web/src/lib/registry.ts`; contract `docs/MODULE_CONTRACT.md#what-a-module-exports` |
 
 ## core (`packages/core/src`)
@@ -69,6 +70,7 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 - Why link / sheet → `packages/ui/src/WhyLink.svelte`, `packages/ui/src/WhySheet.svelte` → — → — → —
 - Data display → `packages/ui/src/LineChart.svelte`, `packages/ui/src/RatingDots.svelte`, `packages/ui/src/Meter.svelte`, `packages/ui/src/Tag.svelte`, `packages/ui/src/Kbd.svelte` → — → — → —
 - Icons → `packages/ui/src/Icon.svelte` → — → — → —
+- Base path, app links (`Button`/`NavItem`/`Toc` resolve hrefs) → `packages/ui/src/paths.ts`, `packages/ui/src/Button.svelte`, `packages/ui/src/NavItem.svelte`, `packages/ui/src/Toc.svelte` → `setBasePath`, `appHref` → — → —
 
 ## web app shell and routes (`apps/web`)
 

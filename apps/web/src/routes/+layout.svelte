@@ -5,6 +5,7 @@
   import { Shell, Sidebar, NavLabel, NavItem, Toc } from '@mindwell/ui';
   import type { TocEntry } from '@mindwell/ui';
   import { page } from '$app/state';
+  import { base } from '$app/paths';
   import { afterNavigate } from '$app/navigation';
   import { nav } from '$lib/nav.svelte';
   import { moduleNavLinks, tocRows } from '$lib/nav';
@@ -39,9 +40,9 @@
       if (cameFromHash) {
         cameFromHash = false;
         window.close();
-        setTimeout(() => void goto('/', { replaceState: true }), 150);
+        setTimeout(() => void goto(`${base}/`, { replaceState: true }), 150);
       } else {
-        void goto('/');
+        void goto(`${base}/`);
       }
     };
     window.addEventListener('mindwell:done', onDone);
@@ -81,8 +82,9 @@
     };
   });
 
-  const isActive = (href: string) =>
-    href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
+  // Hrefs are app paths; the URL carries the base (e.g. /mindwell) in production.
+  const appPath = $derived(page.url.pathname.slice(base.length) || '/');
+  const isActive = (href: string) => (href === '/' ? appPath === '/' : appPath.startsWith(href));
 </script>
 
 <Shell>

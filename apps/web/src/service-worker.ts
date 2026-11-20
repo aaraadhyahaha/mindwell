@@ -3,12 +3,13 @@
 /// <reference lib="esnext" />
 /// <reference lib="webworker" />
 
-import { build, files, version } from '$service-worker';
+import { base, build, files, version } from '$service-worker';
 
 const sw = self as unknown as ServiceWorkerGlobalScope;
 
 const CACHE = `mindwell-${version}`;
-const PRECACHE = [...build, ...files, '/'];
+const SHELL = `${base}/`;
+const PRECACHE = [...build, ...files, SHELL];
 const PRECACHED = new Set(PRECACHE);
 
 sw.addEventListener('install', (event) => {
@@ -44,7 +45,7 @@ sw.addEventListener('fetch', (event) => {
         try {
           return await fetch(request);
         } catch {
-          const cached = await (await caches.open(CACHE)).match('/');
+          const cached = await (await caches.open(CACHE)).match(SHELL);
           return cached ?? Response.error();
         }
       })()
@@ -53,8 +54,8 @@ sw.addEventListener('fetch', (event) => {
   }
 
   // The database worker and the sqlite wasm come from the worker build, so they are not in `build`.
-  // Everything under /_app/immutable/ is content-hashed, so cache it the first time it is fetched.
-  if (url.pathname.startsWith('/_app/immutable/') && !PRECACHED.has(url.pathname)) {
+  // Everything under {base}/_app/immutable/ is content-hashed, so cache it the first time it is fetched.
+  if (url.pathname.startsWith(`${base}/_app/immutable/`) && !PRECACHED.has(url.pathname)) {
     event.respondWith(
       (async () => {
         const cache = await caches.open(CACHE);
@@ -88,7 +89,7 @@ sw.addEventListener('notificationclick', (event) => {
         await mine.focus();
         return;
       }
-      await sw.clients.openWindow('/');
+      await sw.clients.openWindow(SHELL);
     })()
   );
 });

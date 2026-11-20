@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ModuleViewProps } from '@mindwell/core';
-  import { Card } from '@mindwell/ui';
+  import { Card, appHref } from '@mindwell/ui';
   import { PRE_EVENT_MIN } from '../reminders';
   import { clock, eventToday } from '../signals';
 
@@ -15,7 +15,7 @@
     <p class="title">{ev.title}</p>
     <p class="say">Your body is getting ready to perform. Say: <i>I'm excited.</i></p>
     <p class="muted">A racing heart and quick breath are the same signals as excitement. Name them that way.</p>
-    <a class="link" href="/m/ch03?tab=events">Events</a>
+    <a class="link" href={appHref('/m/ch03?tab=events')}>Events</a>
   </Card>
 {/if}
 

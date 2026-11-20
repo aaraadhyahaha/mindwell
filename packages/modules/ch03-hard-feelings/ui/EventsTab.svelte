@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ModuleViewProps } from '@mindwell/core';
   import { addDays } from '@mindwell/core';
-  import { Button, Choice, Field, RatingDots, Scale, Tag } from '@mindwell/ui';
+  import { Button, Choice, Field, RatingDots, Scale, Tag, appHref } from '@mindwell/ui';
   import { addEvent, deleteEvent, listEvents, rateEvent, updateEvent } from '../repo';
   import type { ReframeHelped, StressEvent } from '../schema';
   import { clock } from '../signals';
@@ -136,7 +136,7 @@
       </div>
       <p class="note">
         A notification comes the morning of and an hour before, while mindwell is open in a browser tab. It says:
-        <i>{REAPPRAISAL_BODY}</i> Turn notifications on in <a href="/settings">Settings</a>.
+        <i>{REAPPRAISAL_BODY}</i> Turn notifications on in <a href={appHref('/settings')}>Settings</a>.
       </p>
     </form>
   </section>

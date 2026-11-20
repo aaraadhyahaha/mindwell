@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ModuleViewProps } from '@mindwell/core';
   import { addDays } from '@mindwell/core';
-  import { Button, LineChart, Opener, WhyLink } from '@mindwell/ui';
+  import { Button, LineChart, Opener, WhyLink, appHref } from '@mindwell/ui';
   import { dayLabel, draftStep, groupByDay, storyCharts } from '../history';
   import { manifest } from '../manifest';
   import { discardRecord, listRecords } from '../repo';
@@ -65,7 +65,7 @@
             <p class="meta">Started {dayLabel(r.day, day)} · next: <i class="n">{draftStep(r).split(' ')[0]}</i> {draftStep(r).split(' ').slice(1).join(' ')}</p>
           </div>
           <span class="acts">
-            <a class="link" href="/m/ch02/new?id={r.id}">Resume</a>
+            <a class="link" href={appHref(`/m/ch02/new?id=${r.id}`)}>Resume</a>
             <button class="link" type="button" onclick={() => discard(r.id)}>Discard</button>
           </span>
         </div>
@@ -91,7 +91,7 @@
               <div class="meta">
                 <span>{r.feeling} · {r.intensity_before} → {r.intensity_after}</span>
                 {#if nameOf(r.story_id)}<span class="chip">{nameOf(r.story_id)}</span>{/if}
-                <a class="link" href="/m/ch02/new?id={r.id}">Open</a>
+                <a class="link" href={appHref(`/m/ch02/new?id=${r.id}`)}>Open</a>
               </div>
             </div>
           </div>

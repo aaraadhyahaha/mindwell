@@ -2,6 +2,7 @@
   import type { Snippet } from 'svelte';
   import type { IconName } from './Icon.svelte';
   import Icon from './Icon.svelte';
+  import { appHref } from './paths';
   /**
    * primary = accent fill (44px), secondary = surface + rule outline (38px), quiet = accent text.
    * With `href` it renders a link styled as a button. `icon` adds a 16px leading stroke icon.
@@ -28,7 +29,7 @@
 </script>
 
 {#if href}
-  <a class="btn {variant}" {href} {onclick}>
+  <a class="btn {variant}" href={appHref(href)} {onclick}>
     {#if icon}<Icon name={icon} />{/if}{@render children()}
   </a>
 {:else}

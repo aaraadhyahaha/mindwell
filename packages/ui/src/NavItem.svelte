@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { IconName } from './Icon.svelte';
   import Icon from './Icon.svelte';
+  import { appHref } from './paths';
   /** A sidebar row: 18px stroke icon, label, optional count. The current row gets the accent-soft fill and accent text. */
   let {
     href,
@@ -11,7 +12,7 @@
   }: { href: string; label: string; icon?: IconName | string; count?: number | null; current?: boolean } = $props();
 </script>
 
-<a class="nav" class:on={current} {href} aria-current={current ? 'page' : undefined}>
+<a class="nav" class:on={current} href={appHref(href)} aria-current={current ? 'page' : undefined}>
   <Icon name={icon} />{label}{#if count !== null}<span class="count">{count}</span>{/if}
 </a>
 

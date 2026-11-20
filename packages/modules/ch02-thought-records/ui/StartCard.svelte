@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ModuleViewProps } from '@mindwell/core';
-  import { Button, Card } from '@mindwell/ui';
+  import { Button, Card, appHref } from '@mindwell/ui';
   import { listDrafts } from '../repo';
 
   let { store, day }: ModuleViewProps = $props();
@@ -17,7 +17,7 @@
   <p class="muted">When a thought hits hard, check it like a fair judge.</p>
   <div class="acts">
     <Button variant="secondary" href="/m/ch02/new" icon="plus">New thought record</Button>
-    {#if draftId}<a class="link" href="/m/ch02/new?id={draftId}">Resume your draft</a>{/if}
+    {#if draftId}<a class="link" href={appHref(`/m/ch02/new?id=${draftId}`)}>Resume your draft</a>{/if}
   </div>
 </Card>
 

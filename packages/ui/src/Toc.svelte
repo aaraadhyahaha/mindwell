@@ -10,6 +10,7 @@
 </script>
 
 <script lang="ts">
+  import { appHref } from './paths';
   /** The book's table of contents under Library. A dot marks a chapter read. */
   let { entries }: { entries: TocEntry[] } = $props();
 </script>
@@ -17,7 +18,7 @@
 <ul class="toc">
   {#each entries as e (e.href)}
     <li>
-      <a class:read={e.read} href={e.href} aria-current={e.current ? 'page' : undefined}
+      <a class:read={e.read} href={appHref(e.href)} aria-current={e.current ? 'page' : undefined}
         ><i>{e.number}</i>{e.title}{#if e.read}<span class="sr">, read</span>{/if}</a
       >
     </li>

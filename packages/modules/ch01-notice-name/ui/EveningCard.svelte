@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ModuleViewProps } from '@mindwell/core';
-  import { Card, SectionLabel } from '@mindwell/ui';
+  import { Card, SectionLabel, appHref } from '@mindwell/ui';
   import { capturesOnDay, listStories } from '../repo';
   import { thoughtRecordHref } from '../signals';
   import type { CaptureRecord, StoryRecord } from '../schema';
@@ -44,7 +44,7 @@
               <LinkStory {store} {day} captureId={c.id} {stories} onlinked={load} />
             {/if}
             {#if thoughtRecordHref(signals, c.id)}
-              <a class="link" href={thoughtRecordHref(signals, c.id)}>Thought record</a>
+              <a class="link" href={appHref(thoughtRecordHref(signals, c.id) ?? '')}>Thought record</a>
             {/if}
           </li>
         {/each}
