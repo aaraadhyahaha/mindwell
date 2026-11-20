@@ -14,6 +14,7 @@
     "@mindwell/core": "workspace:*",
     "@mindwell/module-ch01": "workspace:*",
     "@mindwell/module-ch02": "workspace:*",
+    "@mindwell/module-ch03": "workspace:*",
     "@mindwell/module-dev-test": "workspace:*",
     "@mindwell/module-intro": "workspace:*",
     "@mindwell/storage-sqlite": "workspace:*",

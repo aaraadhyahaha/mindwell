@@ -35,6 +35,8 @@ Build in phases. Use each phase for 1–2 weeks before the next. Tags say who do
 
 Each spec has its own checklist.
 
+- [x] Module built and registered (2026-11-20); acceptance checks pass (`apps/web/src/lib/ch03-flow.test.ts`, gratitude 28-evening test in `packages/modules/ch03-hard-feelings/prompts.test.ts`, browser check of notifications with Playwright). Core: optional `Module.reminders` + `pickReminder` (module notifications fired by the app's reminder loop).
+
 ## Later chapters (spec written after reading each chapter)
 
 | Ch | Module |

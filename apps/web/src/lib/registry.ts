@@ -4,6 +4,7 @@ import { validateModules } from '@mindwell/core';
 import { module as intro } from '@mindwell/module-intro';
 import { module as ch01 } from '@mindwell/module-ch01';
 import { module as ch02 } from '@mindwell/module-ch02';
+import { module as ch03 } from '@mindwell/module-ch03';
 
 /**
  * A module's UI component. Props differ by part (cards and review sections get
@@ -20,6 +21,8 @@ export const modules: Module<ModuleComponent>[] = [
   ch01,
   // After ch01: ch02's signals read ch01's through ctx.signals.
   ch02,
+  // After ch01: ch03's Defuse tab and prompts read ch01's captures and repeating story.
+  ch03,
   // Dev-only test module. Imported dynamically inside the DEV branch so a release
   // build drops it entirely (vite.config.js fails the build if it leaks).
   ...(import.meta.env.DEV ? [(await import('@mindwell/module-dev-test')).module] : []),

@@ -64,9 +64,9 @@ Published through `Module.reminders` (core contract): per upcoming event, one at
 | `gratitude` | Gratitude twice a week | 28 |
 
 ## Acceptance checks
-- [ ] No journal text is ever stored for expressive writing or gratitude.
-- [ ] Event notifications fire while a mindwell tab is open (in the background too), and a missed one shows once when the tab regains focus; none fire for past events.
-- [ ] Gratitude prompt never appears more than twice in 7 days.
+- [x] No journal text is ever stored for expressive writing or gratitude.
+- [x] Event notifications fire while a mindwell tab is open (in the background too), and a missed one shows once when the tab regains focus; none fire for past events.
+- [x] Gratitude prompt never appears more than twice in 7 days.
 
 ## Build checklist
 - [x] [builder] migrations + schema + repo
@@ -74,4 +74,4 @@ Published through `Module.reminders` (core contract): per upcoming event, one at
 - [x] [builder] Defuse + Gratitude tabs
 - [x] [builder] Events + notifications; Writing series + timer
 - [x] [builder] Today cards + review section
-- [ ] [main] register, end-to-end check
+- [x] [main] register, end-to-end check

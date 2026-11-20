@@ -29,6 +29,9 @@ importers:
       '@mindwell/module-ch02':
         specifier: workspace:*
         version: link:../../packages/modules/ch02-thought-records
+      '@mindwell/module-ch03':
+        specifier: workspace:*
+        version: link:../../packages/modules/ch03-hard-feelings
       '@mindwell/module-dev-test':
         specifier: workspace:*
         version: link:../../packages/modules/dev-test

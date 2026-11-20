@@ -132,7 +132,7 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 
 ## ch03 — Making room (`packages/modules/ch03-hard-feelings`)
 
-- Module, manifest → `packages/modules/ch03-hard-feelings/index.ts`, `packages/modules/ch03-hard-feelings/manifest.ts` → `module`, `manifest` → — → `docs/modules/ch03.md`
+- Module, manifest → `packages/modules/ch03-hard-feelings/index.ts`, `packages/modules/ch03-hard-feelings/manifest.ts` → `module`, `manifest` → `apps/web/src/lib/ch03-flow.test.ts` → `docs/modules/ch03.md`
 - Records, validators → `packages/modules/ch03-hard-feelings/schema.ts` → `Defusion`, `StressEvent`, `Series`, `Session`, `Gratitude`, `SERIES_PROMPTS`, `SESSION_MINUTES`, `validateTopic`, `validateThoughtText`, `validateRating5` → `packages/modules/ch03-hard-feelings/repo.test.ts` → `docs/modules/ch03.md#records`
 - Migrations → `packages/modules/ch03-hard-feelings/migrations.ts` → `migrations` → `packages/modules/ch03-hard-feelings/repo.test.ts` → `docs/modules/ch03.md#records`
 - Repo → `packages/modules/ch03-hard-feelings/repo.ts` → `addDefusion`, `listDefusions`, `defusionsBetween`, `addEvent`, `updateEvent`, `rateEvent`, `deleteEvent`, `listEvents`, `eventsBetween`, `startSeries`, `activeSeries`, `listSeries`, `finishSeries`, `stopSeries`, `startSession`, `finishSession`, `sessionsForSeries`, `sessionsBetween`, `markGratitude`, `unmarkGratitude`, `gratitudeDays`, `gratitudeBetween` → `packages/modules/ch03-hard-feelings/repo.test.ts` → —
