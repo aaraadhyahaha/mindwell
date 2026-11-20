@@ -13,6 +13,7 @@ export const SETTING_KEYS = {
   eveningOn: 'reminder.evening.on',
   theme: 'theme',
   sent: 'reminder.sent',
+  moduleSent: 'reminder.module_sent',
   backupSince: 'backup.since',
   lastExportAt: 'backup.last_export_at',
   backupDismissedAt: 'backup.dismissed_at',
@@ -42,6 +43,8 @@ export class SettingsState {
   eveningOn = $state(true);
   theme = $state<ThemePreference>('system');
   sent = $state.raw<ReminderSent>({ morning: null, evening: null });
+  /** Keys of module reminders already shown (see `pickReminder`). */
+  moduleSent = $state.raw<string[]>([]);
   backupSince = $state<string | null>(null);
   lastExportAt = $state<string | null>(null);
   backupDismissedAt = $state<string | null>(null);
@@ -81,6 +84,8 @@ export class SettingsState {
       if (s && typeof s === 'object' && isDayOrNull(s.morning ?? null) && isDayOrNull(s.evening ?? null)) {
         this.sent = { morning: s.morning ?? null, evening: s.evening ?? null };
       }
+      const ms = get(SETTING_KEYS.moduleSent);
+      if (Array.isArray(ms)) this.moduleSent = ms.filter((k): k is string => typeof k === 'string');
       const bs = get(SETTING_KEYS.backupSince);
       if (typeof bs === 'string') this.backupSince = bs;
       else {
@@ -116,6 +121,10 @@ export class SettingsState {
     }
   }
 
+  setModuleSent(keys: string[]): Promise<boolean> {
+    this.moduleSent = keys;
+    return this.save(SETTING_KEYS.moduleSent, keys);
+  }
   saveName(): Promise<boolean> {
     this.name = this.name.trim();
     return this.save(SETTING_KEYS.name, this.name);

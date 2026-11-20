@@ -27,7 +27,7 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 - Core records and tables → `packages/core/src/records.ts` → `CORE_TABLES`, `DAY_TYPES`, `DayRecord`, `PromptShownRecord`, `SuggestionRecord`, `SettingRecord` → `packages/storage-sqlite/src/core-tables.test.ts` → `docs/ARCHITECTURE.md#data-rules`
 - Core migrations → `packages/core/src/migrations.ts` → `coreMigrations` → `packages/storage-sqlite/src/core-tables.test.ts` → —
 - Dates, day boundary → `packages/core/src/dates.ts` → `DAY_BOUNDARY_HOUR`, `localDay`, `isDay`, `addDays`, `daysBetween` → `packages/core/src/dates.test.ts` → —
-- Module contract types → `packages/core/src/module.ts` → `Module`, `ModuleManifest`, `ScreenDef`, `TodayCardDef`, `ReviewSectionDef`, `ExperimentDef` → — → `docs/MODULE_CONTRACT.md#what-a-module-exports`
+- Module contract types → `packages/core/src/module.ts` → `Module`, `ModuleManifest`, `ScreenDef`, `TodayCardDef`, `ReviewSectionDef`, `ExperimentDef`, `ReminderDef`, `ModuleReminder`, `ReminderContext` → — → `docs/MODULE_CONTRACT.md#what-a-module-exports`
 - Module registry → `packages/core/src/registry.ts` → `validateModules`, `activeModules`, `recentlyUnlocked`, `libraryEntries`, `RECENTLY_UNLOCKED_DAYS`, `LibraryEntry` → `packages/core/src/registry.test.ts` → `docs/MODULE_CONTRACT.md#rules`
 - Book chapters and parts → `packages/core/src/book.ts` → `BOOK_CHAPTERS`, `BOOK_PARTS`, `BookChapter`, `BookPart` → — → —
 - Chapter read state → `packages/core/src/library.ts` → `readChapters`, `markChapterRead`, `markChapterUnread` → — → —
@@ -39,6 +39,7 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 - Prompt history log → `packages/core/src/prompt-log.ts` → `loadPromptHistory`, `recordShown`, `recordSwap`, `setFeedback`, `shownInSlot`, `PromptHistory` → `packages/storage-sqlite/src/prompt-log.test.ts` → —
 - Suggestions (evaluate, decide) → `packages/core/src/review.ts` → `evaluateSuggestions`, `reviewSuggestions`, `decideSuggestion`, `ProposedSuggestion`, `SuggestionEvaluation` → `packages/core/src/review.test.ts` → —
 - Weekly review data → `packages/core/src/review.ts` → `reviewWeek`, `weekSummary`, `REVIEW_DAYS`, `WeekSummary` → `packages/core/src/review.test.ts`, `packages/storage-sqlite/src/review.test.ts` → —
+- Module reminder pick (latest pending, dedupe) → `packages/core/src/reminders.ts` → `pickReminder`, `pruneSent`, `ReminderPick` → `packages/core/src/reminders.test.ts` → `docs/MODULE_CONTRACT.md#what-a-module-exports`
 - Export → `packages/core/src/export.ts` → `collectRecords`, `exportJson`, `exportMarkdown`, `EXPORT_FORMAT_VERSION`, `RecordDump` → `packages/core/src/export.test.ts` → —
 
 ## storage (`packages/storage-sqlite/src`)
@@ -74,7 +75,7 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 - Module registration, dev-test gating → `apps/web/src/lib/registry.ts` → `modules`, `ModuleComponent` → — → `docs/MODULE_CONTRACT.md#adding-a-new-chapter-the-loop`
 - Store bootstrap, migration order → `apps/web/src/lib/db.ts` → `getStore` → — → `docs/ARCHITECTURE.md#browser`
 - Service worker, PWA → `apps/web/src/service-worker.ts`, `apps/web/static/manifest.webmanifest` → `CACHE` → — → `docs/ARCHITECTURE.md#browser`
-- Reminders, notifications → `apps/web/src/lib/reminders.ts`, `apps/web/src/lib/reminders.svelte.ts` → `dueReminders`, `catchUpReminder`, `REMINDER_WINDOW_MIN`, `ReminderConfig`, `requestNotificationPermission`, `startReminders` → `apps/web/src/lib/reminders.test.ts` → —
+- Reminders, notifications → `apps/web/src/lib/reminders.ts`, `apps/web/src/lib/reminders.svelte.ts` → `dueReminders`, `catchUpReminder`, `REMINDER_WINDOW_MIN`, `ReminderConfig`, `requestNotificationPermission`, `startReminders`, `moduleTick` → `apps/web/src/lib/reminders.test.ts` → —
 - Export, backup nudge → `apps/web/src/lib/export.ts`, `apps/web/src/lib/backup.ts` → `exportRecords`, `ExportFormat`, `ExportResult`, `BACKUP_INTERVAL_DAYS`, `backupDue` → `apps/web/src/lib/backup.test.ts` → —
 - Quick capture → `apps/web/src/lib/capture.svelte.ts`, `apps/web/src/lib/capture-key.ts` → `CAPTURE_KEY`, `capture`, `openCapture`, `isCaptureKey`, `CaptureKeyEvent` → `apps/web/src/lib/capture-key.test.ts` → —
 - Weekly review (`/week`) → `apps/web/src/routes/week/+page.svelte`, `apps/web/src/lib/week.ts` → `weekRangeLabel` → `apps/web/src/lib/week.test.ts` → —
@@ -135,6 +136,10 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 - Records, validators → `packages/modules/ch03-hard-feelings/schema.ts` → `Defusion`, `StressEvent`, `Series`, `Session`, `Gratitude`, `SERIES_PROMPTS`, `SESSION_MINUTES`, `validateTopic`, `validateThoughtText`, `validateRating5` → `packages/modules/ch03-hard-feelings/repo.test.ts` → `docs/modules/ch03.md#records`
 - Migrations → `packages/modules/ch03-hard-feelings/migrations.ts` → `migrations` → `packages/modules/ch03-hard-feelings/repo.test.ts` → `docs/modules/ch03.md#records`
 - Repo → `packages/modules/ch03-hard-feelings/repo.ts` → `addDefusion`, `listDefusions`, `defusionsBetween`, `addEvent`, `updateEvent`, `rateEvent`, `deleteEvent`, `listEvents`, `eventsBetween`, `startSeries`, `activeSeries`, `listSeries`, `finishSeries`, `stopSeries`, `startSession`, `finishSession`, `sessionsForSeries`, `sessionsBetween`, `markGratitude`, `unmarkGratitude`, `gratitudeDays`, `gratitudeBetween` → `packages/modules/ch03-hard-feelings/repo.test.ts` → —
+- Signals, visibility → `packages/modules/ch03-hard-feelings/signals.ts` → `signals`, `ch03SignalValues`, `eventToday`, `eventsToRate`, `seriesActive`, `daysSinceGratitude`, `reappraisalCardVisible`, `rateCardVisible`, `sessionCardVisible`, `clock`, `dayWord` → `packages/modules/ch03-hard-feelings/signals.test.ts` → `docs/modules/ch03.md#signals-published`
+- Prompts → `packages/modules/ch03-hard-feelings/prompts.ts` → `prompts`, `GRATITUDE_GAP_DAYS` → `packages/modules/ch03-hard-feelings/prompts.test.ts` → `docs/modules/ch03.md#prompts`
+- Suggestions → `packages/modules/ch03-hard-feelings/suggestions.ts` → `suggestions`, `REFRAME_MIN_EVENTS`, `REFRAME_MIN_RATE` → `packages/modules/ch03-hard-feelings/suggestions.test.ts` → `docs/modules/ch03.md#suggestions`
+- Event reminders (morning of, 60 min before) → `packages/modules/ch03-hard-feelings/reminders.ts` → `reminders`, `eventReminders`, `PRE_EVENT_MIN`, `REAPPRAISAL_BODY` → `packages/modules/ch03-hard-feelings/reminders.test.ts` → `docs/modules/ch03.md#what-the-user-does`
 
 ## dev-test (`packages/modules/dev-test`, dev builds only)
 

@@ -1,5 +1,6 @@
-import type { DayRecord } from '@mindwell/core';
-import { CORE_TABLES, localDay } from '@mindwell/core';
+import type { DayRecord, ModuleReminder } from '@mindwell/core';
+import { CORE_TABLES, localDay, pickReminder, pruneSent } from '@mindwell/core';
+import { activation } from './activation.svelte';
 import { getStore } from './db';
 import { catchUpReminder, dueReminders, REMINDER_BODY } from './reminders';
 import type { ReminderKind } from './reminders';
@@ -20,14 +21,18 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
 }
 
 async function show(kind: ReminderKind): Promise<void> {
-  const options = { body: REMINDER_BODY[kind], tag: 'mindwell-' + kind, icon: '/icons/icon-192.png' };
+  await notify('mindwell', REMINDER_BODY[kind], 'mindwell-' + kind);
+}
+
+async function notify(title: string, body: string, tag: string): Promise<void> {
+  const options = { body, tag, icon: '/icons/icon-192.png' };
   try {
     const reg = await navigator.serviceWorker?.getRegistration();
     if (reg) {
-      await reg.showNotification('mindwell', options);
+      await reg.showNotification(title, options);
       return;
     }
-    const n = new Notification('mindwell', options);
+    const n = new Notification(title, options);
     n.onclick = () => {
       window.focus();
       n.close();
@@ -41,6 +46,38 @@ async function todayRow(now: Date): Promise<DayRecord | null> {
   const store = await getStore();
   const [row] = await store.list<DayRecord>(CORE_TABLES.days, { where: { day: localDay(now) }, limit: 1 });
   return row ?? null;
+}
+
+/** Every active module's reminders. A def whose compute throws is skipped and `complete` is false (then nothing is pruned). */
+async function moduleReminders(now: Date): Promise<{ list: ModuleReminder[]; complete: boolean }> {
+  const store = await getStore();
+  const ctx = { store, now: now.toISOString(), day: localDay(now), morning: settings.morning };
+  const list: ModuleReminder[] = [];
+  let complete = true;
+  for (const m of activation.active) {
+    for (const def of m.reminders ?? []) {
+      try {
+        list.push(...(await def.compute(ctx)));
+      } catch {
+        complete = false;
+      }
+    }
+  }
+  return { list, complete };
+}
+
+/** Shows at most one due module reminder (the latest) and records the pending ones as sent. */
+async function moduleTick(): Promise<void> {
+  if (!settings.loaded || !activation.loaded || !canNotify()) return;
+  const now = new Date();
+  const { list, complete } = await moduleReminders(now);
+  const pick = pickReminder(now.toISOString(), list, new Set(settings.moduleSent));
+  const kept = complete ? pruneSent(settings.moduleSent, list) : settings.moduleSent;
+  const next = [...kept, ...pick.markSent.filter((k) => !kept.includes(k))];
+  if (pick.show) await notify(pick.show.title, pick.show.body, 'mindwell-' + pick.show.key);
+  if (next.length !== settings.moduleSent.length || next.some((k, i) => k !== settings.moduleSent[i])) {
+    await settings.setModuleSent(next);
+  }
 }
 
 async function tick(): Promise<void> {
@@ -72,8 +109,14 @@ export function startReminders(): () => void {
   const queue = (task: () => Promise<void>) => {
     chain = chain.then(task).catch(() => {});
   };
-  const run = () => queue(tick);
-  const catchUpRun = () => queue(catchUp);
+  const run = () => {
+    queue(tick);
+    queue(moduleTick);
+  };
+  const catchUpRun = () => {
+    queue(catchUp);
+    queue(moduleTick);
+  };
   const onVisible = () => {
     if (document.visibilityState === 'visible') catchUpRun();
   };

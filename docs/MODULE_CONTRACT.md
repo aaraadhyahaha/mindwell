@@ -17,6 +17,7 @@ export const module: Module = {
   reviewSections,    // [{ id, title, component, order }] for the weekly review
   suggestions,       // SuggestionRule[] evaluated at weekly review
   experiments,       // [{ technique, label, defaultDays }] that can be run as experiments
+  reminders?,        // optional [{ id, compute(ctx) => ModuleReminder[] }]: notifications the app shows
 };
 ```
 
@@ -31,6 +32,7 @@ export const module: Module = {
 | `reviewSections` | Read data via Store/signals. Writes only to the module's own tables (e.g. a weekly check-in); suggestions are accepted through core. The component receives `ModuleViewProps` (`day` = last day of the week). |
 | `suggestions` | `{ id, evaluate(signals, ctx) => Suggestion | null }`. Pure over its inputs; tested. |
 | `experiments` | Techniques the Introduction module can run as trials. Reach intro through core's `experiments.available` signal (active modules only). |
+| `reminders` | Optional. `{ id, compute(ctx) }`, `ctx` = `{ store, now, day, morning }` (`morning` = the user's check-in time). Returns `{ key, at, until, title, body }[]` from the module's own tables. The app shows each key at most once while a tab is open, only when `at ≤ now < until`, and only the latest when several are pending (core `pickReminder`). The module never touches the browser. |
 
 ## Folder layout
 

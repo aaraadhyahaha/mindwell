@@ -59,6 +59,36 @@ export interface ReviewSectionDef<C> {
   order: number;
 }
 
+/** Inputs a module reminder may read. Plain data plus the module's own tables. */
+export interface ReminderContext {
+  /** Read-only use. */
+  store: Store;
+  /** ISO timestamp the check runs at. */
+  now: string;
+  /** Local day (`YYYY-MM-DD`, 04:00 boundary) of `now`. */
+  day: string;
+  /** The user's morning check-in time, `HH:MM` (Settings). */
+  morning: string;
+}
+
+/** One notification a module wants shown while a mindwell tab is open. */
+export interface ModuleReminder {
+  /** Stable and unique: shown at most once per key. Namespaced, e.g. `'ch03.event:<id>:<starts_at>:pre'`. */
+  key: string;
+  /** ISO: due from this moment. */
+  at: string;
+  /** ISO: never shown at or after this moment (e.g. the event's start). */
+  until: string;
+  title: string;
+  body: string;
+}
+
+export interface ReminderDef {
+  id: string;
+  /** Reads only the module's own tables. Should return only reminders whose `until` is after `now`. */
+  compute(ctx: ReminderContext): Promise<ModuleReminder[]>;
+}
+
 export interface ExperimentDef {
   technique: string;
   label: string;
@@ -79,4 +109,6 @@ export interface Module<C = unknown> {
   reviewSections: ReviewSectionDef<C>[];
   suggestions: SuggestionRule[];
   experiments: ExperimentDef[];
+  /** Optional: time-based notifications (the app fires them; modules never touch the browser). */
+  reminders?: ReminderDef[];
 }

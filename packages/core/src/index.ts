@@ -67,3 +67,5 @@ export type { WeekSummary, ProposedSuggestion, SuggestionEvaluation, ReviewSugge
 export { REVIEW_DAYS, reviewWeek, weekSummary, evaluateSuggestions, reviewSuggestions, decideSuggestion } from './review';
 export type { RecordDump } from './export';
 export { EXPORT_FORMAT_VERSION, collectRecords, exportJson, exportMarkdown } from './export';
+export type { ReminderPick } from './reminders';
+export { pickReminder, pruneSent } from './reminders';

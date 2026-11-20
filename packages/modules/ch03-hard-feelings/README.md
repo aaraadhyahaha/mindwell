@@ -27,6 +27,9 @@ Series day prompts: Day 1 "Write about what happened and how it felt." · Day 2 
 - Today card (evening), visible when an event happened today without an outcome: rate it.
 - Today card (anytime), visible when a series is active and today's session not done: "Day {n} of {planned}: {prompt}" + Start 15-min timer.
 
+## Reminders
+Published through `Module.reminders` (core contract): per upcoming event, one at the user's morning check-in time on the event's day (only if earlier than the 60-min one) and one 60 min before; both end at `starts_at`. A reminder whose time had passed when the event was added or edited is skipped.
+
 ## Signals published
 | Key | Value | Meaning |
 | --- | --- | --- |
@@ -34,6 +37,7 @@ Series day prompts: Day 1 "Write about what happened and how it felt." · Day 2 
 | `ch03.series_active` | `{topic, day_n, planned} \| null` | |
 | `ch03.days_since_gratitude` | `number` (∞ if never) | |
 | `ch03.reframe_helped_rate` | `number \| null` | share of events rated yes/a bit |
+| `ch03.events_to_rate`, `ch03.reframe_counts`, `ch03.series_moods`, `ch03.upcoming_events` | | for cards, suggestions and core's Coming up |
 
 ## Prompts
 | id | kind | when | technique | text | condition | cooldown |
@@ -41,7 +45,7 @@ Series day prompts: Day 1 "Write about what happened and how it felt." · Day 2 
 | `ch03.intent.excited` | intent | morning | reappraisal | When the nerves come today, call it excitement: my body is getting ready. | `ch03.event_today` or `exam`/`stressful_event` in `day.types` | 1 |
 | `ch03.defuse_story` | journal | morning | defusion | Write "I'm having the thought that {story}" five times. Notice how it feels by the fifth. | `ch01.repeating_story` | 7 |
 | `ch03.offer_series` | journal | morning | expressive | "{story}" has been with you most days this week. Consider a 3-day writing series on it. | `ch01.repeating_story` and no `ch03.series_active` | 14 |
-| `ch03.gratitude` | journal | evening | gratitude | Three things that went well today, and why each one happened. | `ch03.days_since_gratitude >= 4` and `day.rating >= 3` | 3 |
+| `ch03.gratitude` | journal | evening | gratitude | Three things that went well today, and why each one happened. | `ch03.days_since_gratitude >= 4` and `day.rating >= 3` | 4 (3 would allow three shows in 7 days when not marked done) |
 
 ## Weekly review section
 "Making room": events this week and whether the reframe helped, writing sessions with mood before/after, gratitude count.
@@ -66,7 +70,7 @@ Series day prompts: Day 1 "Write about what happened and how it felt." · Day 2 
 
 ## Build checklist
 - [x] [builder] migrations + schema + repo
-- [ ] [tester] signals, conditions, suggestions, notification scheduling helper
+- [x] [tester] signals, conditions, suggestions, notification scheduling helper
 - [ ] [builder] Defuse + Gratitude tabs
 - [ ] [builder] Events + notifications; Writing series + timer
 - [ ] [builder] Today cards + review section
