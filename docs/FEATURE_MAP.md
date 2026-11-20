@@ -129,6 +129,13 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 - Today card (start) → `packages/modules/ch02-thought-records/ui/StartCard.svelte` → — → — → `docs/modules/ch02.md#screens-and-today-cards`
 - Weekly review section → `packages/modules/ch02-thought-records/ui/ReviewSection.svelte` → — → — → `docs/modules/ch02.md#weekly-review-section`
 
+## ch03 — Making room (`packages/modules/ch03-hard-feelings`)
+
+- Module, manifest → `packages/modules/ch03-hard-feelings/index.ts`, `packages/modules/ch03-hard-feelings/manifest.ts` → `module`, `manifest` → — → `docs/modules/ch03.md`
+- Records, validators → `packages/modules/ch03-hard-feelings/schema.ts` → `Defusion`, `StressEvent`, `Series`, `Session`, `Gratitude`, `SERIES_PROMPTS`, `SESSION_MINUTES`, `validateTopic`, `validateThoughtText`, `validateRating5` → `packages/modules/ch03-hard-feelings/repo.test.ts` → `docs/modules/ch03.md#records`
+- Migrations → `packages/modules/ch03-hard-feelings/migrations.ts` → `migrations` → `packages/modules/ch03-hard-feelings/repo.test.ts` → `docs/modules/ch03.md#records`
+- Repo → `packages/modules/ch03-hard-feelings/repo.ts` → `addDefusion`, `listDefusions`, `defusionsBetween`, `addEvent`, `updateEvent`, `rateEvent`, `deleteEvent`, `listEvents`, `eventsBetween`, `startSeries`, `activeSeries`, `listSeries`, `finishSeries`, `stopSeries`, `startSession`, `finishSession`, `sessionsForSeries`, `sessionsBetween`, `markGratitude`, `unmarkGratitude`, `gratitudeDays`, `gratitudeBetween` → `packages/modules/ch03-hard-feelings/repo.test.ts` → —
+
 ## dev-test (`packages/modules/dev-test`, dev builds only)
 
 - Module, manifest → `packages/modules/dev-test/index.ts`, `packages/modules/dev-test/manifest.ts` → `module`, `manifest` → — → —

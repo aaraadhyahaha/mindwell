@@ -1,0 +1,73 @@
+# ch03 — Chapter 3: Making room for hard feelings
+
+**Idea:** Some thoughts don't need arguing with. Step back from them, reinterpret the feeling, or get them onto paper.
+**Evidence:** Defusion makes negative self-words less believable (Masuda et al., 2004). Reappraising anxiety as excitement improves performance (Brooks, 2014; Jamieson et al., 2010). Expressive writing has small but real benefits (Pennebaker & Beall, 1986). Weekly gratitude lists improve well-being (Emmons & McCullough, 2003), and writing once or twice a week can work as well as daily.
+**References:** Masuda et al. 2004; Brooks 2014; Jamieson et al. 2010; Crum et al. 2013; Pennebaker & Beall 1986; Emmons & McCullough 2003.
+
+## What the user does
+1. **Defusion:** on any ch01 capture (via link) or a typed thought, taps "Defuse" → shown as "I'm having the thought that {thought}." Saved.
+2. **Reappraisal:** adds an upcoming stressful event (title, date/time). Gets a browser notification (while a mindwell tab is open; a missed one shows once on return to the tab) + Today card the morning of and 60 min before: "Your body is getting ready to perform. Say: I'm excited." Afterwards rates how it went (1–5) and whether the reframe helped (yes / a bit / no).
+3. **Expressive writing series:** starts a 3- or 4-day series on a topic (topic is a short label; can be kept vague). Each day: the day's prompt + a 15-minute timer. **Writing happens in the paper journal**; the app stores only that the session happened, minutes, and mood 1–5 before/after.
+4. **Gratitude:** prompt at most twice a week ("Three things that went well, and why each happened"). Written in the journal; the app records done.
+
+## Records
+| Table | Fields | Notes |
+| --- | --- | --- |
+| `ch03_defusions` | `capture_id` (nullable), `thought_text`, `day` | |
+| `ch03_events` | `title`, `starts_at`, `day`, `reframe_helped` (yes/a_bit/no/null), `outcome_rating` | |
+| `ch03_series` | `topic`, `planned_days` (3/4), `start_day`, `status` | |
+| `ch03_sessions` | `series_id`, `day`, `minutes`, `mood_before`, `mood_after` | |
+| `ch03_gratitude` | `day` | one row = done that day |
+
+Series day prompts: Day 1 "Write about what happened and how it felt." · Day 2 "Write about why it affects you the way it does." · Day 3 "Write about what it might mean for you going forward." · Day 4 "Write about what you've learned, or what you'd tell someone else in it."
+
+## Screens and Today cards
+- Screen `/m/ch03`: four tabs: Defuse · Events · Writing · Gratitude (history for each).
+- Today card (morning), visible when an event is today: reappraisal card with time.
+- Today card (evening), visible when an event happened today without an outcome: rate it.
+- Today card (anytime), visible when a series is active and today's session not done: "Day {n} of {planned}: {prompt}" + Start 15-min timer.
+
+## Signals published
+| Key | Value | Meaning |
+| --- | --- | --- |
+| `ch03.event_today` | `{title, starts_at} \| null` | |
+| `ch03.series_active` | `{topic, day_n, planned} \| null` | |
+| `ch03.days_since_gratitude` | `number` (∞ if never) | |
+| `ch03.reframe_helped_rate` | `number \| null` | share of events rated yes/a bit |
+
+## Prompts
+| id | kind | when | technique | text | condition | cooldown |
+| --- | --- | --- | --- | --- | --- | --- |
+| `ch03.intent.excited` | intent | morning | reappraisal | When the nerves come today, call it excitement: my body is getting ready. | `ch03.event_today` or `exam`/`stressful_event` in `day.types` | 1 |
+| `ch03.defuse_story` | journal | morning | defusion | Write "I'm having the thought that {story}" five times. Notice how it feels by the fifth. | `ch01.repeating_story` | 7 |
+| `ch03.offer_series` | journal | morning | expressive | "{story}" has been with you most days this week. Consider a 3-day writing series on it. | `ch01.repeating_story` and no `ch03.series_active` | 14 |
+| `ch03.gratitude` | journal | evening | gratitude | Three things that went well today, and why each one happened. | `ch03.days_since_gratitude >= 4` and `day.rating >= 3` | 3 |
+
+## Weekly review section
+"Making room": events this week and whether the reframe helped, writing sessions with mood before/after, gratitude count.
+
+## Suggestions
+| id | When it fires | Text |
+| --- | --- | --- |
+| `ch03.reframe_works` | ≥ 3 events, helped rate ≥ 0.66 | "Reframing nerves as excitement helped in {k} of {n} events." (evidence) |
+| `ch03.series_mood` | a series finished with average mood after > before | "Your writing series on '{topic}' left you calmer on average." (evidence) |
+
+## Experiments offered
+| technique | label | default days |
+| --- | --- | --- |
+| `defusion` | Defuse repeating thoughts | 14 |
+| `reappraisal` | "I'm excited" before stressful events | 21 |
+| `gratitude` | Gratitude twice a week | 28 |
+
+## Acceptance checks
+- [ ] No journal text is ever stored for expressive writing or gratitude.
+- [ ] Event notifications fire while a mindwell tab is open (in the background too), and a missed one shows once when the tab regains focus; none fire for past events.
+- [ ] Gratitude prompt never appears more than twice in 7 days.
+
+## Build checklist
+- [x] [builder] migrations + schema + repo
+- [ ] [tester] signals, conditions, suggestions, notification scheduling helper
+- [ ] [builder] Defuse + Gratitude tabs
+- [ ] [builder] Events + notifications; Writing series + timer
+- [ ] [builder] Today cards + review section
+- [ ] [main] register, end-to-end check
