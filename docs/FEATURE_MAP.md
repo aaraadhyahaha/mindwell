@@ -20,6 +20,7 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 | Notifications | `apps/web/src/lib/reminders.ts`, `apps/web/src/lib/reminders.svelte.ts`, `apps/web/src/service-worker.ts` |
 | Capture | key/overlay `apps/web/src/lib/capture.svelte.ts`, `apps/web/src/lib/capture-key.ts`; screen `packages/modules/ch01-notice-name/ui/CaptureScreen.svelte` |
 | Deploy (GitHub Pages) | `.github/workflows/deploy.yml`; base path `apps/web/svelte.config.js`, set in `apps/web/src/routes/+layout.ts` |
+| README screenshots, demo data | `scripts/screenshots.mjs` (run after `pnpm build`), output `docs/screenshots/` |
 | Register a module | `apps/web/src/lib/registry.ts`; contract `docs/MODULE_CONTRACT.md#what-a-module-exports` |
 
 ## core (`packages/core/src`)
