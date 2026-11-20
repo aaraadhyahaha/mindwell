@@ -73,5 +73,5 @@ Published through `Module.reminders` (core contract): per upcoming event, one at
 - [x] [tester] signals, conditions, suggestions, notification scheduling helper
 - [x] [builder] Defuse + Gratitude tabs
 - [x] [builder] Events + notifications; Writing series + timer
-- [ ] [builder] Today cards + review section
+- [x] [builder] Today cards + review section
 - [ ] [main] register, end-to-end check

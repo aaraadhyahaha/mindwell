@@ -89,3 +89,43 @@ export function gratitudeWeeks(days: readonly string[], today: string): { start:
       return { start, label: `Week of ${d} ${MONTHS[m - 1]}`, count };
     });
 }
+
+export interface SessionLine {
+  id: string;
+  topic: string;
+  day_n: number;
+  day: string;
+  minutes: number;
+  mood_before: number;
+  mood_after: number | null;
+}
+
+/** Week sessions as review lines: topic and the session's number within its series (by day, then order given). Oldest first. Pure. */
+export function sessionLines(
+  week: readonly { id: string; series_id: string; day: string; minutes: number; mood_before: number; mood_after: number | null }[],
+  allSessions: readonly { id: string; series_id: string; day: string }[],
+  series: readonly { id: string; topic: string }[],
+): SessionLine[] {
+  const topics = new Map(series.map((s) => [s.id, s.topic]));
+  const number = (s: { id: string; series_id: string }) => {
+    const mine = allSessions.filter((x) => x.series_id === s.series_id).sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0));
+    return mine.findIndex((x) => x.id === s.id) + 1;
+  };
+  return [...week]
+    .sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0))
+    .map((s) => ({
+      id: s.id,
+      topic: topics.get(s.series_id) ?? 'Writing',
+      day_n: Math.max(number(s), 1),
+      day: s.day,
+      minutes: s.minutes,
+      mood_before: s.mood_before,
+      mood_after: s.mood_after,
+    }));
+}
+
+/** "Done 2 times this week" / "Not this week". Plain counts. Pure. */
+export function gratitudeSummary(count: number): string {
+  if (count <= 0) return 'Not this week';
+  return `Done ${count} ${count === 1 ? 'time' : 'times'} this week`;
+}

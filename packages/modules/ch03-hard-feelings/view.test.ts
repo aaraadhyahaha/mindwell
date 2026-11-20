@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dayLabel, defusedText, gratitudeWeeks, fromStartsAt, splitEvents, tabFromSearch, toStartsAt } from './view';
+import { dayLabel, defusedText, gratitudeSummary, gratitudeWeeks, fromStartsAt, sessionLines, splitEvents, tabFromSearch, toStartsAt } from './view';
 
 describe('view helpers', () => {
   it('labels days in words', () => {
@@ -39,5 +39,23 @@ describe('view helpers', () => {
       { start: '2026-11-16', label: 'Week of 16 November', count: 2 },
       { start: '2026-11-09', label: 'Week of 9 November', count: 1 },
     ]);
+  });
+  it('builds session review lines with series number', () => {
+    const all = [
+      { id: 'a', series_id: 's', day: '2026-11-17' },
+      { id: 'b', series_id: 's', day: '2026-11-18' },
+      { id: 'c', series_id: 't', day: '2026-11-18' },
+    ];
+    const week = [
+      { ...all[1]!, minutes: 15, mood_before: 2, mood_after: 4 },
+      { ...all[2]!, minutes: 10, mood_before: 3, mood_after: null },
+    ];
+    const lines = sessionLines(week, all, [{ id: 's', topic: 'Exam' }]);
+    expect(lines.map((l) => [l.topic, l.day_n, l.mood_after])).toEqual([['Exam', 2, 4], ['Writing', 1, null]]);
+  });
+  it('summarises gratitude counts plainly', () => {
+    expect(gratitudeSummary(0)).toBe('Not this week');
+    expect(gratitudeSummary(1)).toBe('Done 1 time this week');
+    expect(gratitudeSummary(2)).toBe('Done 2 times this week');
   });
 });

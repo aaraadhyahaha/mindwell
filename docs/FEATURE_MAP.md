@@ -146,6 +146,8 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 - Writing helpers (timer math, series step) → `packages/modules/ch03-hard-feelings/writing.ts` → `remainingMs`, `elapsedMinutes`, `formatClock`, `nextDay`, `seriesStep` → `packages/modules/ch03-hard-feelings/writing.test.ts` → `docs/modules/ch03.md#what-the-user-does`
 - Defuse, Writing, Gratitude tabs → `packages/modules/ch03-hard-feelings/ui/DefuseTab.svelte`, `packages/modules/ch03-hard-feelings/ui/WritingTab.svelte`, `packages/modules/ch03-hard-feelings/ui/GratitudeTab.svelte` → — → — → `docs/modules/ch03.md#what-the-user-does`
 - Today card (reappraisal, morning) → `packages/modules/ch03-hard-feelings/ui/ReappraisalCard.svelte` → — → — → `docs/modules/ch03.md#screens-and-today-cards`
+- Today cards (rate event, writing session) → `packages/modules/ch03-hard-feelings/ui/RateEventCard.svelte`, `packages/modules/ch03-hard-feelings/ui/SessionCard.svelte` → — → — → `docs/modules/ch03.md#screens-and-today-cards`
+- Weekly review section → `packages/modules/ch03-hard-feelings/ui/ReviewSection.svelte` → `sessionLines`, `gratitudeSummary` → `packages/modules/ch03-hard-feelings/view.test.ts` → `docs/modules/ch03.md#screens-and-today-cards`
 
 ## dev-test (`packages/modules/dev-test`, dev builds only)
 
