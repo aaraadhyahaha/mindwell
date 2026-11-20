@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { BaseRecord, DayRecord, Migration, Store } from '@mindwell/core';
+import type { BaseRecord, DayRecord, Migration, SqlValue, Store } from '@mindwell/core';
 import { CORE_TABLES, collectRecords, coreMigrations, exportJson, newId, parseBackup, restoreBackup, backupSummary } from '@mindwell/core';
 import type { Backup, BackupRow } from '@mindwell/core';
 import { createStore } from './store';
@@ -53,7 +53,7 @@ const dayRow = (day: string) => ({
 });
 
 /** Writes a row with fixed timestamps, as a restore would. */
-function fixed(id: string, label: string, n: number | null, extra: Partial<BaseRecord> = {}): BaseRecord & Record<string, unknown> {
+function fixed(id: string, label: string, n: number | null, extra: Partial<BaseRecord> & Record<string, SqlValue> = {}): BackupRow {
   return {
     id,
     created_at: '2026-11-01T08:00:00.000Z',
@@ -63,7 +63,7 @@ function fixed(id: string, label: string, n: number | null, extra: Partial<BaseR
     label,
     n,
     ...extra,
-  } as BaseRecord & Record<string, unknown>;
+  } as BackupRow;
 }
 
 /** Seeds a store with a mix of live, soft-deleted and timestamp-controlled rows. */
