@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dayLabel, fromStartsAt, splitEvents, tabFromSearch, toStartsAt } from './view';
+import { dayLabel, defusedText, gratitudeWeeks, fromStartsAt, splitEvents, tabFromSearch, toStartsAt } from './view';
 
 describe('view helpers', () => {
   it('labels days in words', () => {
@@ -26,5 +26,18 @@ describe('view helpers', () => {
     const { upcoming, past } = splitEvents([at(15), at(9), at(13), at(12), at(8)], now);
     expect(upcoming.map((e) => e.id)).toEqual(['13', '15']);
     expect(past.map((e) => e.id)).toEqual(['12', '9', '8']);
+  });
+  it('phrases a defused thought', () => {
+    expect(defusedText("I'm going to fail this.")).toBe("I'm having the thought that I'm going to fail this.");
+    expect(defusedText('I am useless')).toBe("I'm having the thought that I am useless.");
+    expect(defusedText('Everyone will notice. ')).toBe("I'm having the thought that everyone will notice.");
+  });
+  it('groups gratitude days by Monday-start week, last 8 weeks', () => {
+    // 2026-11-20 is a Friday; its week starts Monday 16 November.
+    const w = gratitudeWeeks(['2026-11-20', '2026-11-16', '2026-11-15', '2026-11-15', '2026-09-01'], '2026-11-20');
+    expect(w).toEqual([
+      { start: '2026-11-16', label: 'Week of 16 November', count: 2 },
+      { start: '2026-11-09', label: 'Week of 9 November', count: 1 },
+    ]);
   });
 });

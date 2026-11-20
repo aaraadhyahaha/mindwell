@@ -59,3 +59,33 @@ export const HELPED_OPTIONS: { value: ReframeHelped; label: string }[] = [
   { value: 'a_bit', label: 'A bit' },
   { value: 'no', label: 'No' },
 ];
+
+/** "I'm having the thought that …" phrasing: drops a trailing full stop, lower-cases the first letter unless it starts with "I " or "I'". Pure. */
+export function defusedText(thought: string): string {
+  let t = thought.trim().replace(/\.+$/, '').trim();
+  if (t && !/^I[ ']/.test(t)) t = t.charAt(0).toLowerCase() + t.slice(1);
+  return `I'm having the thought that ${t}.`;
+}
+
+function mondayOf(day: string): string {
+  const [y, m, d] = day.split('-').map(Number) as [number, number, number];
+  const dow = new Date(y, m - 1, d).getDay();
+  return addDays(day, -((dow + 6) % 7));
+}
+
+/** Gratitude days grouped by Monday-start week, newest first, weeks with entries in the last 8 weeks only. Pure. */
+export function gratitudeWeeks(days: readonly string[], today: string): { start: string; label: string; count: number }[] {
+  const oldest = addDays(mondayOf(today), -49);
+  const counts = new Map<string, number>();
+  for (const d of new Set(days)) {
+    const start = mondayOf(d);
+    if (start < oldest || start > mondayOf(today)) continue;
+    counts.set(start, (counts.get(start) ?? 0) + 1);
+  }
+  return [...counts]
+    .sort((a, b) => (a[0] < b[0] ? 1 : -1))
+    .map(([start, count]) => {
+      const [, m, d] = start.split('-').map(Number) as [number, number, number];
+      return { start, label: `Week of ${d} ${MONTHS[m - 1]}`, count };
+    });
+}

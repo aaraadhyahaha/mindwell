@@ -273,7 +273,12 @@
   .when label {
     display: grid;
     gap: 6px;
-    font-size: 13px;
+  }
+  .when label span {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
     font-weight: 600;
   }
   .when input {
