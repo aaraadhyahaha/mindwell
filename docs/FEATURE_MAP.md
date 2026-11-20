@@ -143,6 +143,7 @@ A symbol must appear in one of the files on its line. Update this file in the sa
 - Screen view helpers (tabs, dates, event split) → `packages/modules/ch03-hard-feelings/view.ts` → `TABS`, `tabFromSearch`, `dayLabel`, `toStartsAt`, `fromStartsAt`, `splitEvents`, `defusedText`, `gratitudeWeeks`, `HELPED_LABELS` → `packages/modules/ch03-hard-feelings/view.test.ts` → —
 - Screen (four tabs) → `packages/modules/ch03-hard-feelings/ui/Ch03Screen.svelte` → — → — → `docs/modules/ch03.md#screens-and-today-cards`
 - Events tab (add, edit, rate) → `packages/modules/ch03-hard-feelings/ui/EventsTab.svelte` → — → — → `docs/modules/ch03.md#what-the-user-does`
+- Writing helpers (timer math, series step) → `packages/modules/ch03-hard-feelings/writing.ts` → `remainingMs`, `elapsedMinutes`, `formatClock`, `nextDay`, `seriesStep` → `packages/modules/ch03-hard-feelings/writing.test.ts` → `docs/modules/ch03.md#what-the-user-does`
 - Defuse, Writing, Gratitude tabs → `packages/modules/ch03-hard-feelings/ui/DefuseTab.svelte`, `packages/modules/ch03-hard-feelings/ui/WritingTab.svelte`, `packages/modules/ch03-hard-feelings/ui/GratitudeTab.svelte` → — → — → `docs/modules/ch03.md#what-the-user-does`
 - Today card (reappraisal, morning) → `packages/modules/ch03-hard-feelings/ui/ReappraisalCard.svelte` → — → — → `docs/modules/ch03.md#screens-and-today-cards`
 
