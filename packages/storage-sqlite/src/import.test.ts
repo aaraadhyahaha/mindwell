@@ -219,6 +219,26 @@ describe('restoreBackup into a store with data', () => {
   });
 });
 
+describe('restoreBackup over unique keys', () => {
+  it('replaces a live settings row whose key the backup holds under a different id', async () => {
+    const source = await freshStore();
+    await source.insert('settings', { key: 'backup.since', value: JSON.stringify('2026-10-01T00:00:00.000Z') });
+    const text = exportJson(await collectRecords(source), AT);
+
+    // A fresh install writes its own row for the same key on first visit.
+    const target = await freshStore();
+    const own = await target.insert('settings', { key: 'backup.since', value: JSON.stringify(AT) });
+    const parsed = parseBackup(text);
+    if (!parsed.ok) throw new Error(parsed.error);
+
+    await restoreBackup(target, parsed.backup);
+    const live = await target.list<BaseRecord & { key: string; value: string }>('settings');
+    expect(live).toHaveLength(1);
+    expect(live[0]?.value).toBe(JSON.stringify('2026-10-01T00:00:00.000Z'));
+    expect((await target.get('settings', own.id, { includeDeleted: true }))?.deleted_at).not.toBeNull();
+  });
+});
+
 describe('restoreBackup failures', () => {
   it('throws and changes nothing when a row has an unknown column', async () => {
     const store = await freshStore();

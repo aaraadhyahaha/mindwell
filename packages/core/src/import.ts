@@ -141,6 +141,15 @@ export async function restoreBackup(
       let softDeleted = 0;
       for (const table of known) {
         const rows = backup.tables[table] ?? [];
+        // Soft-delete first: a live row here may hold a unique key (e.g. a settings key)
+        // that a backup row with a different id is about to take.
+        const keep = new Set(rows.map((r) => r.id));
+        for (const live of await tx.list<BaseRecord>(table)) {
+          if (!keep.has(live.id)) {
+            await tx.softDelete(table, live.id);
+            softDeleted++;
+          }
+        }
         for (const row of rows) {
           try {
             await tx.put(table, row);
@@ -148,13 +157,6 @@ export async function restoreBackup(
             throw new Error(`A record in ${table} doesn't fit this app's table (${(err as Error).message}).`);
           }
           written++;
-        }
-        const keep = new Set(rows.map((r) => r.id));
-        for (const live of await tx.list<BaseRecord>(table)) {
-          if (!keep.has(live.id)) {
-            await tx.softDelete(table, live.id);
-            softDeleted++;
-          }
         }
       }
       result = { written, softDeleted };
