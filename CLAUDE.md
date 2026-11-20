@@ -8,6 +8,7 @@ Stack: SvelteKit (adapter-static, SPA) + Svelte 5 runes Â· TypeScript (strict) Â
 
 | Task touches | Read |
 | --- | --- |
+| Finding code | `docs/FEATURE_MAP.md` before any search |
 | Anything | this file |
 | A module | `docs/modules/<id>.md` + `docs/MODULE_CONTRACT.md` |
 | Prompts, signals, Today | `docs/PROMPTS.md` |
@@ -27,7 +28,8 @@ Do not read the whole repo or every doc "for context".
 5. Signals, prompt conditions and suggestion rules are pure functions with unit tests.
 6. Every record has the shared columns (`id` ULID, `created_at`, `updated_at`, `deleted_at`, `schema_version`). Soft delete only.
 7. Browser-only code (worker, OPFS, notifications, service worker) lives in `apps/web` and `packages/storage-sqlite/src/browser`; no domain logic there.
-8. No feature without a chapter. No streaks, badges, confetti, quotes, emoji, gradients (see PHILOSOPHY).
+8. Any commit that adds, moves or renames a feature updates `docs/FEATURE_MAP.md` in the same commit (`pnpm check` verifies every path and symbol in it).
+9. No feature without a chapter. No streaks, badges, confetti, quotes, emoji, gradients (see PHILOSOPHY).
 
 ## Working efficiently (keep token use low)
 
@@ -35,7 +37,7 @@ The main session is the orchestrator: it plans, makes architectural calls, and r
 
 | Agent | Model | Use for |
 | --- | --- | --- |
-| `scout` | haiku | "Where is X / what calls Y / list files for Z". Returns paths + one-line notes, never file dumps. |
+| `scout` | haiku | "Where is X / what calls Y / list files for Z". Checks `docs/FEATURE_MAP.md` first. Returns paths + one-line notes, never file dumps. |
 | `builder` | sonnet | Implementing one checklist item inside one folder from an approved spec (UI screens, forms, adapters, migrations, styling). |
 | `tester` | haiku | Writing and running unit tests for pure functions; reports only failures. |
 

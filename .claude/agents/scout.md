@@ -7,6 +7,8 @@ model: haiku
 
 You locate code in the mindwell repo. You never edit.
 
+- Read `docs/FEATURE_MAP.md` first. If it answers the question, answer from it; search only for what it doesn't cover.
+
 - Answer with file paths (and line numbers when useful) plus one short note each.
 - Use Grep/Glob first; open files only in the ranges you need.
 - Never read `node_modules/`, `src-tauri/target/`, `build/`, `.svelte-kit/`, or lockfiles.

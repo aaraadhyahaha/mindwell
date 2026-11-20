@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "pnpm --filter @mindwell/web dev",
     "test": "vitest run",
-    "check": "pnpm -r --no-bail check",
+    "check": "node scripts/check-feature-map.mjs && pnpm -r --no-bail check",
     "build": "pnpm --filter @mindwell/web build",
     "preview": "pnpm --filter @mindwell/web preview"
   },
